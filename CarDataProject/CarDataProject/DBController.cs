@@ -63,7 +63,7 @@ namespace CarDataProject {
 
 
         public List<CarLogEntry> GetAllLogEntriesWithJSONPoint() {
-            string sql = String.Format("SELECT id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, ST_AsGeoJSON(point) AS point, ST_AsGeoJSON(mpoint) AS mpoint FROM cardata");
+            string sql = String.Format("SELECT id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, ST_X(point) AS xcoord, ST_Y(point) AS ycoord, ST_X(mpoint) AS mpx, ST_Y(mpoint) AS mpy FROM cardata");
             DataRowCollection res = Query(sql);
             List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
             if (res.Count >= 1) {

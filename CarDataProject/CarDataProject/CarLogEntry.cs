@@ -35,11 +35,9 @@ namespace CarDataProject {
             this.driverid = row.Field<Int64>("driverid");
             this.rdate = row.Field<Int64>("rdate");
             this.rtime = row.Field<Int64>("rtime");
-            dynamic newPoint = JsonConvert.DeserializeObject(row.Field<String>("point"));
-            this.point = new GeoCoordinate(Convert.ToDouble(newPoint.coordinates[0]), Convert.ToDouble(newPoint.coordinates[1]));
-            
-            dynamic newmPoint = JsonConvert.DeserializeObject(row.Field<String>("mpoint"));
-            this.mpoint = new GeoCoordinate(Convert.ToDouble(newmPoint.coordinates[0]), Convert.ToDouble(newmPoint.coordinates[1]));
+
+            this.point = new GeoCoordinate(row.Field<double>("xcoord"), row.Field<double>("ycoord"));
+            this.mpoint = new GeoCoordinate(row.Field<double>("mpx"), row.Field<double>("mpy"));
 
             this.sat = row.Field<Int64>("sat");
             this.hdop = row.Field<Int64>("hdop");
