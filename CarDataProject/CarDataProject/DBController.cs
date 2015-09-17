@@ -61,8 +61,23 @@ namespace CarDataProject {
             }
         }
 
+
+        public List<CarLogEntry> GetAllLogEntriesWithJSONPoint() {
+            string sql = String.Format("SELECT id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, ST_AsGeoJSON(point) AS point, ST_AsGeoJSON(mpoint) AS mpoint FROM cardata");
+            DataRowCollection res = Query(sql);
+            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
+            if (res.Count >= 1) {
+                foreach (DataRow logEntry in res) {
+                    allLogEntries.Add(new CarLogEntry(logEntry));
+                }
+                return allLogEntries;
+            } else {
+                return allLogEntries;
+            }
+        }
+
         public int AddCarLogEntry(CarLogEntry entry) {
-            string sql = "INSERT INTO cardata1(id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, point, mpoint) VALUES (@id, @entryid, @carid, @driverid, @rdate, @rtime, @sat, @hdop, @maxspd, @spd, @strtcod, @segmentkey, @tripid, @tripsegmentno, ST_SetSRID(ST_MakePoint(:longitude, :latitude),4326), ST_SetSRID(ST_MakePoint(:mlongitude, :mlatitude),4326))";
+            string sql = "INSERT INTO cardata(id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, point, mpoint) VALUES (@id, @entryid, @carid, @driverid, @rdate, @rtime, @sat, @hdop, @maxspd, @spd, @strtcod, @segmentkey, @tripid, @tripsegmentno, ST_SetSRID(ST_MakePoint(:longitude, :latitude),4326), ST_SetSRID(ST_MakePoint(:mlongitude, :mlatitude),4326))";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, conn);
             command.Parameters.AddWithValue("@id", entry.id);
@@ -76,28 +91,28 @@ namespace CarDataProject {
             //longitude.Direction = ParameterDirection.Input;
             //longitude.DbType = DbType.Double;
             longitude.ParameterName = "longitude";
-            longitude.Value = entry.ycoord;
+            longitude.Value = entry.point.Longitude;
             command.Parameters.Add(longitude);
 
             var latitude = command.CreateParameter();
             //latitude.Direction = ParameterDirection.Input;
             //latitude.DbType = DbType.Double;
             latitude.ParameterName = "latitude";
-            latitude.Value = entry.xcoord;
+            latitude.Value = entry.point.Latitude;
             command.Parameters.Add(latitude);
 
             var mlongitude = command.CreateParameter();
             //longitude.Direction = ParameterDirection.Input;
             //longitude.DbType = DbType.Double;
             mlongitude.ParameterName = "mlongitude";
-            mlongitude.Value = entry.mpy;
+            mlongitude.Value = entry.mpoint.Longitude;
             command.Parameters.Add(mlongitude);
 
             var mlatitude = command.CreateParameter();
             //latitude.Direction = ParameterDirection.Input;
             //latitude.DbType = DbType.Double;
             mlatitude.ParameterName = "mlatitude";
-            mlatitude.Value = entry.mpx;
+            mlatitude.Value = entry.mpoint.Latitude;
             command.Parameters.Add(mlatitude);
 
             command.Parameters.AddWithValue("@sat", entry.sat);
@@ -109,73 +124,7 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@tripid", entry.tripid);
             command.Parameters.AddWithValue("@tripsegmentno", entry.tripsegmentno);
 
-            return NonQuery(command, "cardata1");
-        }
-
-        public int AddTest(CarLogEntry entry) {
-            string sql = "INSERT INTO laustable(name, point) VALUES (@name, ST_SetSRID(ST_MakePoint(:longitude, :latitude),4326))";
-
-            NpgsqlCommand command = new NpgsqlCommand(sql, conn);
-
-            command.Parameters.AddWithValue("@name", entry.id);
-
-            var longitude = command.CreateParameter();
-            //longitude.Direction = ParameterDirection.Input;
-            //longitude.DbType = DbType.Double;
-            longitude.ParameterName = "longitude";
-            longitude.Value = entry.ycoord;
-            command.Parameters.Add(longitude);
-
-            var latitude = command.CreateParameter();
-            //latitude.Direction = ParameterDirection.Input;
-            //latitude.DbType = DbType.Double;
-            latitude.ParameterName = "latitude";
-            latitude.Value = entry.xcoord;
-            command.Parameters.Add(latitude);
-            
-            return NonQuery(command, "laustable");
-        }
-
-        public int AddTest2(CarLogEntry entry) {
-            string sql = "INSERT INTO anothertable(point, name, mpoint) VALUES (ST_SetSRID(ST_MakePoint(:longitude, :latitude),4326), @name, ST_SetSRID(ST_MakePoint(:mlongitude, :mlatitude),4326))";
-
-            NpgsqlCommand command = new NpgsqlCommand(sql, conn);
-
-
-
-            var longitude = command.CreateParameter();
-            //longitude.Direction = ParameterDirection.Input;
-            //longitude.DbType = DbType.Double;
-            longitude.ParameterName = "longitude";
-            longitude.Value = entry.ycoord;
-            command.Parameters.Add(longitude);
-
-            var latitude = command.CreateParameter();
-            //latitude.Direction = ParameterDirection.Input;
-            //latitude.DbType = DbType.Double;
-            latitude.ParameterName = "latitude";
-            latitude.Value = entry.xcoord;
-            command.Parameters.Add(latitude);
-
-
-            command.Parameters.AddWithValue("@name", entry.id);
-
-
-            var mlongitude = command.CreateParameter();
-            //longitude.Direction = ParameterDirection.Input;
-            //longitude.DbType = DbType.Double;
-            mlongitude.ParameterName = "mlongitude";
-            mlongitude.Value = entry.mpy;
-            command.Parameters.Add(mlongitude);
-
-            var mlatitude = command.CreateParameter();
-            //latitude.Direction = ParameterDirection.Input;
-            //latitude.DbType = DbType.Double;
-            mlatitude.ParameterName = "mlatitude";
-            mlatitude.Value = entry.mpx;
-            command.Parameters.Add(mlatitude);
-
-            return NonQuery(command, "anothertable");
+            return NonQuery(command, "cardata");
         }
     }
 }

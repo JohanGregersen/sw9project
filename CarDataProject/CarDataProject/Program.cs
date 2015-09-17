@@ -16,21 +16,15 @@ namespace CarDataProject {
 
         static void Main(string[] args) {
 
-            Int64 utmX = 556425;
+            /*Int64 utmX = 556425;
             Int64 utmY = 6321387;
             string utmZone = "32N";
 
-            GeoCoordinate position = Utility.UtmToLatLng(utmX, utmY, utmZone);
-            
-            List<CarLogEntry> fetchedData = ReadCarDataFromFile();
-
-            /*
+            GeoCoordinate position = Utility.UtmToLatLng(utmX, utmY, utmZone);*/
             DBController dbc = new DBController();
-            for (int i = 0; i < 10; i++) {
-                dbc.AddCarLogEntry(fetchedData[i]);
-            }
-
-            dbc.Close();*/
+            dbc.GetAllLogEntriesWithJSONPoint();
+            dbc.Close();
+            //InsertCarDataIntoDB();
 
         }
 
@@ -38,7 +32,7 @@ namespace CarDataProject {
             return CarLogEntryReader.ReadFile(Path.Combine(Directory.GetCurrentDirectory(), path + filename + filetype));
         }
 
-        public static void InsertCarDataIntoBD() {
+        public static void InsertCarDataIntoDB() {
             List<CarLogEntry> entries = ReadCarDataFromFile();
 
             DBController dbc = new DBController();
@@ -46,10 +40,7 @@ namespace CarDataProject {
             foreach (CarLogEntry entry in entries) {
                 dbc.AddCarLogEntry(entry);
             }
-
-            List<CarLogEntry> list = dbc.GetAllLogEntries();
             dbc.Close();
-            list.Count();
         }
     }
 }

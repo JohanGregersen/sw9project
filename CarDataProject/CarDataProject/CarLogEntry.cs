@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Data;
 using Npgsql;
 using NpgsqlTypes;
+using System.Device.Location;
+using Newtonsoft.Json;
 
 namespace CarDataProject {
     public class CarLogEntry {
@@ -15,10 +17,8 @@ namespace CarDataProject {
         public Int64 driverid { get; set; }
         public Int64 rdate { get; set; }
         public Int64 rtime { get; set; }
-        public Int64 xcoord { get; set; }
-        public Int64 ycoord { get; set; }
-        public Int64 mpx { get; set; }
-        public Int64 mpy { get; set; }
+        public GeoCoordinate point { get; set; }
+        public GeoCoordinate mpoint { get; set; }
         public Int64 sat { get; set; }
         public Int64 hdop { get; set; }
         public Int64 maxspd { get; set; }
@@ -35,10 +35,12 @@ namespace CarDataProject {
             this.driverid = row.Field<Int64>("driverid");
             this.rdate = row.Field<Int64>("rdate");
             this.rtime = row.Field<Int64>("rtime");
-            this.xcoord = row.Field<Int64>("xcoord");
-            this.ycoord = row.Field<Int64>("ycoord");
-            this.mpx = row.Field<Int64>("mpx");
-            this.mpy = row.Field<Int64>("mpy");
+            dynamic newPoint = JsonConvert.DeserializeObject(row.Field<String>("point"));
+            this.point = new GeoCoordinate(Convert.ToDouble(newPoint.coordinates[0]), Convert.ToDouble(newPoint.coordinates[1]));
+            
+            dynamic newmPoint = JsonConvert.DeserializeObject(row.Field<String>("mpoint"));
+            this.mpoint = new GeoCoordinate(Convert.ToDouble(newmPoint.coordinates[0]), Convert.ToDouble(newmPoint.coordinates[1]));
+
             this.sat = row.Field<Int64>("sat");
             this.hdop = row.Field<Int64>("hdop");
             this.maxspd = row.Field<Int64>("maxspd");
@@ -57,10 +59,8 @@ namespace CarDataProject {
             this.driverid = row.ElementAt(3);
             this.rdate = row.ElementAt(4);
             this.rtime = row.ElementAt(5);
-            this.xcoord = row.ElementAt(6);
-            this.ycoord = row.ElementAt(7);
-            this.mpx = row.ElementAt(8);
-            this.mpy = row.ElementAt(9);
+            this.point = Utility.UtmToLatLng(row.ElementAt(6), row.ElementAt(7), "32N");
+            this.mpoint = Utility.UtmToLatLng(row.ElementAt(8), row.ElementAt(9), "32N");
             this.sat = row.ElementAt(10);
             this.hdop = row.ElementAt(11);
             this.maxspd = row.ElementAt(12);
