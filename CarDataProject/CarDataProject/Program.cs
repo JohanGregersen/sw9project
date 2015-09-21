@@ -21,9 +21,29 @@ namespace CarDataProject {
             string utmZone = "32N";
 
             GeoCoordinate position = Utility.UtmToLatLng(utmX, utmY, utmZone);*/
+
+            /*
             DBController dbc = new DBController();
             dbc.GetAllLogEntriesWithJSONPoint();
             dbc.Close();
+            */
+
+
+
+
+            DBController dbc = new DBController();
+            List<Int64> allDates = dbc.GetAllDates();
+            List<DateTime> timesByFirstDate = dbc.GetTimeByDate(allDates.First());
+
+
+
+            int temp = allDates.Count();
+            dbc.Close();
+
+
+
+
+
             //InsertCarDataIntoDB();
 
         }

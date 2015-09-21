@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Npgsql;
 using System.Data;
+using System.Text;
 using Microsoft.Win32.SafeHandles;
 using System.Configuration;
 
@@ -125,6 +126,66 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@tripsegmentno", entry.tripsegmentno);
 
             return NonQuery(command, "cardata");
+        }
+
+
+
+        public List<Int64> GetAllDates() {
+            string sql = String.Format("SELECT DISTINCT rdate FROM cardata ORDER BY rdate ASC");
+            DataRowCollection res = Query(sql);
+            List<Int64> allDates = new List<Int64>();
+            if (res.Count >= 1) {
+                foreach (DataRow date in res) {
+                    allDates.Add(date.Field<Int64>("rdate"));
+                }
+                return allDates;
+            } else {
+                return allDates;
+            }
+        }
+
+        public List<DateTime> GetTimeByDate(Int64 rdate) {
+            string strDate = DateAndTimeConverter(rdate);
+            string sql = String.Format("SELECT rtime FROM cardata WHERE rdate = '{0}' ORDER BY rtime ASC", rdate);
+            DataRowCollection res = Query(sql);
+            List<DateTime> timesByDate = new List<DateTime>();
+            if (res.Count >= 1) {
+                foreach (DataRow time in res) {
+                    Int64 t = time.Field<Int64>("rtime");
+                    String strTime = DateAndTimeConverter(t);
+
+                    StringBuilder sb = new StringBuilder();
+                    int year = Convert.ToInt32(sb.Append("20").Append(strDate[4]).Append(strDate[5]).ToString());
+                    sb.Clear();
+                    int month = Convert.ToInt32(sb.Append(strDate[2]).Append(strDate[3]).ToString());
+                    sb.Clear();
+                    int day = Convert.ToInt32(sb.Append(strDate[0]).Append(strDate[1]).ToString());
+                    sb.Clear();
+                    int hour = Convert.ToInt32(sb.Append(strTime[0]).Append(strTime[1]).ToString());
+                    sb.Clear();
+                    int minute = Convert.ToInt32(sb.Append(strTime[2]).Append(strTime[3]).ToString());
+                    sb.Clear(); 
+                    int second = Convert.ToInt32(sb.Append(strTime[4]).Append(strTime[5]).ToString());
+                    
+                    DateTime dt = new DateTime(year, month, day, hour, minute, second);
+
+
+
+                    timesByDate.Add(dt);
+                }
+                return timesByDate;
+            } else {
+                return timesByDate;
+            }
+        }
+
+        public static string DateAndTimeConverter (Int64 dt) {
+            string strDT = dt.ToString();
+            
+            if(strDT.Length == 5) {
+                strDT = "0" + strDT;
+            }
+            return strDT;
         }
     }
 }
