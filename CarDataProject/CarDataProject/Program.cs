@@ -27,26 +27,24 @@ namespace CarDataProject {
             dbc.GetAllLogEntriesWithJSONPoint();
             dbc.Close();
             */
-
-
-
-
             DBController dbc = new DBController();
-            List<Int64> allDates = dbc.GetAllDates();
-            List<DateTime> timesByFirstDate = dbc.GetTimeByDate(allDates.First());
+            
 
-
-
-            int temp = allDates.Count();
+            List<Trip> myTrips = TripCalculator.CalculateTripsByCarId(1);
+            for(int i = 1; i < myTrips.Count() + 1; i++) {
+                foreach(Tuple<Int64, DateTime> entry in myTrips[i - 1].allTimestamps) {
+                    dbc.UpdateWithNewId(i, entry.Item1);
+                }
+            }
+            
             dbc.Close();
-
-
-
 
 
             //InsertCarDataIntoDB();
 
         }
+
+
 
         public static List<CarLogEntry> ReadCarDataFromFile() {
             return CarLogEntryReader.ReadFile(Path.Combine(Directory.GetCurrentDirectory(), path + filename + filetype));

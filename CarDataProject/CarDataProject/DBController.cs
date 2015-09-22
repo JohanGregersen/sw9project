@@ -130,8 +130,8 @@ namespace CarDataProject {
 
 
 
-        public List<Int64> GetAllDates() {
-            string sql = String.Format("SELECT DISTINCT rdate FROM cardata ORDER BY rdate ASC");
+        public List<Int64> GetAllDatesByCarId(Int64 carid) {
+            string sql = String.Format("SELECT DISTINCT rdate FROM cardata WHERE carid = '{0}' ORDER BY rdate ASC", carid);
             DataRowCollection res = Query(sql);
             List<Int64> allDates = new List<Int64>();
             if (res.Count >= 1) {
@@ -144,11 +144,11 @@ namespace CarDataProject {
             }
         }
 
-        public List<DateTime> GetTimeByDate(Int64 rdate) {
+        public List<Tuple<Int64, DateTime>> GetTimeByDate(Int64 rdate) {
             string strDate = DateAndTimeConverter(rdate);
-            string sql = String.Format("SELECT rtime FROM cardata WHERE rdate = '{0}' ORDER BY rtime ASC", rdate);
+            string sql = String.Format("SELECT id, rtime FROM cardata WHERE rdate = '{0}' ORDER BY rtime ASC", rdate);
             DataRowCollection res = Query(sql);
-            List<DateTime> timesByDate = new List<DateTime>();
+            List<Tuple<Int64, DateTime>> timesByDate = new List<Tuple<Int64, DateTime>>();
             if (res.Count >= 1) {
                 foreach (DataRow time in res) {
                     Int64 t = time.Field<Int64>("rtime");
@@ -170,14 +170,25 @@ namespace CarDataProject {
                     DateTime dt = new DateTime(year, month, day, hour, minute, second);
 
 
-
-                    timesByDate.Add(dt);
+                    Int64 id = time.Field<Int64>("id");
+                    timesByDate.Add(new Tuple<Int64, DateTime>(id, dt));
                 }
                 return timesByDate;
             } else {
                 return timesByDate;
             }
         }
+
+
+
+
+
+        public int UpdateWithNewId(int newId, Int64 currentId) {
+            string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentId);
+            NpgsqlCommand command = new NpgsqlCommand(sql, conn);
+            return NonQuery(command, "cardata");
+        }
+
 
         public static string DateAndTimeConverter (Int64 dt) {
             string strDT = dt.ToString();
