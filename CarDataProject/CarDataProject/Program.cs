@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace CarDataProject {
     class Program {
@@ -14,7 +15,7 @@ namespace CarDataProject {
         static string filename = "t01c01";
         static string filetype = ".txt";
 
-        
+
         static void Main(string[] args) {
 
             /*Int64 utmX = 556425;
@@ -40,19 +41,19 @@ namespace CarDataProject {
             List<Int64> Hdop = new List<Int64>();
             List<Int64> Sat = new List<Int64>();
 
-            for(int i = 0; i < myList.Count; i++) {
+            for (int i = 0; i < myList.Count; i++) {
                 Hdop.Add(myList[i].Hdop);
                 Sat.Add(myList[i].Sat);
             }
-            
-            
-            
+
+            WriteQualityHdopSatToFile(myList);
+            Gnuplot();
 
             myList = myList;
 
             List<SatHdop> lowQualityEntries = new List<SatHdop>();
-            foreach(SatHdop qual in myList) {
-                if(qual.Sat <= 3 || qual.Hdop >= 3) {
+            foreach (SatHdop qual in myList) {
+                if (qual.Sat <= 3 || qual.Hdop >= 3) {
                     lowQualityEntries.Add(qual);
                 }
 
@@ -69,23 +70,51 @@ namespace CarDataProject {
                     
             */
             lowQualityEntries = lowQualityEntries;
-            
 
 
-            
+
+
 
             //InsertCarDataIntoDB();
 
         }
 
-        public static void WriteQualityPlotsToFile(List<SatHdop> qualityPlots) {
-            using (StreamWriter writer = new StreamWriter(path + "qualityplots.txt")) {
-                foreach(SatHdop plots in qualityPlots) {
-                    writer.WriteLine(plots.Id + "," + plots.Sat + "," + plots.Hdop);
+        public static void Gnuplot() {
+
+            string Pgm = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
+            Process extPro = new Process();
+            extPro.StartInfo.FileName = Pgm;
+            extPro.StartInfo.UseShellExecute = false;
+            extPro.StartInfo.RedirectStandardInput = true;
+            extPro.Start();
+
+            StreamWriter gnupStWr = extPro.StandardInput;
+            
+            gnupStWr.WriteLine("plot 'C:\\data\\qualityHdopSat.dat' using 1:2 with lines t \"HDOP\", 'C:\\data\\qualityHdopSat.dat' using 1:3 with lines t \"Sat\"");
+            //gnupStWr.WriteLine("plot 'C:\\data\\qualityhdop.dat' with linespoints ls 1");
+            //gnupStWr.WriteLine("plot 'C:\\data\\qualitysat.dat' with linespoints ls 1");
+            gnupStWr.Flush();
+
+
+        }
+
+        public static void WriteQualityHdopSatToFile(List<SatHdop> qualityPlots) {
+            using (StreamWriter writer = new StreamWriter(path + "qualityHdopSat.dat")) {
+                writer.WriteLine("#X, Hdop, Sat");
+                for (int i = 0; i < qualityPlots.Count; i++) {
+                    writer.WriteLine(i + " " + qualityPlots[i].Hdop + " " + qualityPlots[i].Sat);
                 }
             }
         }
-
+        /*
+        public static void WriteQualitySatToFile(List<SatHdop> qualityPlots) {
+            using (StreamWriter writer = new StreamWriter(path + "qualitysat.dat")) {
+                for (int i = 0; i < qualityPlots.Count; i++) {
+                    writer.WriteLine(i + " " + qualityPlots[i].Sat);
+                }
+            }
+        }
+        */
         public static List<CarLogEntry> ReadCarDataFromFile() {
             return CarLogEntryReader.ReadFile(Path.Combine(Directory.GetCurrentDirectory(), path + filename + filetype));
         }
