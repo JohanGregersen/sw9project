@@ -14,6 +14,7 @@ namespace CarDataProject {
         static string filename = "t01c01";
         static string filetype = ".txt";
 
+        
         static void Main(string[] args) {
 
             /*Int64 utmX = 556425;
@@ -27,24 +28,63 @@ namespace CarDataProject {
             dbc.GetAllLogEntriesWithJSONPoint();
             dbc.Close();
             */
-            DBController dbc = new DBController();
-            
 
-            List<Trip> myTrips = TripCalculator.CalculateTripsByCarId(1);
-            for(int i = 1; i < myTrips.Count() + 1; i++) {
-                foreach(Tuple<Int64, DateTime> entry in myTrips[i - 1].allTimestamps) {
-                    dbc.UpdateWithNewId(i, entry.Item1);
-                }
-            }
-            
+            Car firstCar = new Car(1);
+            DBController dbc = new DBController();
+            List<SatHdop> myList = dbc.GetSatHdopForTrip(1, 1);
             dbc.Close();
 
+            //WriteQualityPlotsToFile(myList);
+
+
+            List<Int64> Hdop = new List<Int64>();
+            List<Int64> Sat = new List<Int64>();
+
+            for(int i = 0; i < myList.Count; i++) {
+                Hdop.Add(myList[i].Hdop);
+                Sat.Add(myList[i].Sat);
+            }
+            
+            
+            
+
+            myList = myList;
+
+            List<SatHdop> lowQualityEntries = new List<SatHdop>();
+            foreach(SatHdop qual in myList) {
+                if(qual.Sat <= 3 || qual.Hdop >= 3) {
+                    lowQualityEntries.Add(qual);
+                }
+
+            }
+
+
+            /*
+            Vejrdata
+                Kvalitet af data
+                Driving in bad weather
+            Dato
+                Kørsel på forskellige ugedage
+                Forskellige tidspunkter
+                    
+            */
+            lowQualityEntries = lowQualityEntries;
+            
+
+
+            
 
             //InsertCarDataIntoDB();
 
         }
 
-
+        public static void WriteQualityPlotsToFile(List<SatHdop> qualityPlots) {
+            using (StreamWriter writer = new StreamWriter(path + "qualityplots.txt")) {
+                foreach(SatHdop plots in qualityPlots) {
+                    writer.WriteLine(plots.Id + "," + plots.Sat + "," + plots.Hdop);
+                }
+            }
+        }
 
         public static List<CarLogEntry> ReadCarDataFromFile() {
             return CarLogEntryReader.ReadFile(Path.Combine(Directory.GetCurrentDirectory(), path + filename + filetype));

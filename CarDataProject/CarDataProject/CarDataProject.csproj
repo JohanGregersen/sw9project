@@ -53,6 +53,8 @@
     <Compile Include="CarLogEntry.cs" />
     <Compile Include="CarLogEntryReader.cs" />
     <Compile Include="DBController.cs" />
+    <Compile Include="Objects\Car.cs" />
+    <Compile Include="Objects\SatHdop.cs" />
     <Compile Include="Objects\Trip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

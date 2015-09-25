@@ -179,13 +179,40 @@ namespace CarDataProject {
             }
         }
 
+        public List<SatHdop> GetSatHdopForTrip(int carId, int tripId) {
+            string sql = String.Format("SELECT id, sat, hdop FROM cardata where carid = '{0}' AND newtripid = '{1}'", carId, tripId);
+            DataRowCollection res = Query(sql);
+            List<SatHdop> allSatHdopForCar = new List<SatHdop>();
+            if (res.Count >= 1) {
+                foreach (DataRow row in res) {
+                    allSatHdopForCar.Add(new SatHdop(row));
+                }
+                return allSatHdopForCar;
+            } else {
+                return allSatHdopForCar;
+            }
+        }
 
 
 
+        //UPDATE with newTripId
 
         public int UpdateWithNewId(int newId, Int64 currentId) {
             string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentId);
             NpgsqlCommand command = new NpgsqlCommand(sql, conn);
+            return NonQuery(command, "cardata");
+        }
+
+        public int UpdateWithNewIdWithMultipleEntries(int newId, List<Tuple<Int64, DateTime>> currentIds) {
+            string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentIds[0].Item1);
+
+            StringBuilder sb = new StringBuilder(sql);
+            
+            for(int i = 1; i < currentIds.Count; i++) {
+                sb.Append(String.Format("OR id = '{0}'", currentIds[i].Item1));
+            }
+
+            NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), conn);
             return NonQuery(command, "cardata");
         }
 
