@@ -60,7 +60,6 @@ namespace CarDataProject {
             }
         }
 
-
         public List<CarLogEntry> GetAllLogEntriesWithJSONPoint() {
             string sql = String.Format("SELECT id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, ST_X(point) AS xcoord, ST_Y(point) AS ycoord, ST_X(mpoint) AS mpx, ST_Y(mpoint) AS mpy FROM cardata");
             DataRowCollection res = Query(sql);
@@ -125,8 +124,6 @@ namespace CarDataProject {
 
             return NonQuery(command, "cardata");
         }
-
-
 
         public List<Int64> GetAllDatesByCarId(Int64 carid, bool uniqueOnly, bool sortAscending) {
 
@@ -203,8 +200,6 @@ namespace CarDataProject {
             }
         }
 
-
-
         //UPDATE with newTripId
 
         public int UpdateWithNewId(int newId, Int64 currentId) {
@@ -217,15 +212,14 @@ namespace CarDataProject {
             string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentIds[0].Item1);
 
             StringBuilder sb = new StringBuilder(sql);
-            
-            for(int i = 1; i < currentIds.Count; i++) {
+
+            for (int i = 1; i < currentIds.Count; i++) {
                 sb.Append(String.Format("OR id = '{0}'", currentIds[i].Item1));
             }
 
             NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), conn);
             return NonQuery(command, "cardata");
         }
-
 
         public static string DateAndTimeConverter (Int64 dt) {
             string strDT = dt.ToString();

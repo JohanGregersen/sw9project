@@ -6,11 +6,9 @@ using CarDataProject.DataManipulators;
 
 namespace CarDataProject {
     class Program {
-
         static string path = @"\data\";
         static string filename = "t01c01";
         static string filetype = ".txt";
-
 
         static void Main(string[] args) {
 
@@ -27,9 +25,12 @@ namespace CarDataProject {
             dbc.GetAllLogEntriesWithJSONPoint();
             dbc.Close();
             */
-            Int64 carId = 1;
-            Dictionary<DayOfWeek, int> result = WeekdayCalculator.CalculateWeekdays(carId);
 
+            Int64 carId = 1;
+            List<Trip> trips = TripCalculator.CalculateTripsByCarId(carId);
+            Dictionary<DayOfWeek, TimeSpan> result = WeekdayCalculator.TimePerWeekday(carId, trips);
+            Dictionary<DayOfWeek, int> otherresult = WeekdayCalculator.PlotsPerWeekday(carId);
+            
             Car firstCar = new Car(1);
             DBController dbc = new DBController();
             List<SatHdop> myList = dbc.GetSatHdopForTrip(1, 1);
@@ -58,7 +59,6 @@ namespace CarDataProject {
                 }
 
             }
-
 
             /*
             Vejrdata
