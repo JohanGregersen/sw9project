@@ -51,7 +51,7 @@ namespace CarDataProject {
 
         private static List<Int64> FetchAllDatesByCarId(Int64 carid) {
             DBController dbc = new DBController();
-            List<Int64> allDates = dbc.GetAllDatesByCarId(carid);
+            List<Int64> allDates = dbc.GetAllDatesByCarId(carid, true, true);
             dbc.Close();
             return allDates;
         }

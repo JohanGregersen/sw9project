@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Device.Location;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
+using CarDataProject.DataManipulators;
 
 namespace CarDataProject {
     class Program {
@@ -17,6 +13,8 @@ namespace CarDataProject {
 
 
         static void Main(string[] args) {
+
+            //InsertCarDataIntoDB();
 
             /*Int64 utmX = 556425;
             Int64 utmY = 6321387;
@@ -29,6 +27,8 @@ namespace CarDataProject {
             dbc.GetAllLogEntriesWithJSONPoint();
             dbc.Close();
             */
+            Int64 carId = 1;
+            Dictionary<DayOfWeek, int> result = WeekdayCalculator.CalculateWeekdays(carId);
 
             Car firstCar = new Car(1);
             DBController dbc = new DBController();
@@ -70,13 +70,6 @@ namespace CarDataProject {
                     
             */
             lowQualityEntries = lowQualityEntries;
-
-
-
-
-
-            //InsertCarDataIntoDB();
-
         }
 
         public static void Gnuplot() {
