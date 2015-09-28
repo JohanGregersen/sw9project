@@ -5,6 +5,7 @@ using System.Data;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 using System.Configuration;
+using System.Device.Location;
 
 namespace CarDataProject {
     public class DBController {
@@ -145,33 +146,16 @@ namespace CarDataProject {
         }
 
         public List<Tuple<Int64, DateTime>> GetTimeByDate(Int64 rdate) {
-            string strDate = DateAndTimeConverter(rdate);
+
             string sql = String.Format("SELECT id, rtime FROM cardata WHERE rdate = '{0}' ORDER BY rtime ASC", rdate);
             DataRowCollection res = Query(sql);
             List<Tuple<Int64, DateTime>> timesByDate = new List<Tuple<Int64, DateTime>>();
             if (res.Count >= 1) {
                 foreach (DataRow time in res) {
-                    Int64 t = time.Field<Int64>("rtime");
-                    String strTime = DateAndTimeConverter(t);
-
-                    StringBuilder sb = new StringBuilder();
-                    int year = Convert.ToInt32(sb.Append("20").Append(strDate[4]).Append(strDate[5]).ToString());
-                    sb.Clear();
-                    int month = Convert.ToInt32(sb.Append(strDate[2]).Append(strDate[3]).ToString());
-                    sb.Clear();
-                    int day = Convert.ToInt32(sb.Append(strDate[0]).Append(strDate[1]).ToString());
-                    sb.Clear();
-                    int hour = Convert.ToInt32(sb.Append(strTime[0]).Append(strTime[1]).ToString());
-                    sb.Clear();
-                    int minute = Convert.ToInt32(sb.Append(strTime[2]).Append(strTime[3]).ToString());
-                    sb.Clear(); 
-                    int second = Convert.ToInt32(sb.Append(strTime[4]).Append(strTime[5]).ToString());
-                    
-                    DateTime dt = new DateTime(year, month, day, hour, minute, second);
-
+                    Int64 rtime = time.Field<Int64>("rtime");
 
                     Int64 id = time.Field<Int64>("id");
-                    timesByDate.Add(new Tuple<Int64, DateTime>(id, dt));
+                    timesByDate.Add(new Tuple<Int64, DateTime>(id, DateTimeHelper.ConvertToDateTime(rdate, rtime)));
                 }
                 return timesByDate;
             } else {
@@ -192,6 +176,38 @@ namespace CarDataProject {
                 return allSatHdopForCar;
             }
         }
+
+        public List<Point> GetMPointByCarAndTripId(int carId, int tripId) {
+            string sql = String.Format("SELECT id, ST_Y(mpoint) AS lat, ST_X(mpoint) AS lng FROM cardata where carid = '{0}' AND newtripid = '{1}' ORDER BY id ASC", carId, tripId);
+            DataRowCollection res = Query(sql);
+            List<Point> allLogEntries = new List<Point>();
+            if (res.Count >= 1) {
+                foreach (DataRow logEntry in res) {
+                    allLogEntries.Add(new Point(logEntry.Field<Int64>("id"), new GeoCoordinate(logEntry.Field<double>("lat"), logEntry.Field<double>("lng"))));
+                }
+                return allLogEntries;
+            } else {
+                return allLogEntries;
+            }
+        }
+
+        
+
+        
+        public List<Timestamp> GetTimestampsByCarAndTripId(int carId, int tripId) {
+            string sql = String.Format("SELECT id, rdate, rtime FROM cardata where carid = '{0}' AND newtripid = '{1}' ORDER BY id ASC", carId, tripId);
+            DataRowCollection res = Query(sql);
+            List<Timestamp> allLogEntries = new List<Timestamp>();
+            if (res.Count >= 1) {
+                foreach (DataRow ts in res) {
+                    allLogEntries.Add(new Timestamp(ts));
+                }
+                return allLogEntries;
+            } else {
+                return allLogEntries;
+            }
+        }
+        
 
 
 
@@ -217,13 +233,6 @@ namespace CarDataProject {
         }
 
 
-        public static string DateAndTimeConverter (Int64 dt) {
-            string strDT = dt.ToString();
-            
-            if(strDT.Length == 5) {
-                strDT = "0" + strDT;
-            }
-            return strDT;
-        }
+
     }
 }
