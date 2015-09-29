@@ -28,10 +28,6 @@ namespace CarDataProject {
         public static void GetTimePlot(int carid, int tripid) {
             List<Timestamp> timeData = GetTimeData(carid, tripid);
 
-            foreach (Timestamp ts in timeData) {
-                ts.StoreAsDateTimeFormat();
-            }
-
             List<double> timestampDifferences = new List<double>();
             for (int i = 0; i < timeData.Count - 1; i++) {
                 double timeDifference = Math.Abs(DateTimeHelper.ToUnixTime(timeData[i].timestamp) - DateTimeHelper.ToUnixTime(timeData[i + 1].timestamp));

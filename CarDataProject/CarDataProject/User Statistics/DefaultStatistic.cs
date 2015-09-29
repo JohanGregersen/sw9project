@@ -38,14 +38,16 @@ namespace CarDataProject {
 
         }
 
-        public static List<TimeSpan> TimePerTrip(List<Trip> trips) {
-            List<TimeSpan> TripTimes = new List<TimeSpan>();
 
-            foreach(Trip trip in trips) {
-                TripTimes.Add(trip.allTimestamps[trip.allTimestamps.Count - 1].Item2 - trip.allTimestamps[0].Item2);
-            }
+        public static TimeSpan TimePerTrip(int carid, int tripid) {
 
-            return TripTimes;
+            DBController dbc = new DBController();
+            List<Timestamp> timestamps = dbc.GetTimestampsByCarAndTripId(carid, tripid);
+
+            TimeSpan triptime = timestamps[timestamps.Count - 1].timestamp - timestamps[0].timestamp;
+            dbc.Close();
+
+            return triptime;
         }
 
         public static int OptPercentileDriven() {
