@@ -7,6 +7,7 @@ namespace CarDataProject.DataManipulators {
     public static class WeekdayCalculator {
         public static Dictionary<DayOfWeek, int> PlotsPerWeekday(Int64 carid) {
             Dictionary<DayOfWeek, int> entriesPerDay = new Dictionary<DayOfWeek, int>();
+
             entriesPerDay.Add(DayOfWeek.Monday, 0);
             entriesPerDay.Add(DayOfWeek.Tuesday, 0);
             entriesPerDay.Add(DayOfWeek.Wednesday, 0);
@@ -72,6 +73,70 @@ namespace CarDataProject.DataManipulators {
                 }
             }
             return timePerDay;
+        }
+
+        private static Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> setupDay(Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> dictionary, DayOfWeek day) {
+
+            dictionary.Add(day, new Dictionary<int, TimeSpan>());
+
+            for (int i = 0; i < 24; i++) {
+                dictionary[day].Add(i, new TimeSpan(0, 0, 0));
+            }
+
+            return dictionary;
+        }
+
+        public static Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> TimePerHourPerWeekday(Int64 carid, List<Trip> trips) {
+            Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> timePerHour = new Dictionary<DayOfWeek, Dictionary<int, TimeSpan>>();
+            setupDay(timePerHour, DayOfWeek.Monday);
+            setupDay(timePerHour, DayOfWeek.Tuesday);
+            setupDay(timePerHour, DayOfWeek.Wednesday);
+            setupDay(timePerHour, DayOfWeek.Thursday);
+            setupDay(timePerHour, DayOfWeek.Friday);
+            setupDay(timePerHour, DayOfWeek.Saturday);
+            setupDay(timePerHour, DayOfWeek.Sunday);
+            
+            int hour = 60;
+            int minute = 60;
+
+            //For all trips
+            foreach (Trip trip in trips) {
+
+                //If last timestamp has later date or hour than the first timestamp
+                if (trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Date > trip.allTimestamps[0].Item2.Date || trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Hour > trip.allTimestamps[0].Item2.Hour) {
+
+                    //Add all time from first timestamp until the beginning of the next hour
+                    timePerHour[trip.allTimestamps[0].Item2.DayOfWeek][trip.allTimestamps[0].Item2.Hour] += new TimeSpan(0, hour - trip.allTimestamps[0].Item2.Minute, minute - trip.allTimestamps[0].Item2.Second);
+
+                    //Keep track of the hour and date of the day
+                    int currentHour = trip.allTimestamps[0].Item2.Hour + 1;
+                    DateTime currentDate = trip.allTimestamps[0].Item2;
+
+                    //If past midnight, add a day to currentDate and reset currentHour
+                    if (currentHour == 24) {
+                        currentHour = 0;
+                        currentDate.AddDays(1);
+                    }
+
+                    //For the next hours where the trip does not end, add an hour to total time.
+                    while (currentHour < trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Hour || currentDate.Date < trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Date) {
+                        timePerHour[currentDate.DayOfWeek][currentHour] += new TimeSpan(1, 0, 0);
+                        currentHour++;
+
+                        if (currentHour == 24) {
+                            currentHour = 0;
+                            currentDate.AddDays(1);
+                        }
+                    }
+
+                    //On the last hour where the trip ends, add all remaining minutes and seconds
+                    timePerHour[currentDate.DayOfWeek][currentHour] += new TimeSpan(0, trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Minute, trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Second);
+                } else {
+                    //If trip ends on the same hour as it starts, just subtract starttime from endtime to get the timespan
+                    timePerHour[trip.allTimestamps[0].Item2.DayOfWeek][trip.allTimestamps[0].Item2.Hour] += trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.TimeOfDay - trip.allTimestamps[0].Item2.TimeOfDay;
+                }
+            }
+            return timePerHour;
         }
 
         //Duplicated from TripCalculator - Maybe put in utility or DBhandler?
