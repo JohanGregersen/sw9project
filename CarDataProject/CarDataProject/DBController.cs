@@ -39,7 +39,7 @@ namespace CarDataProject {
 
             return dt.Rows;
         }
-
+        
         private int NonQuery(NpgsqlCommand command, string table) {
             int affectedRows = command.ExecuteNonQuery();
             if (affectedRows == 0) {
@@ -62,7 +62,6 @@ namespace CarDataProject {
                 return allLogEntries;
             }
         }
-
 
         public List<CarLogEntry> GetAllLogEntriesWithJSONPoint() {
             string sql = String.Format("SELECT id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, ST_X(point) AS xcoord, ST_Y(point) AS ycoord, ST_X(mpoint) AS mpx, ST_Y(mpoint) AS mpy FROM cardata");
@@ -128,8 +127,6 @@ namespace CarDataProject {
 
             return NonQuery(command, "cardata");
         }
-
-
 
         public List<Int64> GetAllDatesByCarId(Int64 carid, bool uniqueOnly, bool sortAscending) {
 
@@ -203,9 +200,6 @@ namespace CarDataProject {
             }
         }
 
-        
-
-        
         public List<Timestamp> GetTimestampsByCarAndTripId(int carId, int tripId) {
             string sql = String.Format("SELECT id, rdate, rtime FROM cardata where carid = '{0}' AND newtripid = '{1}' ORDER BY id ASC", carId, tripId);
             DataRowCollection res = Query(sql);
@@ -219,9 +213,12 @@ namespace CarDataProject {
                 return allLogEntries;
             }
         }
-        
 
-
+        public Int64 GetAmountOfTrips(int carid) {
+            string sql = String.Format("SELECT COUNT(DISTINCT newtripid) AS tripamount FROM cardata");
+            DataRowCollection res = Query(sql);
+            return res[0].Field<Int64>("tripamount");
+        }
 
         //UPDATE with newTripId
 

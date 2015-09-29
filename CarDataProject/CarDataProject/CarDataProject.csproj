@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="CarLogEntry.cs" />
     <Compile Include="CarLogEntryReader.cs" />
+    <Compile Include="Data Validation\ValidationPlots.cs" />
     <Compile Include="DataManipulators\WeekdayCalculator.cs" />
     <Compile Include="DBController.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
@@ -63,6 +64,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataManipulators\TripCalculator.cs" />
+    <Compile Include="User Statistics\DefaultStatistic.cs" />
+    <Compile Include="User Statistics\PlotStatistic.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Weather.cs" />
   </ItemGroup>
