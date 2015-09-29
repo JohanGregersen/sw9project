@@ -131,8 +131,20 @@ namespace CarDataProject {
 
 
 
-        public List<Int64> GetAllDatesByCarId(Int64 carid) {
-            string sql = String.Format("SELECT DISTINCT rdate FROM cardata WHERE carid = '{0}' ORDER BY rdate ASC", carid);
+        public List<Int64> GetAllDatesByCarId(Int64 carid, bool uniqueOnly, bool sortAscending) {
+
+            string unique = "DISTINCT ";
+            string ascending = " ORDER BY rdate ASC";
+
+            string sql = "SELECT ";
+            if (uniqueOnly) {
+                sql += unique;
+            }
+            sql += "rdate FROM cardata WHERE carid = " + carid;
+            if (sortAscending) {
+                sql += ascending;
+            }
+
             DataRowCollection res = Query(sql);
             List<Int64> allDates = new List<Int64>();
             if (res.Count >= 1) {
