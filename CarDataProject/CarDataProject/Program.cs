@@ -18,9 +18,7 @@ namespace CarDataProject {
 
         static void Main(string[] args) {
 
-            GetMpointPlot(1, 5);
-            GetTimePlot(1, 5);
-            GetHdopSatPlot(1, 5);
+            
 
 
 
@@ -29,6 +27,12 @@ namespace CarDataProject {
 
             int quahha = 1;
 
+        }
+
+        public static void GetAllPlots(int carid, int tripid) {
+            GetMpointPlot(carid, tripid);
+            GetTimePlot(carid, tripid);
+            GetHdopSatPlot(carid, tripid);
         }
 
         public static List<Timestamp> GetTimeData(int carid, int tripid) {
