@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Device.Location;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarDataProject {
-    public static class Utility {
+    public static class CoordinateHelper {
 
-        /*
-         * Taken from http://stackoverflow.com/a/16660841
-         */
+        //Taken from http://stackoverflow.com/a/16660841
+        //Converts a UTM coordinate into a Latitude/Longitude coordinate
         public static GeoCoordinate UtmToLatLng(Int64 utmX, Int64 utmY, string utmZone) {
             bool isNorthHemisphere = utmZone.Last() >= 'N';
 
@@ -52,6 +48,5 @@ namespace CarDataProject {
             GeoCoordinate latLng = new GeoCoordinate(latitude, longitude);
             return latLng;
         }
-
     }
 }

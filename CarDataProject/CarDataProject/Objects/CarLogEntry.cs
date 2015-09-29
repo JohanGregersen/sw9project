@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
-using Npgsql;
-using NpgsqlTypes;
 using System.Device.Location;
-using Newtonsoft.Json;
 
 namespace CarDataProject {
     public class CarLogEntry {
@@ -57,8 +52,8 @@ namespace CarDataProject {
             this.driverid = row.ElementAt(3);
             this.rdate = row.ElementAt(4);
             this.rtime = row.ElementAt(5);
-            this.point = Utility.UtmToLatLng(row.ElementAt(6), row.ElementAt(7), "32N");
-            this.mpoint = Utility.UtmToLatLng(row.ElementAt(8), row.ElementAt(9), "32N");
+            this.point = CoordinateHelper.UtmToLatLng(row.ElementAt(6), row.ElementAt(7), "32N");
+            this.mpoint = CoordinateHelper.UtmToLatLng(row.ElementAt(8), row.ElementAt(9), "32N");
             this.sat = row.ElementAt(10);
             this.hdop = row.ElementAt(11);
             this.maxspd = row.ElementAt(12);

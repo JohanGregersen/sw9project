@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace CarDataProject {
     public static class FileHandler {
-
         public static List<CarLogEntry> ReadCarLog(string filename) {
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";

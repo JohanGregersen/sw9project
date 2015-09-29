@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using Npgsql;
 using System.Data;
 using System.Text;
-using Microsoft.Win32.SafeHandles;
-using System.Configuration;
 using System.Device.Location;
 
 namespace CarDataProject {
