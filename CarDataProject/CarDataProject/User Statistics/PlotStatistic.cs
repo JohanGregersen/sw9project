@@ -16,7 +16,7 @@ namespace CarDataProject {
             Int64 amountOfTrips = DefaultStatistic.TripsTaken(carid);
             List<double> kmprtrip = new List<double>();
 
-            for(int i = 0; i < amountOfTrips - 1; i++) {
+            for(int i = 1; i < amountOfTrips; i++) {
                 kmprtrip.Add(DefaultStatistic.KilometersDriven(carid, i));
             }
 
@@ -25,11 +25,34 @@ namespace CarDataProject {
 
         }
 
+        public static void GetMinutesprTripPlot(int carid) {
+
+            Int64 amountOfTrips = DefaultStatistic.TripsTaken(carid);
+            List<TimeSpan> mprtrip = new List<TimeSpan>();
+
+            for (int i = 1; i < amountOfTrips; i++) {
+                mprtrip.Add(DefaultStatistic.TimePerTrip(carid, i));
+            }
+
+            WriteTimeprTripToFile(mprtrip);
+            Gnuplot(2);
+
+        }
+
+        public static void WriteTimeprTripToFile(List<TimeSpan> timespan) {
+            using (StreamWriter writer = new StreamWriter(path + "mprtrip.dat")) {
+                writer.WriteLine("#X, title , Distance");
+                for (int i = 0; i < timespan.Count; i++) {
+                    writer.WriteLine(i + " " + timespan[i].Minutes);
+                }
+            }
+        }
+
         public static void WriteKMprTripToFile(List<double> kilometers) {
             using (StreamWriter writer = new StreamWriter(path + "kmprtrip.dat")) {
                 writer.WriteLine("#X, title , Distance");
                 for (int i = 0; i < kilometers.Count; i++) {
-                    writer.WriteLine(i + " " + "\"Trip " + i + "\"" +  " " + kilometers[i]);
+                    writer.WriteLine(i + " " + kilometers[i]);
                 }
             }
         }
@@ -44,14 +67,16 @@ namespace CarDataProject {
             extPro.Start();
 
             StreamWriter gnupStWr = extPro.StandardInput;
+            gnupStWr.WriteLine("set boxwidth 0.5");
+            gnupStWr.WriteLine("set style fill solid");
 
             switch (target) {
                 case 1:
-                    gnupStWr.WriteLine("set boxwidth 0.5");
-                    gnupStWr.WriteLine("set style fill solid");
-                    gnupStWr.WriteLine("plot 'C:\\data\\kmprtrip.dat' using 1:3 with boxes t \"Kilometers / trip\"");
+                    gnupStWr.WriteLine("plot 'C:\\data\\kmprtrip.dat' using 1:2 with boxes t \"Kilometers / trip\"");
                     break;
-
+                case 2:
+                    gnupStWr.WriteLine("plot 'C:\\data\\mprtrip.dat' using 1:2 with boxes t \"Minutes / trip\"");
+                    break;
                 default:
                     break;
             }

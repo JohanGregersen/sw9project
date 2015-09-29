@@ -17,15 +17,19 @@ namespace CarDataProject {
 
         static void Main(string[] args) {
 
-            //InsertCarDataIntoDB();
+            // InsertCarDataIntoDB();
 
-            //Car car = new Car(1);
-            //car.UpdateCarWithTripIdsOptimized(1);
+            // Car car = new Car(1);
+            // car.UpdateCarWithTripIdsOptimized(1);
 
-            DefaultStatistic.TripsTaken(1);
-            DefaultStatistic.KilometersDriven(1, 1);
+            // DefaultStatistic.TripsTaken(1);
+            // DefaultStatistic.KilometersDriven(1, 1);
 
-            //ReadCarDataFromFile();
+
+            // PlotStatistic.GetKMprTripPlot(1);
+            // PlotStatistic.GetMinutesprTripPlot(1);
+
+            // ReadCarDataFromFile();
             // ValidationPlots.GetAllPlots(1, 5);
             int quahha = 1;
 
