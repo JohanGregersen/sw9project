@@ -38,6 +38,16 @@ namespace CarDataProject {
 
         }
 
+        public static List<TimeSpan> TimePerTrip(List<Trip> trips) {
+            List<TimeSpan> TripTimes = new List<TimeSpan>();
+
+            foreach(Trip trip in trips) {
+                TripTimes.Add(trip.allTimestamps[trip.allTimestamps.Count - 1].Item2 - trip.allTimestamps[0].Item2);
+            }
+
+            return TripTimes;
+        }
+
         public static int OptPercentileDriven() {
 
             // some evaluation of the optimal route and how the driver scored
