@@ -153,7 +153,7 @@ namespace CarDataProject.DataManipulators {
             using (StreamWriter writer = new StreamWriter(path + "weeklyPlots.dat")) {
                 writer.WriteLine("#DayOfWeek, Entries");
                 foreach (KeyValuePair<DayOfWeek, int> kvp in plotsPerWeekday) {
-                    writer.WriteLine(kvp.Key + " " + plotsPerWeekday[kvp.Key]);
+                    writer.WriteLine(((int)kvp.Key+1) + " " + plotsPerWeekday[kvp.Key]);
                 }
             }
         }
@@ -163,7 +163,7 @@ namespace CarDataProject.DataManipulators {
             using (StreamWriter writer = new StreamWriter(path + "weeklyTime.dat")) {
                 writer.WriteLine("#DayOfWeek, Time");
                 foreach (KeyValuePair<DayOfWeek, TimeSpan> kvp in timePerWeekday) {
-                    writer.WriteLine(kvp.Key + " " + timePerWeekday[kvp.Key]);
+                    writer.WriteLine(((int)kvp.Key+1) + " " + timePerWeekday[kvp.Key].TotalMinutes);
                 }
             }
         }
@@ -174,14 +174,15 @@ namespace CarDataProject.DataManipulators {
                 writer.WriteLine("#Hour, Time");
 
                 foreach (KeyValuePair<int, TimeSpan> kvp in timePerHourPerWeekday[DayOfWeek.Monday]) {
-                    writer.WriteLine(kvp.Key + " " + kvp.Value);
+                    writer.WriteLine(kvp.Key + " " + kvp.Value.TotalMinutes);
                 }
             }
         }
 
         public static void Gnuplot(int target) {
 
-            string Pgm = @"E:\University\Programs\gnuplot\bin\gnuplot.exe";
+            //string Pgm = @"E:\University\Programs\gnuplot\bin\gnuplot.exe";
+            string Pgm = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
             Process extPro = new Process();
             extPro.StartInfo.FileName = Pgm;
             extPro.StartInfo.UseShellExecute = false;
@@ -209,7 +210,7 @@ namespace CarDataProject.DataManipulators {
                     gnupStWr.WriteLine("plot 'C:\\data\\weeklyTime.dat' using 1:2 with boxes t \"Time driven per weekday\"");
                     break;
                 case 6:
-                    gnupStWr.WriteLine("plot 'C:\\data\\hourlyTime.dat' using 1:2 with boxes t \"Time driven per hour\"");
+                    gnupStWr.WriteLine("plot 'C:\\data\\hourlyTime.dat' using 1:2 with boxes t \"Time(in minutes) driven per hour\"");
                     break;
                 default:
                     break;
