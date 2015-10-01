@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 
@@ -32,7 +34,8 @@ namespace CarDataProject.DataManipulators {
                 DateTime date = new DateTime(year, month, day);
                 entriesPerDay[date.DayOfWeek] += 1;
                 }
-
+            WritePlotsPerWeekdayToFile(entriesPerDay);
+            Gnuplot(4);
             return entriesPerDay;
         }
 
@@ -72,6 +75,8 @@ namespace CarDataProject.DataManipulators {
                     timePerDay[trip.allTimestamps[0].Item2.DayOfWeek] += trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.TimeOfDay - trip.allTimestamps[0].Item2.TimeOfDay;
                 }
             }
+            WriteTimePerWeekdayToFile(timePerDay);
+            Gnuplot(5);
             return timePerDay;
         }
 
@@ -136,7 +141,74 @@ namespace CarDataProject.DataManipulators {
                     timePerHour[trip.allTimestamps[0].Item2.DayOfWeek][trip.allTimestamps[0].Item2.Hour] += trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.TimeOfDay - trip.allTimestamps[0].Item2.TimeOfDay;
                 }
             }
+            WriteTimePerHourPerWeekdayToFile(timePerHour);
+            Gnuplot(6);
             return timePerHour;
+        }
+
+
+        //Dupes from User Statistic - Collect common methods at some point
+        public static void WritePlotsPerWeekdayToFile(Dictionary<DayOfWeek, int> plotsPerWeekday) {
+            string path = @"C:\data\";
+            using (StreamWriter writer = new StreamWriter(path + "weeklyPlots.dat")) {
+                writer.WriteLine("#DayOfWeek, Entries");
+                foreach (KeyValuePair<DayOfWeek, int> kvp in plotsPerWeekday) {
+                    writer.WriteLine(kvp.Key + " " + plotsPerWeekday[kvp.Key]);
+                }
+            }
+        }
+
+        public static void WriteTimePerWeekdayToFile(Dictionary<DayOfWeek, TimeSpan> timePerWeekday) {
+            string path = @"C:\data\";
+            using (StreamWriter writer = new StreamWriter(path + "weeklyTime.dat")) {
+                writer.WriteLine("#DayOfWeek, Time");
+                foreach (KeyValuePair<DayOfWeek, TimeSpan> kvp in timePerWeekday) {
+                    writer.WriteLine(kvp.Key + " " + timePerWeekday[kvp.Key]);
+                }
+            }
+        }
+
+        public static void WriteTimePerHourPerWeekdayToFile(Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> timePerHourPerWeekday) {
+            string path = @"C:\data\";
+            using (StreamWriter writer = new StreamWriter(path + "weeklyTime.dat")) {
+                writer.WriteLine("#Hour, Time");
+
+                foreach (KeyValuePair<int, TimeSpan> kvp in timePerHourPerWeekday[DayOfWeek.Monday]) {
+                    writer.WriteLine(kvp.Key + " " + kvp.Value);
+                }
+            }
+        }
+
+        public static void Gnuplot(int target) {
+
+            string Pgm = @"E:\University\Programs\gnuplot\bin\gnuplot.exe";
+            Process extPro = new Process();
+            extPro.StartInfo.FileName = Pgm;
+            extPro.StartInfo.UseShellExecute = false;
+            extPro.StartInfo.RedirectStandardInput = true;
+            extPro.Start();
+
+            StreamWriter gnupStWr = extPro.StandardInput;
+            gnupStWr.WriteLine("set boxwidth 0.5");
+            gnupStWr.WriteLine("set style fill solid");
+
+            switch (target) {
+                case 1:
+                    gnupStWr.WriteLine("plot 'C:\\data\\kmprtrip.dat' using 1:2 with boxes t \"Kilometers pr trip\"");
+                    break;
+                case 2:
+                    gnupStWr.WriteLine("plot 'C:\\data\\mprtrip.dat' using 1:2 with boxes t \"Minutes pr trip\"");
+                    break;
+                case 3:
+                    gnupStWr.WriteLine("plot 'C:\\data\\weeklykm.dat' using 1:3:xtic(2) with boxes t \"km/trip pr Week\"");
+                    break;
+                default:
+                    break;
+            }
+
+            gnupStWr.Flush();
+
+
         }
 
         //Duplicated from TripCalculator - Maybe put in utility or DBhandler?
@@ -147,7 +219,6 @@ namespace CarDataProject.DataManipulators {
             return allDates;
         }
 
-        //Duplicated
         private static string DateAndTimeConverter(Int64 dt) {
             string strDT = dt.ToString();
 
