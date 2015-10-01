@@ -170,7 +170,7 @@ namespace CarDataProject.DataManipulators {
 
         public static void WriteTimePerHourPerWeekdayToFile(Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> timePerHourPerWeekday) {
             string path = @"C:\data\";
-            using (StreamWriter writer = new StreamWriter(path + "weeklyTime.dat")) {
+            using (StreamWriter writer = new StreamWriter(path + "hourlyTime.dat")) {
                 writer.WriteLine("#Hour, Time");
 
                 foreach (KeyValuePair<int, TimeSpan> kvp in timePerHourPerWeekday[DayOfWeek.Monday]) {
@@ -201,6 +201,15 @@ namespace CarDataProject.DataManipulators {
                     break;
                 case 3:
                     gnupStWr.WriteLine("plot 'C:\\data\\weeklykm.dat' using 1:3:xtic(2) with boxes t \"km/trip pr Week\"");
+                    break;
+                case 4:
+                    gnupStWr.WriteLine("plot 'C:\\data\\weeklyPlots.dat' using 1:2 with boxes t \"Entries per weekday\"");
+                    break;
+                case 5:
+                    gnupStWr.WriteLine("plot 'C:\\data\\weeklyTime.dat' using 1:2 with boxes t \"Time driven per weekday\"");
+                    break;
+                case 6:
+                    gnupStWr.WriteLine("plot 'C:\\data\\hourlyTime.dat' using 1:2 with boxes t \"Time driven per hour\"");
                     break;
                 default:
                     break;
