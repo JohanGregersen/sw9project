@@ -29,8 +29,8 @@ namespace CarDataProject {
                     weeklykm.Add(weekno, DefaultStatistic.KilometersDriven(carid, i));
                     tripsofweek.Add(weekno, 1);
                 } else {
-                    weeklykm[weekno] =+ DefaultStatistic.KilometersDriven(carid, i);
-                    tripsofweek[weekno] =+ 1;
+                    weeklykm[weekno] = weeklykm[weekno] + DefaultStatistic.KilometersDriven(carid, i);
+                    tripsofweek[weekno] = tripsofweek[weekno] + 1;
                 }
             }
             dbc.Close();
