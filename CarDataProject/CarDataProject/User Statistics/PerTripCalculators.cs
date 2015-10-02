@@ -53,11 +53,11 @@ namespace CarDataProject {
 
         public static void GetMPTPlot(int carid) {
 
-            Int64 amountOfTrips = DefaultStatistic.TripsTaken(carid);
+            Int64 amountOfTrips = PerCarCalculator.GetTripsTaken(carid);
             List<TimeSpan> mprtrip = new List<TimeSpan>();
 
             for (int i = 1; i < amountOfTrips; i++) {
-                mprtrip.Add(DefaultStatistic.TimePerTrip(carid, i));
+                mprtrip.Add(PerTripCalculator.GetTime(carid, i));
             }
 
             FileWriter.MinutesPerTrip(mprtrip);
