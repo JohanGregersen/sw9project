@@ -76,44 +76,21 @@ namespace CarDataProject {
         }
 
         public int AddCarLogEntry(CarLogEntry entry) {
-            string sql = "INSERT INTO cardata(id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, point, mpoint) VALUES (@id, @entryid, @carid, @driverid, @rdate, @rtime, @sat, @hdop, @maxspd, @spd, @strtcod, @segmentkey, @tripid, @tripsegmentno, ST_SetSRID(ST_MakePoint(:longitude, :latitude),4326), ST_SetSRID(ST_MakePoint(:mlongitude, :mlatitude),4326))";
+            StringBuilder sql = new StringBuilder();
+            sql.Append("INSERT INTO cardata(id, entryid, carid, driverid, rdate, rtime, xcoord, ycoord, mpx, mpy, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno)");
+            sql.Append(" VALUES (@id, @entryid, @carid, @driverid, @rdate, @rtime, @xcoord, @ycoord, @mpx, @mpy, @sat, @hdop, @maxspd, @spd, @strtcod, @segmentkey, @tripid, @tripsegmentno)");
 
-            NpgsqlCommand command = new NpgsqlCommand(sql, conn);
+            NpgsqlCommand command = new NpgsqlCommand(sql.ToString(), conn);
             command.Parameters.AddWithValue("@id", entry.id);
             command.Parameters.AddWithValue("@entryid", entry.entryid);
             command.Parameters.AddWithValue("@carid", entry.carid);
             command.Parameters.AddWithValue("@driverid", entry.driverid);
             command.Parameters.AddWithValue("@rdate", entry.rdate);
             command.Parameters.AddWithValue("@rtime", entry.rtime);
-
-            var longitude = command.CreateParameter();
-            //longitude.Direction = ParameterDirection.Input;
-            //longitude.DbType = DbType.Double;
-            longitude.ParameterName = "longitude";
-            longitude.Value = entry.point.Longitude;
-            command.Parameters.Add(longitude);
-
-            var latitude = command.CreateParameter();
-            //latitude.Direction = ParameterDirection.Input;
-            //latitude.DbType = DbType.Double;
-            latitude.ParameterName = "latitude";
-            latitude.Value = entry.point.Latitude;
-            command.Parameters.Add(latitude);
-
-            var mlongitude = command.CreateParameter();
-            //longitude.Direction = ParameterDirection.Input;
-            //longitude.DbType = DbType.Double;
-            mlongitude.ParameterName = "mlongitude";
-            mlongitude.Value = entry.mpoint.Longitude;
-            command.Parameters.Add(mlongitude);
-
-            var mlatitude = command.CreateParameter();
-            //latitude.Direction = ParameterDirection.Input;
-            //latitude.DbType = DbType.Double;
-            mlatitude.ParameterName = "mlatitude";
-            mlatitude.Value = entry.mpoint.Latitude;
-            command.Parameters.Add(mlatitude);
-
+            command.Parameters.AddWithValue("@xcoord", entry.xcoord);
+            command.Parameters.AddWithValue("@ycoord", entry.ycoord);
+            command.Parameters.AddWithValue("@mpx", entry.mpx);
+            command.Parameters.AddWithValue("@mpy", entry.mpy);
             command.Parameters.AddWithValue("@sat", entry.sat);
             command.Parameters.AddWithValue("@hdop", entry.hdop);
             command.Parameters.AddWithValue("@maxspd", entry.maxspd);

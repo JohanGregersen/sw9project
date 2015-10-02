@@ -23,14 +23,9 @@ namespace CarDataProject {
             //Read one line at a time. For each line, find column values and create a CarLogEntry from the data
             while ((entry = file.ReadLine()) != null) {
                 List<string> elements = entry.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                List<Int64> row = new List<Int64>();
-
-                foreach (string element in elements) {
-                    row.Add(Convert.ToInt64(element));
-                }
 
                 //Add to list of entries
-                entries.Add(new CarLogEntry(row));
+                entries.Add(new CarLogEntry(elements));
             }
 
             file.Close();
