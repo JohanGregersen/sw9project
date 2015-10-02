@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 
 namespace CarDataProject {
-    public static class FileHandler {
-        public static List<CarLogEntry> ReadCarLog(string filename) {
+    class FileReader {
+
+        public static List<CarLogEntry> CarLog(string filename) {
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";
             string filetype = ".txt";
@@ -21,7 +22,7 @@ namespace CarDataProject {
 
             //Read one line at a time. For each line, find column values and create a CarLogEntry from the data
             while ((entry = file.ReadLine()) != null) {
-                List<string> elements = entry.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                List<string> elements = entry.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 List<Int64> row = new List<Int64>();
 
                 foreach (string element in elements) {
@@ -35,5 +36,6 @@ namespace CarDataProject {
             file.Close();
             return entries;
         }
+
     }
 }
