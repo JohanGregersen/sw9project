@@ -50,11 +50,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\FileReader.cs" />
+    <Compile Include="Helpers\FileWriter.cs" />
+    <Compile Include="Helpers\GnuplotHelper.cs" />
     <Compile Include="Objects\CarLogEntry.cs" />
     <Compile Include="Data Validation\ValidationPlots.cs" />
-    <Compile Include="DataManipulators\WeekdayCalculator.cs" />
+    <Compile Include="User Statistics\PerCarCalculator.cs" />
+    <Compile Include="User Statistics\PerWeekCalculator.cs" />
+    <Compile Include="User Statistics\WeekdayCalculator.cs" />
     <Compile Include="DBController.cs" />
-    <Compile Include="External Data\FileHandler.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Objects\Car.cs" />
     <Compile Include="Objects\Point.cs" />
@@ -63,9 +67,8 @@
     <Compile Include="Objects\Trip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataManipulators\TripCalculator.cs" />
-    <Compile Include="User Statistics\DefaultStatistic.cs" />
-    <Compile Include="User Statistics\PlotStatistic.cs" />
+    <Compile Include="Data Manipulators\TripCalculator.cs" />
+    <Compile Include="User Statistics\PerTripCalculators.cs" />
     <Compile Include="Helpers\CoordinateHelper.cs" />
     <Compile Include="External Data\Weather.cs" />
   </ItemGroup>
