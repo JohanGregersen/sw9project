@@ -9,16 +9,16 @@ using System.Data;
 namespace CarDataProject {
     public class Point {
         public Point(DataRow row) {
-            this.Id = row.Field<Int64>("id");
+            this.Id = row.Field<int>("id");
             this.Mpoint = row.Field<GeoCoordinate>("hdop");
         }
 
-        public Point(Int64 Id, GeoCoordinate Mpoint) {
+        public Point(int Id, GeoCoordinate Mpoint) {
             this.Id = Id;
             this.Mpoint = Mpoint;
         }
 
-        public Int64 Id { get; set; }
+        public int Id { get; set; }
         public GeoCoordinate Mpoint { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CarDataProject {
     public static class WeekdayCalculator {
-        public static Dictionary<DayOfWeek, int> PlotsPerWeekday(Int64 carid) {
+        public static Dictionary<DayOfWeek, int> PlotsPerWeekday(Int16 carid) {
             Dictionary<DayOfWeek, int> entriesPerDay = new Dictionary<DayOfWeek, int>();
 
             entriesPerDay.Add(DayOfWeek.Monday, 0);
@@ -19,9 +19,9 @@ namespace CarDataProject {
             entriesPerDay.Add(DayOfWeek.Sunday, 0);
 
             //Fetch all date entries for a given car
-            List<Int64> allDates = FetchAllDatesByCarId(carid);
+            List<int> allDates = FetchAllDatesByCarId(carid);
 
-            foreach (Int64 rawDate in allDates) {
+            foreach (int rawDate in allDates) {
 
                 //Stolen from DBController
                 String formattedDate = DateAndTimeConverter(rawDate);
@@ -39,7 +39,7 @@ namespace CarDataProject {
             return entriesPerDay;
         }
 
-        public static Dictionary<DayOfWeek, TimeSpan> TimePerWeekday(Int64 carid, List<Trip> trips) {
+        public static Dictionary<DayOfWeek, TimeSpan> TimePerWeekday(Int16 carid, List<Trip> trips) {
             Dictionary<DayOfWeek, TimeSpan> timePerDay = new Dictionary<DayOfWeek, TimeSpan>();
             timePerDay.Add(DayOfWeek.Monday, new TimeSpan(0, 0, 0));
             timePerDay.Add(DayOfWeek.Tuesday, new TimeSpan(0, 0, 0));
@@ -91,7 +91,7 @@ namespace CarDataProject {
             return dictionary;
         }
 
-        public static Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> TimePerHourPerWeekday(Int64 carid, List<Trip> trips) {
+        public static Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> TimePerHourPerWeekday(Int16 carid, List<Trip> trips) {
             Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> timePerHour = new Dictionary<DayOfWeek, Dictionary<int, TimeSpan>>();
             setupDay(timePerHour, DayOfWeek.Monday);
             setupDay(timePerHour, DayOfWeek.Tuesday);
@@ -147,14 +147,14 @@ namespace CarDataProject {
         }
 
         //Duplicated from TripCalculator - Maybe put in utility or DBhandler?
-        private static List<Int64> FetchAllDatesByCarId(Int64 carid) {
+        private static List<int> FetchAllDatesByCarId(Int16 carid) {
             DBController dbc = new DBController();
-            List<Int64> allDates = dbc.GetAllDatesByCarId(carid, false, false);
+            List<int> allDates = dbc.GetAllDatesByCarId(carid, false, false);
             dbc.Close();
             return allDates;
         }
 
-        private static string DateAndTimeConverter(Int64 dt) {
+        private static string DateAndTimeConverter(int dt) {
             string strDT = dt.ToString();
 
             if (strDT.Length == 5) {

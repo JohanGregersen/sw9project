@@ -8,7 +8,7 @@ namespace CarDataProject {
     public static class DateTimeHelper {
 
 
-        public static DateTime ConvertToDateTime(Int64 rdate, Int64 rtime) {
+        public static DateTime ConvertToDateTime(int rdate, int rtime) {
 
             string strDate = DateAndTimeChecker(rdate);
             String strTime = DateAndTimeChecker(rtime);
@@ -31,7 +31,7 @@ namespace CarDataProject {
             return dt;
         }
 
-        private static string DateAndTimeChecker(Int64 dt) {
+        private static string DateAndTimeChecker(int dt) {
             string strDT = dt.ToString();
 
             if (strDT.Length == 5) {

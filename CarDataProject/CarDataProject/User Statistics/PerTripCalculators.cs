@@ -12,7 +12,7 @@ namespace CarDataProject {
 
         static string path = @"C:\data\";
 
-        public static TimeSpan GetTime (int carid, int tripid) {
+        public static TimeSpan GetTime (Int16 carid, int tripid) {
 
             DBController dbc = new DBController();
             List<Timestamp> timestamps = dbc.GetTimestampsByCarAndTripId(carid, tripid);
@@ -23,7 +23,7 @@ namespace CarDataProject {
             return triptime;
         }
 
-        public static double GetKilometersDriven(int carid, int tripid) {
+        public static double GetKilometersDriven(Int16 carid, int tripid) {
 
             double kmdriven = 0;
 
@@ -37,7 +37,7 @@ namespace CarDataProject {
             return kmdriven;
         }
 
-        public static void GetKPTPlot(int carid) {
+        public static void GetKPTPlot(Int16 carid) {
 
             Int64 amountOfTrips = PerCarCalculator.GetTripsTaken(carid);
             List<double> kmprtrip = new List<double>();
@@ -51,7 +51,7 @@ namespace CarDataProject {
 
         }
 
-        public static void GetMPTPlot(int carid) {
+        public static void GetMPTPlot(Int16 carid) {
 
             Int64 amountOfTrips = PerCarCalculator.GetTripsTaken(carid);
             List<TimeSpan> mprtrip = new List<TimeSpan>();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CarDataProject {
     class PerCarCalculator {
 
-        public static Int64 GetTripsTaken(int carid) {
+        public static Int64 GetTripsTaken(Int16 carid) {
 
             DBController dbc = new DBController();
             return dbc.GetAmountOfTrips(carid);

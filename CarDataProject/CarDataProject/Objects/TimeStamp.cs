@@ -9,15 +9,15 @@ namespace CarDataProject {
     public class Timestamp {
 
         public Timestamp(DataRow row) {
-            this.Id = row.Field<Int64>("id");
-            this.rdate = row.Field<Int64>("rdate");
-            this.rtime = row.Field<Int64>("rtime");
+            this.Id = row.Field<int>("id");
+            this.rdate = row.Field<int>("rdate");
+            this.rtime = row.Field<int>("rtime");
             this.timestamp = DateTimeHelper.ConvertToDateTime(this.rdate, this.rtime);
         }
 
-        public Int64 Id { get; set; }
-        public Int64 rdate { get; set; }
-        public Int64 rtime { get; set; }
+        public int Id { get; set; }
+        public int rdate { get; set; }
+        public int rtime { get; set; }
         public DateTime timestamp { get; set; }
 
     }

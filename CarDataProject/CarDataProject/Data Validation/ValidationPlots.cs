@@ -12,20 +12,20 @@ namespace CarDataProject {
 
         static string path = @"\data\";
 
-        public static void GetAllPlots(int carid, int tripid) {
+        public static void GetAllPlots(Int16 carid, int tripid) {
             GetMpointPlot(carid, tripid);
             GetTimePlot(carid, tripid);
             GetHdopSatPlot(carid, tripid);
         }
 
-        public static List<Timestamp> GetTimeData(int carid, int tripid) {
+        public static List<Timestamp> GetTimeData(Int16 carid, int tripid) {
             DBController dbc = new DBController();
             List<Timestamp> data = dbc.GetTimestampsByCarAndTripId(carid, tripid);
             dbc.Close();
             return data;
         }
 
-        public static void GetTimePlot(int carid, int tripid) {
+        public static void GetTimePlot(Int16 carid, int tripid) {
             List<Timestamp> timeData = GetTimeData(carid, tripid);
 
             List<double> timestampDifferences = new List<double>();
@@ -38,14 +38,14 @@ namespace CarDataProject {
             GnuplotHelper.PlotGraph(9);
         }
 
-        public static List<Point> GetMPointData(int carid, int tripid) {
+        public static List<Point> GetMPointData(Int16 carid, int tripid) {
             DBController dbc = new DBController();
             List<Point> data = dbc.GetMPointByCarAndTripId(carid, tripid);
             dbc.Close();
             return data;
         }
 
-        public static void GetMpointPlot(int carid, int tripid) {
+        public static void GetMpointPlot(Int16 carid, int tripid) {
             List<Point> MpointData = GetMPointData(carid, tripid);
 
             List<double> distanceMeasures = new List<double>();
@@ -64,18 +64,18 @@ namespace CarDataProject {
             GnuplotHelper.PlotGraph(8);
         }
 
-        public static List<SatHdop> GetSatHdopData(int carid, int tripid) {
+        public static List<SatHdop> GetSatHdopData(Int16 carid, int tripid) {
             DBController dbc = new DBController();
             List<SatHdop> data = dbc.GetSatHdopForTrip(carid, tripid);
             dbc.Close();
             return data;
         }
 
-        public static void GetHdopSatPlot(int carid, int tripid) {
+        public static void GetHdopSatPlot(Int16 carid, int tripid) {
             List<SatHdop> SatHdopData = GetSatHdopData(carid, tripid);
 
-            List<Int64> Hdop = new List<Int64>();
-            List<Int64> Sat = new List<Int64>();
+            List<Int16> Hdop = new List<Int16>();
+            List<Int16> Sat = new List<Int16>();
 
             for (int i = 0; i < SatHdopData.Count; i++) {
                 Hdop.Add(SatHdopData[i].Hdop);

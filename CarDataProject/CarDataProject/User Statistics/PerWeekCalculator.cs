@@ -6,7 +6,7 @@ using System.Globalization;
 namespace CarDataProject {
     class PerWeekCalculator {
 
-        public static void GetWeeklyKPTPlot(int carid) {
+        public static void GetWeeklyKPTPlot(Int16 carid) {
             DBController dbc = new DBController();
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
             Calendar cal = dfi.Calendar;

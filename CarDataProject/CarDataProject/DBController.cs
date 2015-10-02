@@ -103,7 +103,9 @@ namespace CarDataProject {
             return NonQuery(command, "cardata");
         }
 
-        public List<Int64> GetAllDatesByCarId(Int64 carid, bool uniqueOnly, bool sortAscending) {
+
+
+        public List<int> GetAllDatesByCarId(Int16 carid, bool uniqueOnly, bool sortAscending) {
 
             string unique = "DISTINCT ";
             string ascending = " ORDER BY rdate ASC";
@@ -118,10 +120,10 @@ namespace CarDataProject {
             }
 
             DataRowCollection res = Query(sql);
-            List<Int64> allDates = new List<Int64>();
+            List<int> allDates = new List<int>();
             if (res.Count >= 1) {
                 foreach (DataRow date in res) {
-                    allDates.Add(date.Field<Int64>("rdate"));
+                    allDates.Add(date.Field<int>("rdate"));
                 }
                 return allDates;
             } else {
@@ -129,17 +131,17 @@ namespace CarDataProject {
             }
         }
 
-        public List<Tuple<Int64, DateTime>> GetTimeByDate(Int64 rdate) {
+        public List<Tuple<int, DateTime>> GetTimeByDate(int rdate) {
 
             string sql = String.Format("SELECT id, rtime FROM cardata WHERE rdate = '{0}' ORDER BY rtime ASC", rdate);
             DataRowCollection res = Query(sql);
-            List<Tuple<Int64, DateTime>> timesByDate = new List<Tuple<Int64, DateTime>>();
+            List<Tuple<int, DateTime>> timesByDate = new List<Tuple<int, DateTime>>();
             if (res.Count >= 1) {
                 foreach (DataRow time in res) {
-                    Int64 rtime = time.Field<Int64>("rtime");
+                    int rtime = time.Field<int>("rtime");
 
-                    Int64 id = time.Field<Int64>("id");
-                    timesByDate.Add(new Tuple<Int64, DateTime>(id, DateTimeHelper.ConvertToDateTime(rdate, rtime)));
+                    int id = time.Field<int>("id");
+                    timesByDate.Add(new Tuple<int, DateTime>(id, DateTimeHelper.ConvertToDateTime(rdate, rtime)));
                 }
                 return timesByDate;
             } else {
@@ -161,13 +163,13 @@ namespace CarDataProject {
             }
         }
 
-        public List<Point> GetMPointByCarAndTripId(int carId, int tripId) {
+        public List<Point> GetMPointByCarAndTripId(Int16 carId, int tripId) {
             string sql = String.Format("SELECT id, ST_Y(mpoint) AS lat, ST_X(mpoint) AS lng FROM cardata where carid = '{0}' AND newtripid = '{1}' ORDER BY id ASC", carId, tripId);
             DataRowCollection res = Query(sql);
             List<Point> allLogEntries = new List<Point>();
             if (res.Count >= 1) {
                 foreach (DataRow logEntry in res) {
-                    allLogEntries.Add(new Point(logEntry.Field<Int64>("id"), new GeoCoordinate(logEntry.Field<double>("lat"), logEntry.Field<double>("lng"))));
+                    allLogEntries.Add(new Point(logEntry.Field<int>("id"), new GeoCoordinate(logEntry.Field<double>("lat"), logEntry.Field<double>("lng"))));
                 }
                 return allLogEntries;
             } else {
@@ -175,7 +177,7 @@ namespace CarDataProject {
             }
         }
 
-        public List<Timestamp> GetTimestampsByCarAndTripId(int carId, int tripId) {
+        public List<Timestamp> GetTimestampsByCarAndTripId(Int16 carId, int tripId) {
             string sql = String.Format("SELECT id, rdate, rtime FROM cardata where carid = '{0}' AND newtripid = '{1}' ORDER BY id ASC", carId, tripId);
             DataRowCollection res = Query(sql);
             List<Timestamp> allLogEntries = new List<Timestamp>();
@@ -189,7 +191,7 @@ namespace CarDataProject {
             }
         }
 
-        public Int64 GetAmountOfTrips(int carid) {
+        public Int64 GetAmountOfTrips(Int16 carid) {
             string sql = String.Format("SELECT COUNT(DISTINCT newtripid) AS tripamount FROM cardata");
             DataRowCollection res = Query(sql);
             return res[0].Field<Int64>("tripamount");
@@ -197,13 +199,13 @@ namespace CarDataProject {
 
         //UPDATE with newTripId
 
-        public int UpdateWithNewId(int newId, Int64 currentId) {
+        public int UpdateWithNewId(int newId, int currentId) {
             string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentId);
             NpgsqlCommand command = new NpgsqlCommand(sql, conn);
             return NonQuery(command, "cardata");
         }
 
-        public int UpdateWithNewIdWithMultipleEntries(int newId, List<Tuple<Int64, DateTime>> currentIds) {
+        public int UpdateWithNewIdWithMultipleEntries(int newId, List<Tuple<int, DateTime>> currentIds) {
             string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentIds[0].Item1);
 
             StringBuilder sb = new StringBuilder(sql);

@@ -9,7 +9,7 @@ namespace CarDataProject {
         public Trip() {
 
         }
-        public List<Tuple<Int64, DateTime>> allTimestamps {
+        public List<Tuple<int, DateTime>> allTimestamps {
             get {
                 return _allTS;
             }
@@ -18,7 +18,7 @@ namespace CarDataProject {
             }
 
         }
-        private List<Tuple<Int64, DateTime>> _allTS = new List<Tuple<Int64, DateTime>>();
+        private List<Tuple<int, DateTime>> _allTS = new List<Tuple<int, DateTime>>();
 
         public DateTime firstTimestamp { get; set; }
         public DateTime lastTimestamp { get; set; }

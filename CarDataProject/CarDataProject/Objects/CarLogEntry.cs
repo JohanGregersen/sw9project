@@ -50,7 +50,7 @@ namespace CarDataProject {
             this.newtripid = row.Field<int>("newtripid");
 
 
-
+            //Legacy before we learned ST_Transform
             //this.point = new GeoCoordinate(row.Field<double>("xcoord"), row.Field<double>("ycoord"));
             //this.mpoint = new GeoCoordinate(row.Field<double>("mpx"), row.Field<double>("mpy"));
         }
@@ -59,20 +59,26 @@ namespace CarDataProject {
             //Extract values from list into class fields
             this.id = Convert.ToInt32(row.ElementAt(0).Trim());
             this.entryid = Convert.ToInt64(row.ElementAt(1).Trim());
-            this.carid = row.ElementAt(2);
-            this.driverid = row.ElementAt(3);
-            this.rdate = row.ElementAt(4);
-            this.rtime = row.ElementAt(5);
+            this.carid = Convert.ToInt32(row.ElementAt(2).Trim());
+            this.driverid = Convert.ToInt32(row.ElementAt(3).Trim());
+            this.rdate = Convert.ToInt32(row.ElementAt(4).Trim());
+            this.rtime = Convert.ToInt32(row.ElementAt(5).Trim());
+            this.xcoord = Convert.ToInt32(row.ElementAt(6).Trim());
+            this.ycoord = Convert.ToInt32(row.ElementAt(7).Trim());
+            this.mpx = Convert.ToInt32(row.ElementAt(8).Trim());
+            this.mpy = Convert.ToInt32(row.ElementAt(9).Trim());
+            this.sat = Convert.ToInt16(row.ElementAt(10).Trim());
+            this.hdop = Convert.ToInt16(row.ElementAt(11).Trim());
+            this.maxspd = Convert.ToInt16(row.ElementAt(12).Trim());
+            this.spd = Convert.ToInt16(row.ElementAt(13).Trim());
+            this.strtcod = Convert.ToInt16(row.ElementAt(14).Trim());
+            this.segmentkey = Convert.ToInt32(row.ElementAt(15).Trim());
+            this.tripid = Convert.ToInt32(row.ElementAt(16).Trim());
+            this.tripsegmentno = Convert.ToInt32(row.ElementAt(17).Trim());
+
+            //Legacy before we learned ST_Transform
             //this.point = CoordinateHelper.UtmToLatLng(row.ElementAt(6), row.ElementAt(7), "32N");
             //this.mpoint = CoordinateHelper.UtmToLatLng(row.ElementAt(8), row.ElementAt(9), "32N");
-            this.sat = row.ElementAt(10);
-            this.hdop = row.ElementAt(11);
-            this.maxspd = row.ElementAt(12);
-            this.spd = row.ElementAt(13);
-            this.strtcod = row.ElementAt(14);
-            this.segmentkey = row.ElementAtOrDefault(15);
-            this.tripid = row.ElementAtOrDefault(16);
-            this.tripsegmentno = row.ElementAtOrDefault(17);
         }
     }
 }

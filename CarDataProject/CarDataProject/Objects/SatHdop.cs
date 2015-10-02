@@ -8,13 +8,13 @@ using System.Data;
 namespace CarDataProject {
     public class SatHdop {
         public SatHdop(DataRow row) {
-            this.Id = row.Field<Int64>("id");
-            this.Hdop = row.Field<Int64>("hdop");
-            this.Sat= row.Field<Int64>("sat");
+            this.Id = row.Field<int>("id");
+            this.Hdop = row.Field<Int16>("hdop");
+            this.Sat= row.Field<Int16>("sat");
         }
 
-        public Int64 Id { get; set; }
-        public Int64 Hdop { get; set; }
-        public Int64 Sat { get; set; }
+        public int Id { get; set; }
+        public Int16 Hdop { get; set; }
+        public Int16 Sat { get; set; }
     }
 }

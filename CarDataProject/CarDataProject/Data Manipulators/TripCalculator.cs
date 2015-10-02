@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace CarDataProject {
     public static class TripCalculator {
-        public static List<Trip> CalculateTripsByCarId(Int64 carid) {
+        public static List<Trip> CalculateTripsByCarId(Int16 carid) {
             //Fetch all dates a given car is being used.
-            List<Int64> allDates = FetchAllDatesByCarId(carid);
+            List<int> allDates = FetchAllDatesByCarId(carid);
 
             //Instantiate the containers for trips and timestamps fetched by a single date at a time
             List<Trip> allTrips = new List<Trip>();
             Trip trip = new Trip();
             allTrips.Add(trip);
-            List<Tuple<Int64, DateTime>> timestampsByDate;
+            List<Tuple<int, DateTime>> timestampsByDate;
 
             //Used to handle the first case of the algorithm because it needs to be there to ensure the first comparison goes well
             bool firstCaseFlag = true;
@@ -49,16 +49,16 @@ namespace CarDataProject {
             return allTrips;
         }
 
-        private static List<Int64> FetchAllDatesByCarId(Int64 carid) {
+        private static List<int> FetchAllDatesByCarId(Int16 carid) {
             DBController dbc = new DBController();
-            List<Int64> allDates = dbc.GetAllDatesByCarId(carid, true, true);
+            List<int> allDates = dbc.GetAllDatesByCarId(carid, true, true);
             dbc.Close();
             return allDates;
         }
 
-        private static List<Tuple<Int64, DateTime>> FetchTimestampsByDate(Int64 date) {
+        private static List<Tuple<int, DateTime>> FetchTimestampsByDate(int date) {
             DBController dbc = new DBController();
-            List<Tuple<Int64, DateTime>> timestampsByDate = dbc.GetTimeByDate(date);
+            List<Tuple<int, DateTime>> timestampsByDate = dbc.GetTimeByDate(date);
             dbc.Close();
             return timestampsByDate;
         }
