@@ -11,7 +11,7 @@ namespace CarDataProject {
         }
 
         private static void InsertCarLogIntoDB() {
-            List<CarLogEntry> entries = FileHandler.ReadCarLog(CarLogFile);
+            List<CarLogEntry> entries = FileReader.CarLog(CarLogFile);
 
             DBController dbc = new DBController();
 
