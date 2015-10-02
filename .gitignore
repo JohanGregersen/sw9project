@@ -1,4 +1,4 @@
 CarDataProject/CarDataProject/bin/
 CarDataProject/CarDataProject/obj/
 CarDataProject/data/
-CarDataProject/.vs/.*
+**/*.suo
