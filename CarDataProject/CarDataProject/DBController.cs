@@ -218,6 +218,25 @@ namespace CarDataProject {
             return NonQuery(command, "cardata");
         }
 
+        public void UpdateEntryWithPointAndMpoint(Int16 carId) {
+
+            
+            string sql = String.Format("SELECT id AS entryids FROM cardata where carid = '{0}' ORDER BY id ASC", carId);
+            DataRowCollection res = Query(sql);
+            List<int> entryIds = new List<int>();
+            if (res.Count >= 1) {
+                foreach (DataRow logEntry in res) {
+                    entryIds.Add(logEntry.Field<int>("entryids"));
+                }
+            }
+            
+
+            foreach(int entryId in entryIds) {
+                string sql2 = String.Format("UPDATE cardata SET point = ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326), mpoint = ST_Transform(ST_SetSrid(ST_MakePoint(mpx, mpy), 32632), 4326) WHERE id = '{0}'", entryId);
+                NpgsqlCommand command = new NpgsqlCommand(sql2, conn);
+                NonQuery(command, "cardata");
+            }
+        }
 
 
     }

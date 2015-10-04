@@ -72,10 +72,11 @@ namespace CarDataProject {
             this.maxspd = Convert.ToInt16(row.ElementAt(12).Trim());
             this.spd = Convert.ToInt16(row.ElementAt(13).Trim());
             this.strtcod = Convert.ToInt16(row.ElementAt(14).Trim());
-            this.segmentkey = Convert.ToInt32(row.ElementAt(15).Trim());
-            this.tripid = Convert.ToInt32(row.ElementAt(16).Trim());
-            this.tripsegmentno = Convert.ToInt32(row.ElementAt(17).Trim());
-
+            if (row.ElementAtOrDefault(15) != null) {
+                this.segmentkey = Convert.ToInt32(row.ElementAtOrDefault(15).Trim());
+                this.tripid = Convert.ToInt32(row.ElementAtOrDefault(16).Trim());
+                this.tripsegmentno = Convert.ToInt32(row.ElementAtOrDefault(17).Trim());
+            }
             //Legacy before we learned ST_Transform
             //this.point = CoordinateHelper.UtmToLatLng(row.ElementAt(6), row.ElementAt(7), "32N");
             //this.mpoint = CoordinateHelper.UtmToLatLng(row.ElementAt(8), row.ElementAt(9), "32N");
