@@ -11,8 +11,8 @@ namespace CarDataProject {
 
         public static void PlotGraph(int target) {
 
-            string Pgm = @"E:\University\Programs\gnuplot\bin\gnuplot.exe";
-            // Caspers Path string Pgm = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
+            // string Pgm = @"E:\University\Programs\gnuplot\bin\gnuplot.exe";
+            string Pgm = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
             Process extPro = new Process();
             extPro.StartInfo.FileName = Pgm;
             extPro.StartInfo.UseShellExecute = false;
@@ -50,6 +50,9 @@ namespace CarDataProject {
                     break;
                 case 9:
                     gnupStWr.WriteLine("plot 'C:\\data\\timePlots.dat' using 1:2 with lines t \"Time-difference\"");
+                    break;
+                case 10:
+                    gnupStWr.WriteLine("plot 'C:\\data\\acceleration.dat' using 1:2 with lines t \"Acceleration\"");
                     break;
                 default:
                     break;
