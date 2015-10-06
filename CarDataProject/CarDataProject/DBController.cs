@@ -21,7 +21,6 @@ namespace CarDataProject {
                 "Server={0};User Id={1};Password={2};Database={3};Encoding=Unicode;",
                 dbHost, dbUser, dbPass, dbName);
             conn = new NpgsqlConnection(connstring);
-            //
             conn.Open();
         }
 
@@ -37,7 +36,7 @@ namespace CarDataProject {
 
             return dt.Rows;
         }
-        
+
         private int NonQuery(NpgsqlCommand command, string table) {
             int affectedRows = command.ExecuteNonQuery();
             if (affectedRows == 0) {
@@ -209,8 +208,8 @@ namespace CarDataProject {
             string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentIds[0].Item1);
 
             StringBuilder sb = new StringBuilder(sql);
-            
-            for(int i = 1; i < currentIds.Count; i++) {
+
+            for (int i = 1; i < currentIds.Count; i++) {
                 sb.Append(String.Format("OR id = '{0}'", currentIds[i].Item1));
             }
 
@@ -220,7 +219,7 @@ namespace CarDataProject {
 
         public void UpdateEntryWithPointAndMpoint(Int16 carId) {
 
-            
+
             string sql = String.Format("SELECT id AS entryids FROM cardata where carid = '{0}' ORDER BY id ASC", carId);
             DataRowCollection res = Query(sql);
             List<int> entryIds = new List<int>();
@@ -229,15 +228,19 @@ namespace CarDataProject {
                     entryIds.Add(logEntry.Field<int>("entryids"));
                 }
             }
-            
 
-            foreach(int entryId in entryIds) {
+
+            foreach (int entryId in entryIds) {
                 string sql2 = String.Format("UPDATE cardata SET point = ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326), mpoint = ST_Transform(ST_SetSrid(ST_MakePoint(mpx, mpy), 32632), 4326) WHERE id = '{0}'", entryId);
                 NpgsqlCommand command = new NpgsqlCommand(sql2, conn);
                 NonQuery(command, "cardata");
             }
         }
 
-
-    }
+        public void UpdateAllMlines(Int16 carId) {
+            int tripsTaken = PerCarCalculator.GetTripsTaken(carId);
+            for (int i = 0; i < tripsTaken; i++) {
+                string query = String.Format("UPDATE cardata SET mline = myline FROM(SELECT newtripid, id, ST_MakeLine(mpoint, next_mpoint) AS myline FROM(SELECT newtripid, id, mpoint, lead(mpoint) OVER w as next_mpoint FROM cardata WINDOW w AS (ORDER BY id)) AS res WHERE newtripid = '{0}' AND res.next_mpoint IS NOT NULL) AS calclines WHERE cardata.id = calclines.id", i);
+            }
+      }
 }
