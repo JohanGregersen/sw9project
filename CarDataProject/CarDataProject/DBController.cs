@@ -256,7 +256,7 @@ namespace CarDataProject {
         public void UpdateAllMlines(Int16 carId) {
             int tripsTaken = PerCarCalculator.GetTripsTaken(carId);
             for (int i = 1; i < tripsTaken; i++) {
-                string sql = String.Format("UPDATE cardata SET mline = myline FROM(SELECT newtripid, id, ST_MakeLine(mpoint, next_mpoint) AS myline FROM(SELECT newtripid, id, mpoint, lead(mpoint) OVER w as next_mpoint FROM cardata WINDOW w AS (ORDER BY id)) AS res WHERE newtripid = '{0}' AND res.next_mpoint IS NOT NULL) AS calclines WHERE cardata.id = calclines.id", i);
+                string sql = String.Format("UPDATE cardata SET mline = myline FROM(SELECT newtripid, id, ST_MakeLine(mpoint, next_mpoint) AS myline FROM(SELECT newtripid, id, mpoint, lead(mpoint) OVER w as next_mpoint, lead(newtripid) OVER w as next_newtripid FROM cardata WINDOW w AS(ORDER BY id)) AS res WHERE newtripid = '{0}' AND next_newtripid = newtripid) AS calclines WHERE cardata.id = calclines.id", i);
                 NpgsqlCommand command = new NpgsqlCommand(sql, conn);
                 NonQuery(command, "cardata");
             }
