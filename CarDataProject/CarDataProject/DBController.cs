@@ -242,7 +242,7 @@ namespace CarDataProject {
             DataRowCollection res = Query(sql);
 
 
-            List<Tuple<Timestamp, int>> timestampsAndSpeed= new List<Tuple<Timestamp, int>>();
+            List<Tuple<Timestamp, int>> timestampsAndSpeed = new List<Tuple<Timestamp, int>>();
             if (res.Count >= 1) {
                 foreach (DataRow row in res) {
                     timestampsAndSpeed.Add(new Tuple<Timestamp, int>(new Timestamp(row), row.Field<Int16>("spd")));
@@ -252,11 +252,14 @@ namespace CarDataProject {
                 return timestampsAndSpeed;
             }
         }
-    }
+
         public void UpdateAllMlines(Int16 carId) {
             int tripsTaken = PerCarCalculator.GetTripsTaken(carId);
-            for (int i = 0; i < tripsTaken; i++) {
-                string query = String.Format("UPDATE cardata SET mline = myline FROM(SELECT newtripid, id, ST_MakeLine(mpoint, next_mpoint) AS myline FROM(SELECT newtripid, id, mpoint, lead(mpoint) OVER w as next_mpoint FROM cardata WINDOW w AS (ORDER BY id)) AS res WHERE newtripid = '{0}' AND res.next_mpoint IS NOT NULL) AS calclines WHERE cardata.id = calclines.id", i);
+            for (int i = 1; i < tripsTaken; i++) {
+                string sql = String.Format("UPDATE cardata SET mline = myline FROM(SELECT newtripid, id, ST_MakeLine(mpoint, next_mpoint) AS myline FROM(SELECT newtripid, id, mpoint, lead(mpoint) OVER w as next_mpoint FROM cardata WINDOW w AS (ORDER BY id)) AS res WHERE newtripid = '{0}' AND res.next_mpoint IS NOT NULL) AS calclines WHERE cardata.id = calclines.id", i);
+                NpgsqlCommand command = new NpgsqlCommand(sql, conn);
+                NonQuery(command, "cardata");
             }
-      }
+        }
+    }
 }
