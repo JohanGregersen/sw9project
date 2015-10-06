@@ -37,32 +37,33 @@ namespace CarDataProject {
             return kmdriven;
         }
 
-        public static void GetKPTPlot(Int16 carid) {
 
-            Int64 amountOfTrips = PerCarCalculator.GetTripsTaken(carid);
-            List<double> kmprtrip = new List<double>();
 
-            for (int i = 1; i < amountOfTrips; i++) {
-                kmprtrip.Add(GetKilometersDriven(carid, i));
+        public static List<double> GetAccelerationCalcultions(Int16 carId, int tripId) {
+            DBController dbc = new DBController();
+            List<Tuple<Timestamp, int>> accelerationData = dbc.GetAccelerationDataByTrip(carId, tripId);
+            dbc.Close();
+
+            List<double> accelerationCalculations = new List<double>();
+
+            for(int i = 0; i < accelerationData.Count() - 1; i++) {
+                //Item1 = TimeStamp (DateTime object)
+                //Item2 = speed
+                // a = VELCOCITY CHANGE / TIME TAKEN;
+                double velocityChange = accelerationData[i + 1].Item2 - accelerationData[i].Item2;
+                    
+                double timeTaken = Convert.ToDouble((DateTimeHelper.ToUnixTime(accelerationData[i + 1].Item1.timestamp) - DateTimeHelper.ToUnixTime(accelerationData[i].Item1.timestamp)));
+
+                double acceleration = velocityChange / timeTaken;
+
+                accelerationCalculations.Add(acceleration);
+
             }
 
-            FileWriter.KilometersPerTrip(kmprtrip);
-            GnuplotHelper.PlotGraph(1);
+            FileWriter.Acceleration(accelerationCalculations);
+            GnuplotHelper.PlotGraph(10);
 
-        }
-
-        public static void GetMPTPlot(Int16 carid) {
-
-            Int64 amountOfTrips = PerCarCalculator.GetTripsTaken(carid);
-            List<TimeSpan> mprtrip = new List<TimeSpan>();
-
-            for (int i = 1; i < amountOfTrips; i++) {
-                mprtrip.Add(PerTripCalculator.GetTime(carid, i));
-            }
-
-            FileWriter.MinutesPerTrip(mprtrip);
-            GnuplotHelper.PlotGraph(2);
-
+            return accelerationCalculations;
         }
 
     }
