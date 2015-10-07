@@ -107,6 +107,14 @@ namespace CarDataProject {
             }
         }
 
+        public static void Acceleration(List<double> acceleration) {
+            using (StreamWriter writer = new StreamWriter(path + "acceleration.dat")) {
+                writer.WriteLine("#X, acceleration");
+                for (int i = 0; i < acceleration.Count; i++) {
+                    writer.WriteLine(i + " " + acceleration[i]);
+                }
+            }
+        }
 
 
     }
