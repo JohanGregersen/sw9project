@@ -35,7 +35,7 @@ namespace CarDataProject {
             }
 
             FileWriter.DifferenceInTime(timestampDifferences);
-            GnuplotHelper.PlotGraph(9);
+            GnuplotHelper.PlotGraph(9, "timeplot");
         }
 
         public static List<Point> GetMPointData(Int16 carid, int tripid) {
@@ -61,7 +61,7 @@ namespace CarDataProject {
             FileWriter.DifferenceOutliers(outofscopePoints);
             FileWriter.DifferenceInDistance(distanceMeasures);
 
-            GnuplotHelper.PlotGraph(8);
+            GnuplotHelper.PlotGraph(8, "mpointplot");
         }
 
         public static List<SatHdop> GetSatHdopData(Int16 carid, int tripid) {
@@ -83,7 +83,7 @@ namespace CarDataProject {
             }
 
             FileWriter.HdopAndSatPerPoint(SatHdopData);
-            GnuplotHelper.PlotGraph(7);
+            GnuplotHelper.PlotGraph(7, "hdopsat");
         }
 
     }

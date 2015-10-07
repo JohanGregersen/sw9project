@@ -47,7 +47,7 @@ namespace CarDataProject {
             }
 
             FileWriter.KilometersPerTrip(kmprtrip);
-            GnuplotHelper.PlotGraph(1);
+            GnuplotHelper.PlotGraph(1, "kmpertrip");
 
         }
 
@@ -61,7 +61,7 @@ namespace CarDataProject {
             }
 
             FileWriter.MinutesPerTrip(mprtrip);
-            GnuplotHelper.PlotGraph(2);
+            GnuplotHelper.PlotGraph(2, "minutespertrip");
 
         }
 

@@ -35,7 +35,7 @@ namespace CarDataProject {
                 entriesPerDay[date.DayOfWeek] += 1;
                 }
             FileWriter.PlotsPerWeekday(entriesPerDay);
-            GnuplotHelper.PlotGraph(4);
+            GnuplotHelper.PlotGraph(4, "weekdayplots");
             return entriesPerDay;
         }
 
@@ -76,7 +76,7 @@ namespace CarDataProject {
                 }
             }
             FileWriter.TimePerWeekday(timePerDay);
-            GnuplotHelper.PlotGraph(5);
+            GnuplotHelper.PlotGraph(5, "timeperweek");
             return timePerDay;
         }
 
@@ -142,7 +142,7 @@ namespace CarDataProject {
                 }
             }
             FileWriter.TimePerHourPerWeekday(timePerHour);
-            GnuplotHelper.PlotGraph(6);
+            GnuplotHelper.PlotGraph(6, "Timeperhour");
             return timePerHour;
         }
 

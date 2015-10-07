@@ -34,7 +34,7 @@ namespace CarDataProject {
             }
 
             FileWriter.WeeklyKilometersPerTrip(finaldict);
-            GnuplotHelper.PlotGraph(3);
+            GnuplotHelper.PlotGraph(3, "WeeklyKMpertrip");
 
         }
     }

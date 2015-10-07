@@ -9,7 +9,7 @@ using System.IO;
 namespace CarDataProject {
     class GnuplotHelper {
 
-        public static void PlotGraph(int target) {
+        public static void PlotGraph(int target, string graphname) {
 
             string Pgm = @"E:\University\Programs\gnuplot\bin\gnuplot.exe";
             // Caspers Path string Pgm = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
@@ -54,6 +54,11 @@ namespace CarDataProject {
                 default:
                     break;
             }
+
+            gnupStWr.WriteLine("set term png size 3500,2000 enhanced font \"Arial, 20\"");
+            gnupStWr.WriteLine("set output 'C:\\data\\" + graphname + ".png'");
+            gnupStWr.WriteLine("replot");
+            gnupStWr.WriteLine("set term win");
 
             gnupStWr.Flush();
         }
