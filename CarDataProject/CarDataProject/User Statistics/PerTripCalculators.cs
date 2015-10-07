@@ -61,7 +61,7 @@ namespace CarDataProject {
             }
 
             FileWriter.Acceleration(accelerationCalculations);
-            GnuplotHelper.PlotGraph(10);
+            GnuplotHelper.PlotGraph(10, "acceleration");
 
             return accelerationCalculations;
         }
