@@ -6,7 +6,7 @@ using System.Globalization;
 namespace CarDataProject {
     class PerWeekCalculator {
 
-        public static void GetWeeklyKPTPlot(Int16 carid) {
+        public static Dictionary<int, double> GetWeeklyKPTPlot(Int16 carid) {
             DBController dbc = new DBController();
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
             Calendar cal = dfi.Calendar;
@@ -33,8 +33,10 @@ namespace CarDataProject {
                 finaldict.Add(kvp.Key, (kvp.Value / tripsofweek[kvp.Key]));
             }
 
-            FileWriter.WeeklyKilometersPerTrip(finaldict);
-            GnuplotHelper.PlotGraph(3, "WeeklyKMpertrip");
+            // FileWriter.WeeklyKilometersPerTrip(finaldict);
+            // GnuplotHelper.PlotGraph(3, "WeeklyKMpertrip");
+
+            return finaldict;
 
         }
     }

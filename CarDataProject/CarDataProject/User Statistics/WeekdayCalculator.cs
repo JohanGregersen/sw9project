@@ -34,8 +34,8 @@ namespace CarDataProject {
                 DateTime date = new DateTime(year, month, day);
                 entriesPerDay[date.DayOfWeek] += 1;
                 }
-            FileWriter.PlotsPerWeekday(entriesPerDay);
-            GnuplotHelper.PlotGraph(4, "weekdayplots");
+            // FileWriter.PlotsPerWeekday(entriesPerDay);
+            // GnuplotHelper.PlotGraph(4, "weekdayplots");
             return entriesPerDay;
         }
 
@@ -75,8 +75,8 @@ namespace CarDataProject {
                     timePerDay[trip.allTimestamps[0].Item2.DayOfWeek] += trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.TimeOfDay - trip.allTimestamps[0].Item2.TimeOfDay;
                 }
             }
-            FileWriter.TimePerWeekday(timePerDay);
-            GnuplotHelper.PlotGraph(5, "timeperweek");
+            // FileWriter.TimePerWeekday(timePerDay);
+            // GnuplotHelper.PlotGraph(5, "timeperweek");
             return timePerDay;
         }
 
@@ -141,8 +141,10 @@ namespace CarDataProject {
                     timePerHour[trip.allTimestamps[0].Item2.DayOfWeek][trip.allTimestamps[0].Item2.Hour] += trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.TimeOfDay - trip.allTimestamps[0].Item2.TimeOfDay;
                 }
             }
-            FileWriter.TimePerHourPerWeekday(timePerHour);
-            GnuplotHelper.PlotGraph(6, "Timeperhour");
+
+            // FileWriter.TimePerHourPerWeekday(timePerHour);
+            // GnuplotHelper.PlotGraph(6, "Timeperhour");
+
             return timePerHour;
         }
 
