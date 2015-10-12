@@ -6,13 +6,6 @@ namespace CarDataProject {
 
         static void Main(string[] args) {
 
-            PerCarCalculator.SaveAllCardata(1);
-            PerWeekCalculator.SaveAllPerWeekData(1);
-            WeekdayCalculator.SaveAllWeekdayData(1);
-
-            for (int i = 1; i < PerCarCalculator.GetTripsTaken(1); i++) {
-                PerTripCalculator.SaveAllTripData(1, i);
-            }
 
             int breakpoint = 0;
         }
