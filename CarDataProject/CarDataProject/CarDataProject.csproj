@@ -55,6 +55,8 @@
     <Compile Include="Helpers\GnuplotHelper.cs" />
     <Compile Include="Objects\CarLogEntry.cs" />
     <Compile Include="Data Validation\ValidationPlots.cs" />
+    <Compile Include="Score Calculators\AccelerationScore.cs" />
+    <Compile Include="Score Calculators\FinalScore.cs" />
     <Compile Include="User Statistics\PerCarCalculator.cs" />
     <Compile Include="User Statistics\PerWeekCalculator.cs" />
     <Compile Include="User Statistics\WeekdayCalculator.cs" />
@@ -68,7 +70,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data Manipulators\TripCalculator.cs" />
-    <Compile Include="User Statistics\PerTripCalculators.cs" />
+    <Compile Include="User Statistics\PerTripCalculator.cs" />
     <Compile Include="Helpers\CoordinateHelper.cs" />
     <Compile Include="External Data\Weather.cs" />
   </ItemGroup>
