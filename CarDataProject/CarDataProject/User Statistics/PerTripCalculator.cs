@@ -10,12 +10,27 @@ using System.Globalization;
 namespace CarDataProject {
     class PerTripCalculator {
 
+        public static void SaveAllTripData(Int16 carid, int tripid) {
+
+            string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+            string dataPath = @"\data\";
+            string foldername = "Car" + carid + "\\Trip" + tripid;
+
+            string pathString = System.IO.Path.Combine(solutionPath + dataPath, foldername);
+            System.IO.Directory.CreateDirectory(pathString);
+
+            FileWriter.DefaultTripStatistics(carid, tripid, foldername);
+        }
+
         public static TimeSpan GetTime (Int16 carid, int tripid) {
 
             DBController dbc = new DBController();
             List<Timestamp> timestamps = dbc.GetTimestampsByCarAndTripId(carid, tripid);
 
+
             TimeSpan triptime = timestamps[timestamps.Count - 1].timestamp - timestamps[0].timestamp;
+
+
             dbc.Close();
 
             return triptime;
