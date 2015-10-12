@@ -35,24 +35,24 @@ namespace CarDataProject {
             return kmdriven;
         }
 
-        public static List<double> GetAccelerationCalcultions(Int16 carId, int tripId) {
+        public static List<Tuple<int, double>> GetAccelerationCalcultions(Int16 carId, int tripId) {
             DBController dbc = new DBController();
-            List<Tuple<Timestamp, int>> accelerationData = dbc.GetAccelerationDataByTrip(carId, tripId);
+            List<Tuple<int, Timestamp, int>> accelerationData = dbc.GetAccelerationDataByTrip(carId, tripId);
             dbc.Close();
 
-            List<double> accelerationCalculations = new List<double>();
+            List<Tuple<int, double>> accelerationCalculations = new List<Tuple<int, double>>();
 
             for(int i = 0; i < accelerationData.Count() - 1; i++) {
                 //Item1 = TimeStamp (DateTime object)
                 //Item2 = speed
                 // a = VELCOCITY CHANGE / TIME TAKEN;
-                double velocityChange = accelerationData[i + 1].Item2 - accelerationData[i].Item2;
+                double velocityChange = accelerationData[i + 1].Item3 - accelerationData[i].Item3;
                     
-                double timeTaken = Convert.ToDouble((DateTimeHelper.ToUnixTime(accelerationData[i + 1].Item1.timestamp) - DateTimeHelper.ToUnixTime(accelerationData[i].Item1.timestamp)));
+                double timeTaken = Convert.ToDouble((DateTimeHelper.ToUnixTime(accelerationData[i + 1].Item2.timestamp) - DateTimeHelper.ToUnixTime(accelerationData[i].Item2.timestamp)));
 
                 double acceleration = velocityChange / timeTaken;
 
-                accelerationCalculations.Add(acceleration);
+                accelerationCalculations.Add(new Tuple<int, double>(accelerationData[i].Item1, acceleration));
 
             }
 
