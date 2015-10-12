@@ -6,7 +6,7 @@ namespace CarDataProject {
 
         static void Main(string[] args) {
 
-            PerCarCalculator.SaveAllCardata(1);
+            
 
             int breakpoint = 0;
         }
