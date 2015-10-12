@@ -7,6 +7,28 @@ using System.Text;
 
 namespace CarDataProject {
     public static class WeekdayCalculator {
+
+        public static void SaveAllWeekdayData(Int16 carid) {
+
+            string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+            string dataPath = @"\data\";
+            string foldername = "Car" + carid;
+
+            string pathString = System.IO.Path.Combine(solutionPath + dataPath, foldername);
+            System.IO.Directory.CreateDirectory(pathString);
+
+            // TODO: This needs a fixing - I think wrong parameters, for the methods!
+
+            FileWriter.PlotsPerWeekday(PlotsPerWeekday(carid), foldername);
+            // FileWriter.TimePerWeekday(TimePerWeekday(carid), foldername)
+            // FileWriter.TimePerHourPerWeekday()
+
+            // GnuplotHelper.PlotGraph(4, "weekdayplots");
+            GnuplotHelper.PlotGraph("PointsPerWeekday", foldername, "weekdayplots", true, 1, 2, "Points per weekday");
+
+        }
+
+
         public static Dictionary<DayOfWeek, int> PlotsPerWeekday(Int16 carid) {
             Dictionary<DayOfWeek, int> entriesPerDay = new Dictionary<DayOfWeek, int>();
 
@@ -34,8 +56,7 @@ namespace CarDataProject {
                 DateTime date = new DateTime(year, month, day);
                 entriesPerDay[date.DayOfWeek] += 1;
                 }
-            // FileWriter.PlotsPerWeekday(entriesPerDay);
-            // GnuplotHelper.PlotGraph(4, "weekdayplots");
+
             return entriesPerDay;
         }
 
@@ -75,8 +96,7 @@ namespace CarDataProject {
                     timePerDay[trip.allTimestamps[0].Item2.DayOfWeek] += trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.TimeOfDay - trip.allTimestamps[0].Item2.TimeOfDay;
                 }
             }
-            // FileWriter.TimePerWeekday(timePerDay);
-            // GnuplotHelper.PlotGraph(5, "timeperweek");
+
             return timePerDay;
         }
 
@@ -142,8 +162,7 @@ namespace CarDataProject {
                 }
             }
 
-            // FileWriter.TimePerHourPerWeekday(timePerHour);
-            // GnuplotHelper.PlotGraph(6, "Timeperhour");
+
 
             return timePerHour;
         }

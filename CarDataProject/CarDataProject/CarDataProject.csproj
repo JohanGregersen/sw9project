@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data Validation\TripHoles.cs" />
     <Compile Include="Helpers\FileReader.cs" />
     <Compile Include="Helpers\FileWriter.cs" />
     <Compile Include="Helpers\GnuplotHelper.cs" />

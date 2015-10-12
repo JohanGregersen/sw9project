@@ -19,6 +19,13 @@ namespace CarDataProject {
             }
         }
 
+        public static void DefaultTripStatistics(Int16 carid, int tripid, string foldername) {
+            using (StreamWriter writer = new StreamWriter(solutionPath + dataPath + foldername + "\\DefaultCarStatistics" + filetype)) {
+                writer.WriteLine("Amount Of Minutes Driven : " + PerTripCalculator.GetTime(carid,tripid).Minutes);
+                writer.WriteLine("Amount Of Kilmoters Driven : " + PerTripCalculator.GetKilometersDriven(carid,tripid));
+            }
+        }
+
         public static void WeeklyKilometersPerTrip(Dictionary<int, double> weeklykm, string foldername) {
             using (StreamWriter writer = new StreamWriter(solutionPath + dataPath + foldername + "\\weeklykm" + filetype)) {
                 writer.WriteLine("#X, Week, Distance");

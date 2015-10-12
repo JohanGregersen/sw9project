@@ -12,7 +12,7 @@ namespace CarDataProject {
 
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";
-            string foldername = "Car " + carid;
+            string foldername = "Car" + carid;
 
             string pathString = System.IO.Path.Combine(solutionPath + dataPath, foldername);
             System.IO.Directory.CreateDirectory(pathString);
