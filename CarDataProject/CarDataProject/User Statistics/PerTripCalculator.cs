@@ -10,8 +10,6 @@ using System.Globalization;
 namespace CarDataProject {
     class PerTripCalculator {
 
-        static string path = @"C:\data\";
-
         public static TimeSpan GetTime (Int16 carid, int tripid) {
 
             DBController dbc = new DBController();
@@ -37,8 +35,6 @@ namespace CarDataProject {
             return kmdriven;
         }
 
-
-
         public static List<double> GetAccelerationCalcultions(Int16 carId, int tripId) {
             DBController dbc = new DBController();
             List<Tuple<Timestamp, int>> accelerationData = dbc.GetAccelerationDataByTrip(carId, tripId);
@@ -60,8 +56,8 @@ namespace CarDataProject {
 
             }
 
-            FileWriter.Acceleration(accelerationCalculations);
-            GnuplotHelper.PlotGraph(10, "acceleration");
+            // FileWriter.Acceleration(accelerationCalculations);
+            // GnuplotHelper.PlotGraph(10, "acceleration");
 
             return accelerationCalculations;
         }

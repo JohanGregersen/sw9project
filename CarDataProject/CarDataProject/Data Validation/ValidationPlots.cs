@@ -10,8 +10,6 @@ using System.Diagnostics;
 namespace CarDataProject {
     class ValidationPlots {
 
-        static string path = @"\data\";
-
         public static void GetAllPlots(Int16 carid, int tripid) {
             GetMpointPlot(carid, tripid);
             GetTimePlot(carid, tripid);
@@ -34,8 +32,8 @@ namespace CarDataProject {
                 timestampDifferences.Add(timeDifference);
             }
 
-            FileWriter.DifferenceInTime(timestampDifferences);
-            GnuplotHelper.PlotGraph(9, "timeplot");
+            // FileWriter.DifferenceInTime(timestampDifferences);
+            // GnuplotHelper.PlotGraph(9, "timeplot");
         }
 
         public static List<Point> GetMPointData(Int16 carid, int tripid) {
@@ -58,10 +56,10 @@ namespace CarDataProject {
                     outofscopePoints.Add(new Tuple<GeoCoordinate, GeoCoordinate>(MpointData[i].Mpoint, MpointData[i + 1].Mpoint));
                 }
             }
-            FileWriter.DifferenceOutliers(outofscopePoints);
-            FileWriter.DifferenceInDistance(distanceMeasures);
+            //FileWriter.DifferenceOutliers(outofscopePoints);
+            //FileWriter.DifferenceInDistance(distanceMeasures);
 
-            GnuplotHelper.PlotGraph(8, "mpointplot");
+            // GnuplotHelper.PlotGraph(8, "mpointplot");
         }
 
         public static List<SatHdop> GetSatHdopData(Int16 carid, int tripid) {
@@ -82,8 +80,8 @@ namespace CarDataProject {
                 Sat.Add(SatHdopData[i].Sat);
             }
 
-            FileWriter.HdopAndSatPerPoint(SatHdopData);
-            GnuplotHelper.PlotGraph(7, "hdopsat");
+            // FileWriter.HdopAndSatPerPoint(SatHdopData);
+            // GnuplotHelper.PlotGraph(7, "hdopsat");
         }
 
     }

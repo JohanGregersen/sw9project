@@ -71,6 +71,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data Manipulators\TripCalculator.cs" />
+<<<<<<< HEAD
+    <Compile Include="User Statistics\PerTripCalculator.cs" />
+=======
+>>>>>>> cc42148cc584459911abfa1c377a5455fa6f8a41
     <Compile Include="Helpers\CoordinateHelper.cs" />
     <Compile Include="External Data\Weather.cs" />
   </ItemGroup>
