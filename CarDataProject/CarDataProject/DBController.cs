@@ -102,7 +102,26 @@ namespace CarDataProject {
             return NonQuery(command, "cardata");
         }
 
+        public List<CarLogEntry> GetEntriesByIds(List<int> ids) {
+            string sql = String.Format("SELECT * FROM cardata WHERE id = '{0}'", ids[0]);
 
+            StringBuilder sb = new StringBuilder(sql);
+
+            for (int i = 1; i < ids.Count; i++) {
+                sb.Append(String.Format("OR id = '{0}'", ids[i]));
+            }
+
+            DataRowCollection res = Query(sql);
+            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
+            if (res.Count >= 1) {
+                foreach (DataRow logEntry in res) {
+                    allLogEntries.Add(new CarLogEntry(logEntry));
+                }
+                return allLogEntries;
+            } else {
+                return allLogEntries;
+            }
+        }
 
         public List<int> GetAllDatesByCarId(Int16 carid, bool uniqueOnly, bool sortAscending) {
 
