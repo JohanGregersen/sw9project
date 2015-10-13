@@ -262,5 +262,20 @@ namespace CarDataProject {
                 NonQuery(command, "cardata");
             }
         }
+
+        public List<Tuple<Timestamp, int, int>> GetSpeedDataByTrip(Int16 carId, int tripId) {
+            string sql = String.Format("SELECT id, rtime, rdate, spd, maxspd FROM cardata WHERE carid = '{0}' AND newtripid = '{1}' ORDER BY id", carId, tripId);
+            DataRowCollection res = Query(sql);
+
+            List<Tuple<Timestamp, int, int>> speeddata = new List<Tuple<Timestamp, int, int>>();
+            if (res.Count > 0) {
+                foreach (DataRow row in res) {
+                    speeddata.Add(new Tuple<Timestamp, int, int>(new Timestamp(row), row.Field<Int16>("spd"), row.Field<Int16>("maxspd")));
+                }
+                return speeddata;
+            } else {
+                return speeddata;
+            }
+        }
     }
 }
