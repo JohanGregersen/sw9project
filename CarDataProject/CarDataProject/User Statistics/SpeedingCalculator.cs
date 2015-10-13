@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CarDataProject.User_Statistics {
     public static class SpeedingCalculator {
 
-        public static TimeSpan Time(Int16 carId, int tripId, int minimumSpeedingAmount) {
+        public static TimeSpan Time(Int16 carId, int tripId, int minimumSpeedingAmount, TimeSpan ignorableSpeedingTime) {
             TimeSpan timeSped = new TimeSpan();
 
             DBController dbc = new DBController();
@@ -35,13 +35,14 @@ namespace CarDataProject.User_Statistics {
                     //If previously speeding, add the speeding-time to the total
                     if (speeding) {
                         speeding = false;
-                        timeSped += entry.Item1.timestamp - speedingStartPoint;
+                        if (entry.Item1.timestamp - speedingStartPoint >= ignorableSpeedingTime) {
+                            timeSped += entry.Item1.timestamp - speedingStartPoint;
+                        }
                     }
                 }
             }
 
             return timeSped;
-
         }
     }
 }
