@@ -5,7 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CarDataProject {
-    class FinalScore {
+    public class FinalScore {
+
+        public FinalScore() {
+            //Remove bad SatHdopPlots
+            
+
+        }
 
     }
 }
