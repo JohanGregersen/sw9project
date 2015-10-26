@@ -50,29 +50,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data Validation\QualityInsurance.cs" />
     <Compile Include="Data Validation\RelativeDifference.cs" />
     <Compile Include="Data Validation\TripHoles.cs" />
     <Compile Include="Helpers\FileReader.cs" />
     <Compile Include="Helpers\FileWriter.cs" />
     <Compile Include="Helpers\GnuplotHelper.cs" />
     <Compile Include="Data Validation\ValidationPlots.cs" />
-    <Compile Include="Objects\Fact.cs" />
+    <Compile Include="Objects\CarObjects\Car.cs" />
+    <Compile Include="Objects\FactObjects\Fact.cs" />
+    <Compile Include="Objects\FactObjects\FlagInformation.cs" />
+    <Compile Include="Objects\FactObjects\MeasureInformation.cs" />
+    <Compile Include="Objects\FactObjects\PositionInformation.cs" />
     <Compile Include="Objects\Score.cs" />
-    <Compile Include="Objects\Segment.cs" />
+    <Compile Include="Objects\FactObjects\SegmentInformation.cs" />
+    <Compile Include="Objects\TripObjects\ScoreInformation.cs" />
+    <Compile Include="Objects\TripObjects\Trip.cs" />
     <Compile Include="Score Calculators\AccelerationScore.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
     <Compile Include="User Statistics\PerCarCalculator.cs" />
     <Compile Include="User Statistics\PerTripCalculator.cs" />
     <Compile Include="User Statistics\PerWeekCalculator.cs" />
-	<Compile Include="User Statistics\SpeedingCalculator.cs" />
+    <Compile Include="User Statistics\SpeedingCalculator.cs" />
     <Compile Include="User Statistics\WeekdayCalculator.cs" />
     <Compile Include="DBController.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
-    <Compile Include="Objects\Car.cs" />
-    <Compile Include="Objects\Point.cs" />
-    <Compile Include="Objects\QualityControl.cs" />
-    <Compile Include="Objects\TimeStamp.cs" />
+    <Compile Include="Objects\OldCar.cs" />
+    <Compile Include="Objects\FactObjects\QualityInformation.cs" />
+    <Compile Include="Objects\FactObjects\TimeInformation.cs" />
     <Compile Include="Objects\Trip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,6 +91,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
