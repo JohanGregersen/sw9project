@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CarDataProject.User_Statistics {
+namespace CarDataProject {
     public static class SpeedingCalculator {
 
         public static TimeSpan Time(Int16 carId, int tripId, int minimumSpeedingAmount, TimeSpan ignorableSpeedingTime) {

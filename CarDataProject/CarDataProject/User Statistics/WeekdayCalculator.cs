@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -12,7 +11,7 @@ namespace CarDataProject {
 
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";
-            string foldername = "Car" + carid;
+            string foldername = "OldCar" + carid;
 
             string pathString = System.IO.Path.Combine(solutionPath + dataPath, foldername);
             System.IO.Directory.CreateDirectory(pathString);

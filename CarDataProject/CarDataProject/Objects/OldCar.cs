@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CarDataProject {
-    class Car {
-        public Car(Int16 carid) {
+    class OldCar {
+        public OldCar(Int16 carid) {
             this.carId = carid;
         }
 

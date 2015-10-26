@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CarDataProject {
     class Program {
@@ -6,20 +7,19 @@ namespace CarDataProject {
 
         static void Main(string[] args) {
 
-
             int breakpoint = 0;
         }
 
         private static void InsertCarLogIntoDB() {
-            List<CarLogEntry> entries = FileReader.CarLog(CarLogFile);
+            List<Fact> facts = FileReader.CarLog(CarLogFile);
 
             DBController dbc = new DBController();
 
-            foreach (CarLogEntry entry in entries) {
-                dbc.AddCarLogEntry(entry);
+            foreach (Fact fact in facts) {
+                dbc.AddCarLogEntry(fact);
             }
 
-            Car car = new Car(1);
+            OldCar car = new OldCar(1);
             car.UpdateCarWithTripIdsOptimized(1);
             
             dbc.UpdateEntryWithPointAndMpoint(1);

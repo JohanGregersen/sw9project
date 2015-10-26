@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CarDataProject {
     public static class DateTimeHelper {
-
-
         public static DateTime ConvertToDateTime(int rdate, int rtime) {
-
             string strDate = DateAndTimeChecker(rdate);
             String strTime = DateAndTimeChecker(rtime);
 

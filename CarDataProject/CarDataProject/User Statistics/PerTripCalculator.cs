@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Diagnostics;
-using System.Globalization;
 
 namespace CarDataProject {
     class PerTripCalculator {
@@ -14,10 +10,10 @@ namespace CarDataProject {
 
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";
-            string foldername = "Car" + carid + "\\Trip" + tripid;
+            string foldername = "OldCar" + carid + "\\Trip" + tripid;
 
-            string pathString = System.IO.Path.Combine(solutionPath + dataPath, foldername);
-            System.IO.Directory.CreateDirectory(pathString);
+            string pathString = Path.Combine(solutionPath + dataPath, foldername);
+            Directory.CreateDirectory(pathString);
 
             FileWriter.DefaultTripStatistics(carid, tripid, foldername);
         }

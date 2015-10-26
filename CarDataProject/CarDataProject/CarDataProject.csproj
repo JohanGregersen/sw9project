@@ -55,8 +55,10 @@
     <Compile Include="Helpers\FileReader.cs" />
     <Compile Include="Helpers\FileWriter.cs" />
     <Compile Include="Helpers\GnuplotHelper.cs" />
-    <Compile Include="Objects\CarLogEntry.cs" />
     <Compile Include="Data Validation\ValidationPlots.cs" />
+    <Compile Include="Objects\Fact.cs" />
+    <Compile Include="Objects\Score.cs" />
+    <Compile Include="Objects\Segment.cs" />
     <Compile Include="Score Calculators\AccelerationScore.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
     <Compile Include="User Statistics\PerCarCalculator.cs" />
@@ -68,7 +70,7 @@
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Objects\Car.cs" />
     <Compile Include="Objects\Point.cs" />
-    <Compile Include="Objects\SatHdop.cs" />
+    <Compile Include="Objects\QualityControl.cs" />
     <Compile Include="Objects\TimeStamp.cs" />
     <Compile Include="Objects\Trip.cs" />
     <Compile Include="Program.cs" />
