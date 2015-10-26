@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Device.Location;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarDataProject {
     static class FileWriter {
-
         static string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
         static string dataPath = @"\data\";
         static string filetype = ".dat";
@@ -125,6 +121,5 @@ namespace CarDataProject {
                 }
             }
         }
-
     }
 }

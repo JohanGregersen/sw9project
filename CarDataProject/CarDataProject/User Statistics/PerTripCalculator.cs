@@ -5,9 +5,7 @@ using System.IO;
 
 namespace CarDataProject {
     class PerTripCalculator {
-
         public static void SaveAllTripData(Int16 carid, int tripid) {
-
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";
             string foldername = "OldCar" + carid + "\\Trip" + tripid;
@@ -19,7 +17,6 @@ namespace CarDataProject {
         }
 
         public static TimeSpan GetTime (Int16 carid, int tripid) {
-
             DBController dbc = new DBController();
             List<Timestamp> timestamps = dbc.GetTimestampsByCarAndTripId(carid, tripid);
 
@@ -33,9 +30,7 @@ namespace CarDataProject {
         }
 
         public static double GetKilometersDriven(Int16 carid, int tripid) {
-
             double kmdriven = 0;
-
             List<Point> MPointData = ValidationPlots.GetMPointData(carid, tripid);
 
             for (int i = 0; i < MPointData.Count - 1; i++) {
@@ -64,7 +59,6 @@ namespace CarDataProject {
                 double acceleration = velocityChange / timeTaken;
 
                 accelerationCalculations.Add(new Tuple<int, double>(accelerationData[i].Item1, acceleration));
-
             }
 
             // FileWriter.Acceleration(accelerationCalculations);
@@ -72,6 +66,5 @@ namespace CarDataProject {
 
             return accelerationCalculations;
         }
-
     }
 }

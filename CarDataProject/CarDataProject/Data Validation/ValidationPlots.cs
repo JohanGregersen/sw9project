@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Device.Location;
-using System.Diagnostics;
 
 namespace CarDataProject {
     class ValidationPlots {
-
         public static void GetAllPlots(Int16 carid, int tripid) {
             GetMpointPlot(carid, tripid);
             GetTimePlot(carid, tripid);

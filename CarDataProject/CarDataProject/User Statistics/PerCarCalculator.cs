@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace CarDataProject {
     class PerCarCalculator {
-
         public static void SaveAllCardata(Int16 carid) {
-
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";
             string foldername = "OldCar" + carid;
 
-            string pathString = System.IO.Path.Combine(solutionPath + dataPath, foldername);
-            System.IO.Directory.CreateDirectory(pathString);
+            string pathString = Path.Combine(solutionPath + dataPath, foldername);
+            Directory.CreateDirectory(pathString);
 
             FileWriter.KilometersPerTrip(GetKPTPlot(carid), foldername);
             FileWriter.MinutesPerTrip(GetMPTPlot(carid), foldername);
@@ -26,7 +21,6 @@ namespace CarDataProject {
         }
 
         public static int GetTripsTaken(Int16 carId) {
-
             DBController dbc = new DBController();
             int tripsTaken = Convert.ToInt32(dbc.GetAmountOfTrips(carId));
             dbc.Close();
@@ -36,7 +30,6 @@ namespace CarDataProject {
 
         //Kilometers Per Trip
         public static List<double> GetKPTPlot(Int16 carid) {
-
             Int64 amountOfTrips = PerCarCalculator.GetTripsTaken(carid);
             List<double> kmprtrip = new List<double>();
 
@@ -49,7 +42,6 @@ namespace CarDataProject {
 
         //Minutes Per Trip
         public static List<TimeSpan> GetMPTPlot(Int16 carid) {
-
             Int64 amountOfTrips = PerCarCalculator.GetTripsTaken(carid);
             List<TimeSpan> mprtrip = new List<TimeSpan>();
 

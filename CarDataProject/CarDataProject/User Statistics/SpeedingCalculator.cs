@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace CarDataProject {
     public static class SpeedingCalculator {
-
         public static TimeSpan Time(Int16 carId, int tripId, int minimumSpeedingAmount, TimeSpan ignorableSpeedingTime) {
             TimeSpan timeSped = new TimeSpan();
 

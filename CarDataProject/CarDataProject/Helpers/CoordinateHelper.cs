@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace CarDataProject {
     public static class CoordinateHelper {
-
         //Taken from http://stackoverflow.com/a/16660841
         //Converts a UTM coordinate into a Latitude/Longitude coordinate
         public static GeoCoordinate UtmToLatLng(Int64 utmX, Int64 utmY, string utmZone) {

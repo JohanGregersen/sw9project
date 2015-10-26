@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarDataProject.Data_Validation {
     public static class TripHoles {
-
         public static Dictionary<Point, Point> ByTime(Int16 carId, int tripId, TimeSpan HoleSizeMinimumTime) {
             Dictionary<Point, Point> tripHoles = new Dictionary<Point, Point>();
 

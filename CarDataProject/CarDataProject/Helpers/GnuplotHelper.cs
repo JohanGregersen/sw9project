@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 
 namespace CarDataProject {
     class GnuplotHelper {
-
         /*
         public static void PlotGraph(int target, string graphname) {
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
@@ -70,9 +65,7 @@ namespace CarDataProject {
         }
         */
 
-
         public static void PlotGraph(string desiredname, string foldername, string filename, bool graphtype, int xvalue, int yvalue, string subject) {
-
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";
             string typestring;
@@ -105,6 +98,5 @@ namespace CarDataProject {
 
             gnupStWr.Flush();
         } 
-
     }
 }

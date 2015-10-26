@@ -30,6 +30,7 @@ namespace CarDataProject {
 
             file.Close();
 
+            //Assemble the entries into facts
             List<Fact> facts = new List<Fact>();
 
             foreach(List<string> row in rows) {
@@ -41,6 +42,7 @@ namespace CarDataProject {
 
                 facts.Add(new Fact(quality, segment, temporal, spatial, measure));
             }
+
             return facts;
         }
     }

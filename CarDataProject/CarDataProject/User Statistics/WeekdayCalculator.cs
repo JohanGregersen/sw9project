@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-
 namespace CarDataProject {
     public static class WeekdayCalculator {
-
         public static void SaveAllWeekdayData(Int16 carid) {
 
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;

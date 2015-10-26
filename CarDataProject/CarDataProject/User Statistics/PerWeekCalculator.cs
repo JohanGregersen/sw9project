@@ -3,23 +3,19 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
-
 namespace CarDataProject {
     class PerWeekCalculator {
-
         public static void SaveAllPerWeekData(Int16 carid) {
-
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";
             string foldername = "OldCar" + carid;
 
-            string pathString = System.IO.Path.Combine(solutionPath + dataPath, foldername);
-            System.IO.Directory.CreateDirectory(pathString);
+            string pathString = Path.Combine(solutionPath + dataPath, foldername);
+            Directory.CreateDirectory(pathString);
 
             //FileWriter.DefaultTripStatistics(carid, tripid, foldername);
             FileWriter.WeeklyKilometersPerTrip(GetWeeklyKPTPlot(carid), foldername);
             GnuplotHelper.PlotGraph("WeeklyKilometerGraph", foldername, "weeklykm", true, 1, 3, "Kilometers Per Week");
-
         }
 
         public static Dictionary<int, double> GetWeeklyKPTPlot(Int16 carid) {
@@ -53,7 +49,6 @@ namespace CarDataProject {
             // GnuplotHelper.PlotGraph(3, "WeeklyKMpertrip");
 
             return finaldict;
-
         }
     }
 }

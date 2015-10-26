@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarDataProject.Data_Validation {
     public static class RelativeDifference {
-
         public static Dictionary<Point, double> Speed(Int16 carId, int tripId, TimeSpan measurementRangeSeconds) {
 
             Dictionary<Point, double> pointMeasures = new Dictionary<Point, double>();

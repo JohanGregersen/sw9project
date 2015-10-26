@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarDataProject {
     class OldCar {
@@ -12,9 +10,6 @@ namespace CarDataProject {
 
         public Int16 carId { get; set; }
         public List<Trip> allTrips { get; set; }
-
-
-
 
         public void GetQualityMeasurements() {
 
@@ -41,11 +36,7 @@ namespace CarDataProject {
                 dbc.UpdateWithNewIdWithMultipleEntries(i, myTrips[i-1].allTimestamps);
             }
 
-
-
             dbc.Close();
         }
-
-
     }
 }
