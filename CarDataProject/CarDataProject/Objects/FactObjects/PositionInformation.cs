@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Device.Location;
+using NpgsqlTypes;
 
 namespace CarDataProject {
     class PositionInformation {
@@ -8,14 +9,15 @@ namespace CarDataProject {
         public GeoCoordinate Point { get; }
         public GeoCoordinate MPoint { get; }
         public double DistanceToLag { get; }
-        //TODO PathLine
+        public PostgisLineString PathLine { get; }
 
-        public PositionInformation(Int64 TripId, Int64 EntryId, GeoCoordinate Point, GeoCoordinate MPoint, double DistanceToLag) {
+        public PositionInformation(Int64 TripId, Int64 EntryId, GeoCoordinate Point, GeoCoordinate MPoint, double DistanceToLag, PostgisLineString PathLine) {
             this.TripId = TripId;
             this.EntryId = EntryId;
             this.Point = Point;
             this.MPoint = MPoint;
             this.DistanceToLag = DistanceToLag;
+            this.PathLine = PathLine;
         }
 
         public PositionInformation(GeoCoordinate Point, GeoCoordinate MPoint) {
