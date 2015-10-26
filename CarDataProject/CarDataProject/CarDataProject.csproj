@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data Validation\QualityInsurance.cs" />
     <Compile Include="Data Validation\RelativeDifference.cs" />
     <Compile Include="Data Validation\TripHoles.cs" />
     <Compile Include="Helpers\FileReader.cs" />
@@ -64,7 +65,7 @@
     <Compile Include="User Statistics\PerCarCalculator.cs" />
     <Compile Include="User Statistics\PerTripCalculator.cs" />
     <Compile Include="User Statistics\PerWeekCalculator.cs" />
-    <Compile Include="User Statistics\SpeedingCalculator.cs" />
+	<Compile Include="User Statistics\SpeedingCalculator.cs" />
     <Compile Include="User Statistics\WeekdayCalculator.cs" />
     <Compile Include="DBController.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />

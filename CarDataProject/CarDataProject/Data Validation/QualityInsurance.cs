@@ -8,7 +8,7 @@ namespace CarDataProject {
     public static class QualityInsurance {
         //Useful: dbc.GetEntriesByIds, fetches all information for a datarow by an id, universal for much of the quality-insurance
 
-
+        
         ///<summary>
         ///<para>Removes invalid plots based on low number of satellites or high value of horizontal disposition</para>
         ///<para>Cuts the lowerBound of Sat and the upperbound of Hdop</para>

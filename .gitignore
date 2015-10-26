@@ -1,4 +1,6 @@
 CarDataProject/CarDataProject/bin/
 CarDataProject/CarDataProject/obj/
 CarDataProject/data/
+CarDataProject/packages/
+CarDataProject/CarDataProject/packages.config
 **/*.suo

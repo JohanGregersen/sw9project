@@ -16,17 +16,25 @@ namespace CarDataProject {
 
             this.accUpperThreshold = accUpperThreshold;
             this.accLowerThreshold = accLowerThreshold;
+
             dataOutsideThreshold = FindValidDataPoints();
                 
         }
 
-        /*
-        public double CalculateScore(double weight) {
-
-        }
-        */
-
         
+        public double CalculateScore(double weightPerPoint) {
+            double totalAccelerationScore = 0;
+            foreach (KeyValuePair<int, List<Tuple<int, double>>> entry in dataOutsideThreshold) { 
+                foreach(Tuple<int, double> accData in entry.Value) {
+                    //Attempts to compute the power of the acceleration point,
+                    //and add that to the weight of the point.
+                    double powerOfAcceleration = Math.Round(accData.Item2 / 10, 2);
+                    totalAccelerationScore += accData.Item2 * (powerOfAcceleration * weightPerPoint);
+                }
+            }
+
+            return totalAccelerationScore;
+        }
 
         //Get all AccelerationCalculations for each tripId and store them
         //newtripid, List<Tuple<entryid, acceleration>>
