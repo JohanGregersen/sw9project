@@ -50,7 +50,7 @@
     <Compile Include="Batches\INFATI\INFATI.cs" />
     <Compile Include="Data Validation\RelativeDifference.cs" />
     <Compile Include="Data Validation\TripHoles.cs" />
-    <Compile Include="Globals.cs" />
+    <Compile Include="Global.cs" />
     <Compile Include="Helpers\FileWriter.cs" />
     <Compile Include="Helpers\GnuplotHelper.cs" />
     <Compile Include="Data Validation\ValidationPlots.cs" />
@@ -58,7 +58,7 @@
     <Compile Include="Objects\FactObjects\Fact.cs" />
     <Compile Include="Objects\FactObjects\FlagInformation.cs" />
     <Compile Include="Objects\FactObjects\MeasureInformation.cs" />
-    <Compile Include="Objects\FactObjects\PositionInformation.cs" />
+    <Compile Include="Objects\FactObjects\SpatialInformation.cs" />
     <Compile Include="Objects\Score.cs" />
     <Compile Include="Objects\FactObjects\SegmentInformation.cs" />
     <Compile Include="Objects\TripObjects\ScoreInformation.cs" />
@@ -74,7 +74,7 @@
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Objects\OldCar.cs" />
     <Compile Include="Objects\FactObjects\QualityInformation.cs" />
-    <Compile Include="Objects\FactObjects\TimeInformation.cs" />
+    <Compile Include="Objects\FactObjects\TemporalInformation.cs" />
     <Compile Include="Objects\Trip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
