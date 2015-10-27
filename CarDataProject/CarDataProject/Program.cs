@@ -3,16 +3,12 @@ using System.Collections.Generic;
 
 namespace CarDataProject {
     class Program {
-        static string CarLogFile = "t01c01";
-
         static void Main(string[] args) {
-
             int breakpoint = 0;
         }
 
-        private static void InsertCarLogIntoDB() {
-            List<Fact> facts = FileReader.CarLog(CarLogFile);
-
+        static void InsertCarLogIntoDB() {
+            List<Fact> facts = INFATI.ReadLog(1, 1);
             DBController dbc = new DBController();
 
             foreach (Fact fact in facts) {
