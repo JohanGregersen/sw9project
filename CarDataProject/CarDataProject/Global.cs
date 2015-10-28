@@ -3,6 +3,12 @@ using System.IO;
 
 namespace CarDataProject {
     static class Global {
+        public static class Database {
+            public const string Host = "localhost";
+            public const string Name = "CarDB";
+            public const string User = "casper";
+            public const string Password = "1234";
+        }
         public static class FileType {
             public const string txt = @".txt";
         }

@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace CarDataProject {
-    class Fact {
+    public class Fact {
         public Int64 EntryId { get; }
         public int CarId { get; }
         public Int64 TripId { get; }
@@ -30,6 +30,12 @@ namespace CarDataProject {
             this.Temporal = Temporal;
             this.Spatial = Spatial;
             this.Measure = Measure;
+        }
+
+        public Fact(Int64 EntryId, TemporalInformation Temporal, SpatialInformation Spatial) {
+            this.EntryId = EntryId;
+            this.Temporal = Temporal;
+            this.Spatial = Spatial;
         }
     }
 }

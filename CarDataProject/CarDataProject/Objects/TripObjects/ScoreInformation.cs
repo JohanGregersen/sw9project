@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace CarDataProject {
-    class ScoreInformation {
+    public class ScoreInformation {
         public int ScoreId { get; }
         public Int64 TripId { get; }
         public double TotalScore { get; }

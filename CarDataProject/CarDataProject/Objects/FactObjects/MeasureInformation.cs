@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace CarDataProject {
-    class MeasureInformation {
+    public class MeasureInformation {
         public Int64 TripId { get; }
         public Int64 EntryId { get; }
         public double Speed { get; }

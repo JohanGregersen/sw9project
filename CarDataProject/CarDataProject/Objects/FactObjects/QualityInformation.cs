@@ -1,20 +1,26 @@
 ﻿using System;
 
 namespace CarDataProject {
-    class QualityInformation {
+    public class QualityInformation {
         public Int64 TripId { get; }
         public Int64 EntryId { get; }
         public Int16 Sat { get; }
-        public Int16 Hdop { get; }
+        public double Hdop { get; }
 
-        public QualityInformation(Int64 TripId, Int64 EntryId, Int16 Sat, Int16 Hdop) {
+        public QualityInformation(Int64 TripId, Int64 EntryId, Int16 Sat, double Hdop) {
             this.TripId = TripId;
             this.EntryId = EntryId;
             this.Sat = Sat;
             this.Hdop = Hdop;
         }
 
-        public QualityInformation(Int16 Sat, Int16 Hdop) {
+        public QualityInformation(Int64 EntryId, Int16 Sat, double Hdop) {
+            this.EntryId = EntryId;
+            this.Sat = Sat;
+            this.Hdop = Hdop;
+        }
+
+        public QualityInformation(Int16 Sat, double Hdop) {
             this.Sat = Sat;
             this.Hdop = Hdop;
         }

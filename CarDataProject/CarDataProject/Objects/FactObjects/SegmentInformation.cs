@@ -2,7 +2,7 @@
 using NpgsqlTypes;
 
 namespace CarDataProject {
-    class SegmentInformation {
+    public class SegmentInformation {
         public Int64 SegmentId { get; }
         public Int64 OSMId { get; }
         public string RoadName { get; }

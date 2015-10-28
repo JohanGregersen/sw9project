@@ -7,34 +7,29 @@ using System.Device.Location;
 
 namespace CarDataProject {
     public class DBController {
-        private DataSet ds = new DataSet();
-        private DataTable dt = new DataTable();
-        private NpgsqlConnection conn;
-
-        private static string dbHost = "localhost";
-        private static string dbName = "CarDB";
-        private static string dbUser = "casper";
-        private static string dbPass = "1234";
+        NpgsqlConnection connection;
+        DataSet dataSet = new DataSet();
+        DataTable dataTable = new DataTable();
 
         public DBController() {
-            string connstring = String.Format(
-                "Server={0};User Id={1};Password={2};Database={3};Encoding=Unicode;",
-                dbHost, dbUser, dbPass, dbName);
-            conn = new NpgsqlConnection(connstring);
-            conn.Open();
+            string connectionSettings = String.Format("Server={0};User Id={1};Password={2};Database={3};Encoding=Unicode;",
+                Global.Database.Host, Global.Database.User, Global.Database.Password, Global.Database.Name);
+
+            connection = new NpgsqlConnection(connectionSettings);
+            connection.Open();
         }
 
         public void Close() {
-            conn.Close();
+            connection.Close();
         }
 
         private DataRowCollection Query(string sql) {
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(sql, conn);
-            ds.Reset();
-            da.Fill(ds);
-            dt = ds.Tables[0];
+            NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(sql, connection);
+            dataSet.Reset();
+            dataAdapter.Fill(dataSet);
+            dataTable = dataSet.Tables[0];
 
-            return dt.Rows;
+            return dataTable.Rows;
         }
 
         private int NonQuery(NpgsqlCommand command, string table) {
@@ -46,40 +41,12 @@ namespace CarDataProject {
             }
         }
 
-        public List<CarLogEntry> GetAllLogEntries() {
-            string sql = String.Format("SELECT * FROM cardata");
-            DataRowCollection res = Query(sql);
-            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
-            if (res.Count >= 1) {
-                foreach (DataRow logEntry in res) {
-                    allLogEntries.Add(new CarLogEntry(logEntry));
-                }
-                return allLogEntries;
-            } else {
-                return allLogEntries;
-            }
-        }
-
-        public List<CarLogEntry> GetAllLogEntriesWithJSONPoint() {
-            string sql = String.Format("SELECT id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, ST_X(point) AS xcoord, ST_Y(point) AS ycoord, ST_X(mpoint) AS mpx, ST_Y(mpoint) AS mpy FROM cardata");
-            DataRowCollection res = Query(sql);
-            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
-            if (res.Count >= 1) {
-                foreach (DataRow logEntry in res) {
-                    allLogEntries.Add(new CarLogEntry(logEntry));
-                }
-                return allLogEntries;
-            } else {
-                return allLogEntries;
-            }
-        }
-
         public int AddCarLogEntry(CarLogEntry entry) {
             StringBuilder sql = new StringBuilder();
             sql.Append("INSERT INTO cardata(id, entryid, carid, driverid, rdate, rtime, xcoord, ycoord, mpx, mpy, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno)");
             sql.Append(" VALUES (@id, @entryid, @carid, @driverid, @rdate, @rtime, @xcoord, @ycoord, @mpx, @mpy, @sat, @hdop, @maxspd, @spd, @strtcod, @segmentkey, @tripid, @tripsegmentno)");
 
-            NpgsqlCommand command = new NpgsqlCommand(sql.ToString(), conn);
+            NpgsqlCommand command = new NpgsqlCommand(sql.ToString(), connection);
             command.Parameters.AddWithValue("@id", entry.id);
             command.Parameters.AddWithValue("@entryid", entry.entryid);
             command.Parameters.AddWithValue("@carid", entry.carid);
@@ -102,97 +69,98 @@ namespace CarDataProject {
             return NonQuery(command, "cardata");
         }
 
-        public List<CarLogEntry> GetEntriesByIds(List<int> ids) {
-            string sql = String.Format("SELECT * FROM cardata WHERE id = '{0}'", ids[0]);
-
-            StringBuilder sb = new StringBuilder(sql);
-
-            for (int i = 1; i < ids.Count; i++) {
-                sb.Append(String.Format("OR id = '{0}'", ids[i]));
-            }
-
-            DataRowCollection res = Query(sql);
-            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
-            if (res.Count >= 1) {
-                foreach (DataRow logEntry in res) {
-                    allLogEntries.Add(new CarLogEntry(logEntry));
-                }
-                return allLogEntries;
-            } else {
-                return allLogEntries;
-            }
-        }
-
-        public List<int> GetAllDatesByCarId(Int16 carid, bool uniqueOnly, bool sortAscending) {
-
+        public List<int> GetDatesByCarId(Int16 carid, bool uniqueOnly, bool sortAscending) {
             string unique = "DISTINCT ";
-            string ascending = " ORDER BY rdate ASC";
+            string ascending = " ORDER BY date ASC";
 
             string sql = "SELECT ";
             if (uniqueOnly) {
                 sql += unique;
             }
-            sql += "rdate FROM cardata WHERE carid = " + carid;
+            sql += "Date FROM facttable WHERE carid = " + carid;
             if (sortAscending) {
                 sql += ascending;
             }
 
-            DataRowCollection res = Query(sql);
-            List<int> allDates = new List<int>();
-            if (res.Count >= 1) {
-                foreach (DataRow date in res) {
-                    allDates.Add(date.Field<int>("rdate"));
+            DataRowCollection result = Query(sql);
+            List<int> dates = new List<int>();
+            if (result.Count >= 1) {
+                foreach (DataRow date in result) {
+                    dates.Add(date.Field<int>("date"));
                 }
-                return allDates;
-            } else {
-                return allDates;
             }
+
+            return dates;
         }
 
-        public List<Tuple<int, DateTime>> GetTimeByDate(int rdate) {
+        public List<TemporalInformation> GetTimesByDateAndCarId(Int16 carId, int date) {
+            string sql = String.Format(@"SELECT entryid, time
+                                         FROM facttable
+                                         WHERE carid = '{0}' AND date = '{1}'
+                                         ORDER BY time ASC", carId, date);
+            DataRowCollection result = Query(sql);
 
-            string sql = String.Format("SELECT id, rtime FROM cardata WHERE rdate = '{0}' ORDER BY rtime ASC", rdate);
-            DataRowCollection res = Query(sql);
-            List<Tuple<int, DateTime>> timesByDate = new List<Tuple<int, DateTime>>();
-            if (res.Count >= 1) {
-                foreach (DataRow time in res) {
-                    int rtime = time.Field<int>("rtime");
-
-                    int id = time.Field<int>("id");
-                    timesByDate.Add(new Tuple<int, DateTime>(id, DateTimeHelper.ConvertToDateTime(rdate, rtime)));
+            List<TemporalInformation> timesByDate = new List<TemporalInformation>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    Int64 entryId = row.Field<Int64>("entryid");
+                    int time = row.Field<int>("time");
+                    timesByDate.Add(new TemporalInformation(entryId, DateTimeHelper.ConvertToDateTime(date, time)));
                 }
-                return timesByDate;
-            } else {
-                return timesByDate;
             }
+
+            return timesByDate;
         }
 
-        public List<SatHdop> GetSatHdopForTrip(int carId, int tripId) {
-            string sql = String.Format("SELECT id, sat, hdop FROM cardata where carid = '{0}' AND newtripid = '{1}'", carId, tripId);
-            DataRowCollection res = Query(sql);
-            List<SatHdop> allSatHdopForCar = new List<SatHdop>();
-            if (res.Count >= 1) {
-                foreach (DataRow row in res) {
-                    allSatHdopForCar.Add(new SatHdop(row));
+        public List<QualityInformation> GetQualityByCarIdAndTripId(Int16 carId, Int64 tripId) {
+            string sql = String.Format(@"SELECT entryid, satellites, hdop 
+                                         FROM facttable LEFT JOIN qualityinformation
+                                         ON(facttable.qualityid = qualityinformation.qualityid)
+                                         WHERE carid = {'0'} && tripid = {'1'}", carId, tripId);
+            DataRowCollection result = Query(sql);
+
+            List<QualityInformation> qualities = new List<QualityInformation>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    Int64 entryId = row.Field<Int64>("entryid");
+                    Int16 satellites = row.Field<Int16>("satellites");
+                    double hdop = row.Field<double>("hdop");
+                    qualities.Add(new QualityInformation(entryId, satellites, hdop));
                 }
-                return allSatHdopForCar;
-            } else {
-                return allSatHdopForCar;
             }
+
+            return qualities;
         }
 
-        public List<Point> GetMPointByCarAndTripId(Int16 carId, int tripId) {
-            string sql = String.Format("SELECT id, ST_Y(mpoint) AS lat, ST_X(mpoint) AS lng FROM cardata where carid = '{0}' AND newtripid = '{1}' ORDER BY id ASC", carId, tripId);
-            DataRowCollection res = Query(sql);
-            List<Point> allLogEntries = new List<Point>();
-            if (res.Count >= 1) {
-                foreach (DataRow logEntry in res) {
-                    allLogEntries.Add(new Point(logEntry.Field<int>("id"), new GeoCoordinate(logEntry.Field<double>("lat"), logEntry.Field<double>("lng"))));
+        public List<SpatialInformation> GetMPointByCarIdAndTripId(Int16 carId, Int64 tripId) {
+            string sql = String.Format(@"SELECT entryid, date, time, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
+                                        FROM facttable
+                                        WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
+            DataRowCollection result = Query(sql);
+
+
+            List<Fact> facts = new List<Fact>();
+            List<SpatialInformation> mPoints = new List<SpatialInformation>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    Int64 entryId = row.Field<Int64>("entryid");
+                    int date = row.Field<int>("date");
+                    int time = row.Field<int>("time");
+                    double latitude = row.Field<double>("latitude");
+                    double longitude = row.Field<double>("longitude");
+
+                    facts.Add(new Fact(entryId,
+                                       new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time)),
+                                       new SpatialInformation(entryId, new GeoCoordinate(latitude, longitude))));
                 }
-                return allLogEntries;
-            } else {
-                return allLogEntries;
+
+                SortingHelper.FactsByDateTime(facts);
+
+                foreach(Fact fact in facts) {
+                    mPoints.Add(fact.Spatial);
+                }
             }
+            return mPoints;
         }
 
         public List<Timestamp> GetTimestampsByCarAndTripId(Int16 carId, int tripId) {
@@ -219,7 +187,7 @@ namespace CarDataProject {
 
         public int UpdateWithNewId(int newId, int currentId) {
             string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentId);
-            NpgsqlCommand command = new NpgsqlCommand(sql, conn);
+            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
             return NonQuery(command, "cardata");
         }
 
@@ -232,7 +200,7 @@ namespace CarDataProject {
                 sb.Append(String.Format("OR id = '{0}'", currentIds[i].Item1));
             }
 
-            NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), conn);
+            NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), connection);
             return NonQuery(command, "cardata");
         }
 
@@ -251,7 +219,7 @@ namespace CarDataProject {
 
             foreach (int entryId in entryIds) {
                 string sql2 = String.Format("UPDATE cardata SET point = ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326), mpoint = ST_Transform(ST_SetSrid(ST_MakePoint(mpx, mpy), 32632), 4326) WHERE id = '{0}'", entryId);
-                NpgsqlCommand command = new NpgsqlCommand(sql2, conn);
+                NpgsqlCommand command = new NpgsqlCommand(sql2, connection);
                 NonQuery(command, "cardata");
             }
         }
@@ -277,7 +245,7 @@ namespace CarDataProject {
             int tripsTaken = PerCarCalculator.GetTripsTaken(carId);
             for (int i = 1; i < tripsTaken; i++) {
                 string sql = String.Format("UPDATE cardata SET mline = myline FROM(SELECT newtripid, id, ST_MakeLine(mpoint, next_mpoint) AS myline FROM(SELECT newtripid, id, mpoint, lead(mpoint) OVER w as next_mpoint, lead(newtripid) OVER w as next_newtripid FROM cardata WINDOW w AS(ORDER BY id)) AS res WHERE newtripid = '{0}' AND next_newtripid = newtripid) AS calclines WHERE cardata.id = calclines.id", i);
-                NpgsqlCommand command = new NpgsqlCommand(sql, conn);
+                NpgsqlCommand command = new NpgsqlCommand(sql, connection);
                 NonQuery(command, "cardata");
             }
         }
@@ -296,5 +264,56 @@ namespace CarDataProject {
                 return speeddata;
             }
         }
+
+        /*public List<CarLogEntry> GetAllLogEntries() {
+            string sql = String.Format("SELECT * FROM cardata");
+            DataRowCollection res = Query(sql);
+            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
+            if (res.Count >= 1) {
+                foreach (DataRow logEntry in res) {
+                    allLogEntries.Add(new CarLogEntry(logEntry));
+                }
+                return allLogEntries;
+            } else {
+                return allLogEntries;
+            }
+        }
+
+        public List<CarLogEntry> GetAllLogEntriesWithJSONPoint() {
+            string sql = String.Format("SELECT id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, ST_X(point) AS xcoord, ST_Y(point) AS ycoord, ST_X(mpoint) AS mpx, ST_Y(mpoint) AS mpy FROM cardata");
+            DataRowCollection res = Query(sql);
+            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
+            if (res.Count >= 1) {
+                foreach (DataRow logEntry in res) {
+                    allLogEntries.Add(new CarLogEntry(logEntry));
+                }
+                return allLogEntries;
+            } else {
+                return allLogEntries;
+            }
+        }
+        
+        //Lau, giver den her mening??
+        public List<CarLogEntry> GetEntriesByIds(List<int> ids) {
+            string sql = String.Format("SELECT * FROM cardata WHERE id = '{0}'", ids[0]);
+
+            StringBuilder sb = new StringBuilder(sql);
+
+            for (int i = 1; i < ids.Count; i++) {
+                sb.Append(String.Format("OR id = '{0}'", ids[i]));
+            }
+
+            DataRowCollection res = Query(sql);
+            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
+            if (res.Count >= 1) {
+                foreach (DataRow logEntry in res) {
+                    allLogEntries.Add(new CarLogEntry(logEntry));
+                }
+                return allLogEntries;
+            } else {
+                return allLogEntries;
+            }
+        }
+        */
     }
 }

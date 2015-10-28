@@ -3,7 +3,7 @@ using System.Device.Location;
 using NpgsqlTypes;
 
 namespace CarDataProject {
-    class SpatialInformation {
+    public class SpatialInformation {
         public Int64 TripId { get; }
         public Int64 EntryId { get; }
         public GeoCoordinate Point { get; }
@@ -20,8 +20,8 @@ namespace CarDataProject {
             this.PathLine = PathLine;
         }
 
-        public SpatialInformation(GeoCoordinate Point, GeoCoordinate MPoint) {
-            this.Point = Point;
+        public SpatialInformation(Int64 EntryId, GeoCoordinate MPoint) {
+            this.EntryId = EntryId;
             this.MPoint = MPoint;
         }
     }

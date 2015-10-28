@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace CarDataProject {
-    class FlagInformation {
+    public class FlagInformation {
         public Int64 TripId { get; }
         public Int64 EntryId { get; }
         public bool Speeding { get; }

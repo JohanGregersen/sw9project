@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace CarDataProject {
-    class Car {
+    public class Car {
         public int CarId { get; }
         public string CarType { get; }
         public string Brand { get; }

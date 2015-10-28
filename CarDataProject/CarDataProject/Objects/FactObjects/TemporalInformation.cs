@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace CarDataProject {
-    class TemporalInformation {
+    public class TemporalInformation {
         public Int64 TripId { get; }
         public Int64 EntryId { get; }
         public DateTime Timestamp { get; }
@@ -12,6 +12,11 @@ namespace CarDataProject {
             this.EntryId = EntryId;
             this.Timestamp = Timestamp;
             this.TimeToLag = TimeToLag;
+        }
+
+        public TemporalInformation(Int64 EntryId, DateTime Timestamp) {
+            this.EntryId = EntryId;
+            this.Timestamp = Timestamp;
         }
 
         public TemporalInformation(DateTime Timestamp) {
