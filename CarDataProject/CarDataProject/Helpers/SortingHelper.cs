@@ -7,5 +7,10 @@ namespace CarDataProject {
             facts.Sort((a, b) => a.Temporal.Timestamp.CompareTo(b.Temporal.Timestamp));
             return facts;
         }
+
+        public static List<TemporalInformation> TemporalInformationByDateTime(List<TemporalInformation> temporals) {
+            temporals.Sort((a, b) => a.Timestamp.CompareTo(b.Timestamp));
+            return temporals;
+        }
     }
 }

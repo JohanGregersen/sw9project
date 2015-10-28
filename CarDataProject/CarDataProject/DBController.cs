@@ -93,7 +93,7 @@ namespace CarDataProject {
             return dates;
         }
 
-        public List<TemporalInformation> GetTimesByDateAndCarId(Int16 carId, int date) {
+        public List<TemporalInformation> GetTimesByCarIdAndDate(Int16 carId, int date) {
             string sql = String.Format(@"SELECT entryid, time
                                          FROM facttable
                                          WHERE carid = '{0}' AND date = '{1}'
@@ -138,7 +138,6 @@ namespace CarDataProject {
                                         WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
             DataRowCollection result = Query(sql);
 
-
             List<Fact> facts = new List<Fact>();
             List<SpatialInformation> mPoints = new List<SpatialInformation>();
             if (result.Count >= 1) {
@@ -163,24 +162,66 @@ namespace CarDataProject {
             return mPoints;
         }
 
-        public List<Timestamp> GetTimestampsByCarAndTripId(Int16 carId, int tripId) {
-            string sql = String.Format("SELECT id, rdate, rtime FROM cardata where carid = '{0}' AND newtripid = '{1}' ORDER BY id ASC", carId, tripId);
-            DataRowCollection res = Query(sql);
-            List<Timestamp> allLogEntries = new List<Timestamp>();
-            if (res.Count >= 1) {
-                foreach (DataRow ts in res) {
-                    allLogEntries.Add(new Timestamp(ts));
+        public List<TemporalInformation> GetTimestampsByCarIdAndTripId(Int16 carId, Int64 tripId) {
+            string sql = String.Format(@"SELECT entryid, date, time
+                                         FROM facttable
+                                         WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
+            DataRowCollection result = Query(sql);
+
+            List<TemporalInformation> timestamps = new List<TemporalInformation>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    Int64 entryId = row.Field<Int64>("entryid");
+                    int date = row.Field<int>("date");
+                    int time = row.Field<int>("time");
+
+                    timestamps.Add(new TemporalInformation(entryId, DateTimeHelper.ConvertToDateTime(date, time)));
+                    SortingHelper.TemporalInformationByDateTime(timestamps);
                 }
-                return allLogEntries;
-            } else {
-                return allLogEntries;
+
+                SortingHelper.TemporalInformationByDateTime(timestamps);
             }
+
+            return timestamps;
         }
 
-        public Int64 GetAmountOfTrips(Int16 carid) {
-            string sql = String.Format("SELECT COUNT(DISTINCT newtripid) AS tripamount FROM cardata");
+        public Int64 GetTripCountByCarId(Int16 carId) {
+            string sql = String.Format(@"SELECT COUNT(tripid) AS tripcount
+                                         FROM tripinformation
+                                         WHERE carid = {'0'}", carId);
+            DataRowCollection result = Query(sql);
+
+            return result[0].Field<Int64>("tripcount");
+        }
+        
+        public List<Fact> GetSpeedInformationByCarIdAndTripId(Int16 carId, Int64 tripId) {
+            string sql = String.Format(@"SELECT entryid, time, date, speed, CASE 
+                                            WHEN direction = TRUE THEN speedforward
+                                            ELSE speedbackward
+                                            END AS maxspeed
+                                         FROM facttable LEFT JOIN segmentinformation
+                                         ON(facttable.segmentid = segmentinformation.segmentid)
+                                         WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
             DataRowCollection res = Query(sql);
-            return res[0].Field<Int64>("tripamount");
+            
+            List<Fact> speedInformation = new List<Fact>();
+            if (res.Count > 0) {
+                foreach (DataRow row in res) {
+                    Int64 entryId = row.Field<Int64>("entryid");
+                    int date = row.Field<int>("date");
+                    int time = row.Field<int>("time");
+                    double speed = row.Field<double>("speed");
+                    Int16 maxSpeed = row.Field<Int16>("maxspeed");
+
+                    facts.Add(new Fact(entryId, SegmentInformation.WithMaxSpeed(maxSpeed),
+                                       new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time)),
+                                       new MeasureInformation(speed)));
+                }
+
+                SortingHelper.FactsByDateTime(facts);
+            }
+
+            return speedInformation;
         }
 
         //UPDATE with newTripId
@@ -247,21 +288,6 @@ namespace CarDataProject {
                 string sql = String.Format("UPDATE cardata SET mline = myline FROM(SELECT newtripid, id, ST_MakeLine(mpoint, next_mpoint) AS myline FROM(SELECT newtripid, id, mpoint, lead(mpoint) OVER w as next_mpoint, lead(newtripid) OVER w as next_newtripid FROM cardata WINDOW w AS(ORDER BY id)) AS res WHERE newtripid = '{0}' AND next_newtripid = newtripid) AS calclines WHERE cardata.id = calclines.id", i);
                 NpgsqlCommand command = new NpgsqlCommand(sql, connection);
                 NonQuery(command, "cardata");
-            }
-        }
-
-        public List<Tuple<Timestamp, int, int>> GetSpeedDataByTrip(Int16 carId, int tripId) {
-            string sql = String.Format("SELECT id, rtime, rdate, spd, maxspd FROM cardata WHERE carid = '{0}' AND newtripid = '{1}' ORDER BY id", carId, tripId);
-            DataRowCollection res = Query(sql);
-
-            List<Tuple<Timestamp, int, int>> speeddata = new List<Tuple<Timestamp, int, int>>();
-            if (res.Count > 0) {
-                foreach (DataRow row in res) {
-                    speeddata.Add(new Tuple<Timestamp, int, int>(new Timestamp(row), row.Field<Int16>("spd"), row.Field<Int16>("maxspd")));
-                }
-                return speeddata;
-            } else {
-                return speeddata;
             }
         }
 
