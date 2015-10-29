@@ -41,33 +41,7 @@ namespace CarDataProject {
             }
         }
 
-        public int AddCarLogEntry(CarLogEntry entry) {
-            StringBuilder sql = new StringBuilder();
-            sql.Append("INSERT INTO cardata(id, entryid, carid, driverid, rdate, rtime, xcoord, ycoord, mpx, mpy, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno)");
-            sql.Append(" VALUES (@id, @entryid, @carid, @driverid, @rdate, @rtime, @xcoord, @ycoord, @mpx, @mpy, @sat, @hdop, @maxspd, @spd, @strtcod, @segmentkey, @tripid, @tripsegmentno)");
-
-            NpgsqlCommand command = new NpgsqlCommand(sql.ToString(), connection);
-            command.Parameters.AddWithValue("@id", entry.id);
-            command.Parameters.AddWithValue("@entryid", entry.entryid);
-            command.Parameters.AddWithValue("@carid", entry.carid);
-            command.Parameters.AddWithValue("@driverid", entry.driverid);
-            command.Parameters.AddWithValue("@rdate", entry.rdate);
-            command.Parameters.AddWithValue("@rtime", entry.rtime);
-            command.Parameters.AddWithValue("@xcoord", entry.xcoord);
-            command.Parameters.AddWithValue("@ycoord", entry.ycoord);
-            command.Parameters.AddWithValue("@mpx", entry.mpx);
-            command.Parameters.AddWithValue("@mpy", entry.mpy);
-            command.Parameters.AddWithValue("@sat", entry.sat);
-            command.Parameters.AddWithValue("@hdop", entry.hdop);
-            command.Parameters.AddWithValue("@maxspd", entry.maxspd);
-            command.Parameters.AddWithValue("@spd", entry.spd);
-            command.Parameters.AddWithValue("@strtcod", entry.strtcod);
-            command.Parameters.AddWithValue("@segmentkey", entry.segmentkey);
-            command.Parameters.AddWithValue("@tripid", entry.tripid);
-            command.Parameters.AddWithValue("@tripsegmentno", entry.tripsegmentno);
-
-            return NonQuery(command, "cardata");
-        }
+        #region Getters
 
         public List<int> GetDatesByCarId(Int16 carid, bool uniqueOnly, bool sortAscending) {
             string unique = "DISTINCT ";
@@ -94,17 +68,17 @@ namespace CarDataProject {
         }
 
         public List<TemporalInformation> GetTimesByCarIdAndDate(Int16 carId, int date) {
-            string sql = String.Format(@"SELECT entryid, time
+            string sql = String.Format(@"SELECT entryid, itime
                                          FROM facttable
-                                         WHERE carid = '{0}' AND date = '{1}'
-                                         ORDER BY time ASC", carId, date);
+                                         WHERE carid = '{0}' AND idate = '{1}'
+                                         ORDER BY itime ASC", carId, date);
             DataRowCollection result = Query(sql);
 
             List<TemporalInformation> timesByDate = new List<TemporalInformation>();
             if (result.Count >= 1) {
                 foreach (DataRow row in result) {
                     Int64 entryId = row.Field<Int64>("entryid");
-                    int time = row.Field<int>("time");
+                    int time = row.Field<int>("itime");
                     timesByDate.Add(new TemporalInformation(entryId, DateTimeHelper.ConvertToDateTime(date, time)));
                 }
             }
@@ -133,7 +107,7 @@ namespace CarDataProject {
         }
 
         public List<SpatialInformation> GetMPointByCarIdAndTripId(Int16 carId, Int64 tripId) {
-            string sql = String.Format(@"SELECT entryid, date, time, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
+            string sql = String.Format(@"SELECT entryid, idate, itime, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
                                         FROM facttable
                                         WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
             DataRowCollection result = Query(sql);
@@ -143,8 +117,8 @@ namespace CarDataProject {
             if (result.Count >= 1) {
                 foreach (DataRow row in result) {
                     Int64 entryId = row.Field<Int64>("entryid");
-                    int date = row.Field<int>("date");
-                    int time = row.Field<int>("time");
+                    int date = row.Field<int>("idate");
+                    int time = row.Field<int>("itime");
                     double latitude = row.Field<double>("latitude");
                     double longitude = row.Field<double>("longitude");
 
@@ -163,7 +137,7 @@ namespace CarDataProject {
         }
 
         public List<TemporalInformation> GetTimestampsByCarIdAndTripId(Int16 carId, Int64 tripId) {
-            string sql = String.Format(@"SELECT entryid, date, time
+            string sql = String.Format(@"SELECT entryid, idate, itime
                                          FROM facttable
                                          WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
             DataRowCollection result = Query(sql);
@@ -172,8 +146,8 @@ namespace CarDataProject {
             if (result.Count >= 1) {
                 foreach (DataRow row in result) {
                     Int64 entryId = row.Field<Int64>("entryid");
-                    int date = row.Field<int>("date");
-                    int time = row.Field<int>("time");
+                    int date = row.Field<int>("idate");
+                    int time = row.Field<int>("itime");
 
                     timestamps.Add(new TemporalInformation(entryId, DateTimeHelper.ConvertToDateTime(date, time)));
                     SortingHelper.TemporalInformationByDateTime(timestamps);
@@ -195,7 +169,7 @@ namespace CarDataProject {
         }
         
         public List<Fact> GetSpeedInformationByCarIdAndTripId(Int16 carId, Int64 tripId) {
-            string sql = String.Format(@"SELECT entryid, time, date, speed, CASE 
+            string sql = String.Format(@"SELECT entryid, itime, idate, speed, CASE 
                                             WHEN direction = TRUE THEN speedforward
                                             ELSE speedbackward
                                             END AS maxspeed
@@ -208,8 +182,8 @@ namespace CarDataProject {
             if (res.Count > 0) {
                 foreach (DataRow row in res) {
                     Int64 entryId = row.Field<Int64>("entryid");
-                    int date = row.Field<int>("date");
-                    int time = row.Field<int>("time");
+                    int date = row.Field<int>("idate");
+                    int time = row.Field<int>("itime");
                     double speed = row.Field<double>("speed");
                     Int16 maxSpeed = row.Field<Int16>("maxspeed");
 
@@ -224,7 +198,37 @@ namespace CarDataProject {
             return speedInformation;
         }
 
-        //UPDATE with newTripId
+        #endregion Getters
+
+        #region Updaters
+
+        public int AddCarLogEntry(CarLogEntry entry) {
+            StringBuilder sql = new StringBuilder();
+            sql.Append("INSERT INTO cardata(id, entryid, carid, driverid, rdate, rtime, xcoord, ycoord, mpx, mpy, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno)");
+            sql.Append(" VALUES (@id, @entryid, @carid, @driverid, @rdate, @rtime, @xcoord, @ycoord, @mpx, @mpy, @sat, @hdop, @maxspd, @spd, @strtcod, @segmentkey, @tripid, @tripsegmentno)");
+
+            NpgsqlCommand command = new NpgsqlCommand(sql.ToString(), connection);
+            command.Parameters.AddWithValue("@id", entry.id);
+            command.Parameters.AddWithValue("@entryid", entry.entryid);
+            command.Parameters.AddWithValue("@carid", entry.carid);
+            command.Parameters.AddWithValue("@driverid", entry.driverid);
+            command.Parameters.AddWithValue("@rdate", entry.rdate);
+            command.Parameters.AddWithValue("@rtime", entry.rtime);
+            command.Parameters.AddWithValue("@xcoord", entry.xcoord);
+            command.Parameters.AddWithValue("@ycoord", entry.ycoord);
+            command.Parameters.AddWithValue("@mpx", entry.mpx);
+            command.Parameters.AddWithValue("@mpy", entry.mpy);
+            command.Parameters.AddWithValue("@sat", entry.sat);
+            command.Parameters.AddWithValue("@hdop", entry.hdop);
+            command.Parameters.AddWithValue("@maxspd", entry.maxspd);
+            command.Parameters.AddWithValue("@spd", entry.spd);
+            command.Parameters.AddWithValue("@strtcod", entry.strtcod);
+            command.Parameters.AddWithValue("@segmentkey", entry.segmentkey);
+            command.Parameters.AddWithValue("@tripid", entry.tripid);
+            command.Parameters.AddWithValue("@tripsegmentno", entry.tripsegmentno);
+
+            return NonQuery(command, "cardata");
+        }
 
         public int UpdateWithNewId(int newId, int currentId) {
             string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentId);
@@ -290,6 +294,8 @@ namespace CarDataProject {
                 NonQuery(command, "cardata");
             }
         }
+
+        #endregion Updaters
 
         /*public List<CarLogEntry> GetAllLogEntries() {
             string sql = String.Format("SELECT * FROM cardata");
