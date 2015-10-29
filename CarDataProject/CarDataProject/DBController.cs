@@ -106,10 +106,10 @@ namespace CarDataProject {
             return qualities;
         }
 
-        public List<SpatialInformation> GetMPointByCarIdAndTripId(Int16 carId, Int64 tripId) {
+        public List<SpatialInformation> GetMPointsByCarIdAndTripId(Int16 carId, Int64 tripId) {
             string sql = String.Format(@"SELECT entryid, idate, itime, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
-                                        FROM facttable
-                                        WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
+                                         FROM facttable
+                                         WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
             DataRowCollection result = Query(sql);
 
             List<Fact> facts = new List<Fact>();
@@ -159,15 +159,32 @@ namespace CarDataProject {
             return timestamps;
         }
 
-        public Int64 GetTripCountByCarId(Int16 carId) {
-            string sql = String.Format(@"SELECT COUNT(tripid) AS tripcount
-                                         FROM tripinformation
-                                         WHERE carid = {'0'}", carId);
+        public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
+            string sql = String.Format(@"SELECT entryid, idate, itime, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
+                                         FROM facttable
+                                         WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
             DataRowCollection result = Query(sql);
 
-            return result[0].Field<Int64>("tripcount");
+            List<Fact> facts = new List<Fact>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    Int64 entryId = row.Field<Int64>("entryid");
+                    int date = row.Field<int>("idate");
+                    int time = row.Field<int>("itime");
+                    double latitude = row.Field<double>("latitude");
+                    double longitude = row.Field<double>("longitude");
+
+                    facts.Add(new Fact(entryId,
+                                       new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time)),
+                                       new SpatialInformation(entryId, new GeoCoordinate(latitude, longitude))));
+                }
+
+                SortingHelper.FactsByDateTime(facts);
+            }
+
+            return facts;
         }
-        
+
         public List<Fact> GetSpeedInformationByCarIdAndTripId(Int16 carId, Int64 tripId) {
             string sql = String.Format(@"SELECT entryid, itime, idate, speed, CASE 
                                             WHEN direction = TRUE THEN speedforward
@@ -196,6 +213,15 @@ namespace CarDataProject {
             }
 
             return speedInformation;
+        }
+
+        public Int64 GetTripCountByCarId(Int16 carId) {
+            string sql = String.Format(@"SELECT COUNT(tripid) AS tripcount
+                                         FROM tripinformation
+                                         WHERE carid = {'0'}", carId);
+            DataRowCollection result = Query(sql);
+
+            return result[0].Field<Int64>("tripcount");
         }
 
         #endregion Getters
