@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
+/*
+ * Skal slettes, men der er måske noget kode der skal genbruges?
+ */
+
 namespace CarDataProject {
     class OldCar {
         public OldCar(Int16 carid) {
