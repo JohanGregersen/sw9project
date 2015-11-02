@@ -48,9 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Batches\INFATI\INFATI.cs" />
-    <Compile Include="Batches\INFATI\INFATILoader.cs" />
+	<Compile Include="Batches\INFATI\INFATILoader.cs" />
     <Compile Include="Data Validation\TripGaps.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\FileWriter.cs" />
     <Compile Include="Helpers\GnuplotHelper.cs" />
     <Compile Include="Data Validation\ValidationPlots.cs" />
@@ -66,7 +67,7 @@
     <Compile Include="Score Calculators\AccelerationScore.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
     <Compile Include="Statistics\CarStatistics.cs" />
-    <Compile Include="Statistics\TripStatistic.cs" />
+    <Compile Include="Statistics\TripStatistics.cs" />
     <Compile Include="Statistics\PerWeekCalculator.cs" />
     <Compile Include="Statistics\SpeedingCalculator.cs" />
     <Compile Include="Statistics\WeekdayCalculator.cs" />
