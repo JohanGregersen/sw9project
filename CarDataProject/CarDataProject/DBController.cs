@@ -223,6 +223,19 @@ namespace CarDataProject {
 
             return result[0].Field<Int64>("tripcount");
         }
+
+        public List<Int64> GetTripIdsByCarId(Int16 carId) {
+            string sql = String.Format(@"SELECT tripid
+                                         FROM tripinformation
+                                         WHERE carid = {'0'}", carId);
+            DataRowCollection result = Query(sql);
+            List<Int64> tripIds = new List<Int64>();
+            foreach (DataRow row in result) {
+                tripIds.Add(row.Field<Int64>("tripid"));
+            }
+
+            return tripIds;
+        }
         #endregion Getters
 
         #region Updaters
