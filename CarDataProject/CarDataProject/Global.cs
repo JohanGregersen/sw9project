@@ -44,8 +44,8 @@ namespace CarDataProject {
             public static string DefaultTripStatisticFile(Int16 carId, Int64 tripId) {
                 return TripPath(carId, tripId) + DefaultFile;
             }
-            public static string WeeklyKilometersFile(Int16 carId) {
-                return CarPath(carId) + @"\WeeklyKilometers" + FileType.dat;
+            public static string WeeklyAverageTripDistanceFile(Int16 carId) {
+                return CarPath(carId) + @"\WeeklyAverageTripDistance" + FileType.dat;
             }
             public static string KilometersPerTripFile(Int16 carId) {
                 return CarPath(carId) + @"\KilometersPerTrip" + FileType.dat;
@@ -83,6 +83,9 @@ namespace CarDataProject {
             }
             public static string MinutesPerTripGraph(Int16 carId) {
                 return CarPath(carId) + @"\MinutesPerTrip" + FileType.png;
+            }
+            public static string WeeklyAverageTripDistanceGraph(Int16 carId) {
+                return CarPath(carId) + @"\WeeklyAverageTripDistance" + FileType.png;
             }
         }
 
