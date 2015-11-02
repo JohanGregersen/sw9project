@@ -48,13 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Batches\INFATI\INFATI.cs" />
-<<<<<<< HEAD
     <Compile Include="Batches\INFATI\INFATILoader.cs" />
-    <Compile Include="Data Validation\RelativeDifference.cs" />
-    <Compile Include="Data Validation\TripHoles.cs" />
-=======
     <Compile Include="Data Validation\TripGaps.cs" />
->>>>>>> a700cd6a21f9642dfc088329be1db540c9e45004
     <Compile Include="Global.cs" />
     <Compile Include="Helpers\FileWriter.cs" />
     <Compile Include="Helpers\GnuplotHelper.cs" />
