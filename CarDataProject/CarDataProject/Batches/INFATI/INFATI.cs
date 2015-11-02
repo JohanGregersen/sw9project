@@ -45,7 +45,7 @@ namespace CarDataProject {
             List<Fact> facts = new List<Fact>();
 
             foreach (List<string> row in rows) {
-                TemporalInformation temporal = new TemporalInformation(ConvertToDateTime(Int32.Parse(row[4]), Int32.Parse(row[5])));
+                TemporalInformation temporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(Int32.Parse(row[4]), Int32.Parse(row[5])));
                 SpatialInformation spatial = new SpatialInformation(new GeoCoordinate(Int32.Parse(row[6]), Int32.Parse(row[7])), new GeoCoordinate(Int32.Parse(row[6]), Int32.Parse(row[7])));
                 QualityInformation quality = new QualityInformation(Int16.Parse(row[10]), Int16.Parse(row[11]));
                 MeasureInformation measure = new MeasureInformation(double.Parse(row[13]));
@@ -93,21 +93,6 @@ namespace CarDataProject {
 
             //Write all adjusted rows back to the file
             File.WriteAllLines(logPath, adjustedRows);
-        }
-
-        private static DateTime ConvertToDateTime(int date, int time) {
-            string dateString = date.ToString("D6");
-            string timeString = time.ToString("D6");
-
-            Int16 year = Int16.Parse(dateString.Substring(4, 2));
-            Int16 month = Int16.Parse(dateString.Substring(2, 2));
-            Int16 day = Int16.Parse(dateString.Substring(0, 2));
-
-            Int16 hour = Int16.Parse(timeString.Substring(0, 2));
-            Int16 minute = Int16.Parse(timeString.Substring(2, 2));
-            Int16 second = Int16.Parse(timeString.Substring(4, 2));
-
-            return new DateTime(year, month, day, hour, minute, second);
         }
     }
 }

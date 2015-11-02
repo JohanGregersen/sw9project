@@ -204,12 +204,12 @@ namespace CarDataProject {
                     double speed = row.Field<double>("speed");
                     Int16 maxSpeed = row.Field<Int16>("maxspeed");
 
-                    facts.Add(new Fact(entryId, SegmentInformation.WithMaxSpeed(maxSpeed),
+                    speedInformation.Add(new Fact(entryId, SegmentInformation.CreateWithMaxSpeed(maxSpeed),
                                        new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time)),
                                        new MeasureInformation(speed)));
                 }
 
-                SortingHelper.FactsByDateTime(facts);
+                SortingHelper.FactsByDateTime(speedInformation);
             }
 
             return speedInformation;
@@ -223,7 +223,6 @@ namespace CarDataProject {
 
             return result[0].Field<Int64>("tripcount");
         }
-
         #endregion Getters
 
         #region Updaters
@@ -292,23 +291,6 @@ namespace CarDataProject {
                 string sql2 = String.Format("UPDATE cardata SET point = ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326), mpoint = ST_Transform(ST_SetSrid(ST_MakePoint(mpx, mpy), 32632), 4326) WHERE id = '{0}'", entryId);
                 NpgsqlCommand command = new NpgsqlCommand(sql2, connection);
                 NonQuery(command, "cardata");
-            }
-        }
-
-        //Tuple<entryid, converted(rtime,rdate) to Timestamp, spd>
-        public List<Tuple<int, Timestamp, int>> GetAccelerationDataByTrip(Int16 carId, int tripId) {
-            string sql = String.Format("SELECT id, rtime, rdate, spd FROM cardata WHERE carid = '{0}' AND newtripid = '{1}' ORDER BY id", carId, tripId);
-            DataRowCollection res = Query(sql);
-
-
-            List<Tuple<int, Timestamp, int>> timestampsAndSpeed = new List<Tuple<int, Timestamp, int>>();
-            if (res.Count >= 1) {
-                foreach (DataRow row in res) {
-                    timestampsAndSpeed.Add(new Tuple<int, Timestamp, int>(row.Field<int>("id"), new Timestamp(row), row.Field<Int16>("spd")));
-                }
-                return timestampsAndSpeed;
-            } else {
-                return timestampsAndSpeed;
             }
         }
 
