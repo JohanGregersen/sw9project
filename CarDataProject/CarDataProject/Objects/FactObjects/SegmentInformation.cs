@@ -27,13 +27,13 @@ namespace CarDataProject {
             this.RoadLine = RoadLine;
         }
 
-        public static SegmentInformation WithId(Int64 SegmentId) {
+        public static SegmentInformation CreateWithId(Int64 SegmentId) {
             SegmentInformation segment = new SegmentInformation();
             segment.SegmentId = SegmentId;
             return segment;
         }
 
-        public static SegmentInformation WithMaxSpeed(Int16 MaxSpeed) {
+        public static SegmentInformation CreateWithMaxSpeed(Int16 MaxSpeed) {
             SegmentInformation segment = new SegmentInformation();
             segment.MaxSpeed = MaxSpeed;
             return segment;

@@ -1,47 +1,35 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 
 namespace CarDataProject {
-    class PerTripCalculator {
-        public static void SaveAllTripData(Int16 carid, int tripid) {
-            string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-            string dataPath = @"\data\";
-            string foldername = "OldCar" + carid + "\\Trip" + tripid;
-
-            string pathString = Path.Combine(solutionPath + dataPath, foldername);
-            Directory.CreateDirectory(pathString);
-
-            FileWriter.DefaultTripStatistics(carid, tripid, foldername);
+    class TripStatistics {
+        public static void WriteAll(Int16 carId, Int64 tripId) {
+            FileWriter.DefaultTripStatistics(carId, tripId);
         }
 
-        public static TimeSpan GetTime (Int16 carid, int tripid) {
+        public static TimeSpan Duration (Int16 carId, int tripId) {
             DBController dbc = new DBController();
-            List<Timestamp> timestamps = dbc.GetTimestampsByCarAndTripId(carid, tripid);
-
-
-            TimeSpan triptime = timestamps[timestamps.Count - 1].timestamp - timestamps[0].timestamp;
-
-
+            List<TemporalInformation> timestamps = dbc.GetTimestampsByCarIdAndTripId(carId, tripId);
             dbc.Close();
 
-            return triptime;
+            return timestamps[timestamps.Count - 1].Timestamp - timestamps[0].Timestamp;
         }
 
-        public static double GetKilometersDriven(Int16 carid, int tripid) {
-            double kmdriven = 0;
-            List<Point> MPointData = ValidationPlots.GetMPointData(carid, tripid);
+        //Hvad skal der ske her? Eller måske er det "Hvad skal der ske i GetMpointPlot?"
+        public static double Distance(Int16 carId, Int64 tripId) {
+            double distance = 0;
+            List<SpatialInformation> entries = ValidationPlots.GetMpointPlot(carId, tripId);
 
-            for (int i = 0; i < MPointData.Count - 1; i++) {
-                kmdriven += MPointData[i].Mpoint.GetDistanceTo(MPointData[i + 1].Mpoint);
+            for (int i = 1; i < entries.Count - 1; i++) {
+                distance += entries[i].MPoint.GetDistanceTo(entries[i - 1].MPoint);
             }
 
-            kmdriven = kmdriven / 1000;
-            return kmdriven;
+            return distance /= 1000;
         }
 
-        public static List<Tuple<int, double>> GetAccelerationCalcultions(Int16 carId, int tripId) {
+        public static Dictionary<int, double> AccelerationCalcultions(Int16 carId, Int64 tripId) {
             DBController dbc = new DBController();
             List<Tuple<int, Timestamp, int>> accelerationData = dbc.GetAccelerationDataByTrip(carId, tripId);
             dbc.Close();
@@ -68,3 +56,4 @@ namespace CarDataProject {
         }
     }
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                 

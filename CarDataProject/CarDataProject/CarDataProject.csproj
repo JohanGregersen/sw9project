@@ -48,9 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Batches\INFATI\INFATI.cs" />
+<<<<<<< HEAD
     <Compile Include="Batches\INFATI\INFATILoader.cs" />
     <Compile Include="Data Validation\RelativeDifference.cs" />
     <Compile Include="Data Validation\TripHoles.cs" />
+=======
+    <Compile Include="Data Validation\TripGaps.cs" />
+>>>>>>> a700cd6a21f9642dfc088329be1db540c9e45004
     <Compile Include="Global.cs" />
     <Compile Include="Helpers\FileWriter.cs" />
     <Compile Include="Helpers\GnuplotHelper.cs" />
@@ -61,28 +65,23 @@
     <Compile Include="Objects\FactObjects\FlagInformation.cs" />
     <Compile Include="Objects\FactObjects\MeasureInformation.cs" />
     <Compile Include="Objects\FactObjects\SpatialInformation.cs" />
-    <Compile Include="Objects\Score.cs" />
     <Compile Include="Objects\FactObjects\SegmentInformation.cs" />
     <Compile Include="Objects\TripObjects\ScoreInformation.cs" />
     <Compile Include="Objects\TripObjects\Trip.cs" />
     <Compile Include="Score Calculators\AccelerationScore.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
-    <Compile Include="User Statistics\PerCarCalculator.cs" />
-    <Compile Include="User Statistics\PerTripCalculator.cs" />
-    <Compile Include="User Statistics\PerWeekCalculator.cs" />
-    <Compile Include="User Statistics\SpeedingCalculator.cs" />
-    <Compile Include="User Statistics\WeekdayCalculator.cs" />
+    <Compile Include="Statistics\CarStatistics.cs" />
+    <Compile Include="Statistics\TripStatistic.cs" />
+    <Compile Include="Statistics\PerWeekCalculator.cs" />
+    <Compile Include="Statistics\SpeedingCalculator.cs" />
+    <Compile Include="Statistics\WeekdayCalculator.cs" />
     <Compile Include="DBController.cs" />
-    <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Objects\OldCar.cs" />
     <Compile Include="Objects\FactObjects\QualityInformation.cs" />
     <Compile Include="Objects\FactObjects\TemporalInformation.cs" />
-    <Compile Include="Objects\Trip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data Manipulators\TripCalculator.cs" />
-    <Compile Include="Helpers\CoordinateHelper.cs" />
-    <Compile Include="External Data\Weather.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

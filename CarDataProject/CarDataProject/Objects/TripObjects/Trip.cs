@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CarDataProject.Objects.TripObjects {
+namespace CarDataProject {
     public class Trip {
         public Int64 TripId { get; }
         public int CarId { get; }

@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace CarDataProject {
     public static class TripCalculator {
-        public static List<Trip> CalculateTripsByCarId(Int16 carid) {
+        public static List<Trip> CalculateTripsByCarId(Int16 carId) {
             //Fetch all dates a given car is being used.
-            List<int> allDates = FetchAllDatesByCarId(carid);
+            List<int> allDates = FetchAllDatesByCarId(carId);
 
             //Instantiate the containers for trips and timestamps fetched by a single date at a time
             List<Trip> allTrips = new List<Trip>();
@@ -46,9 +46,9 @@ namespace CarDataProject {
             return allTrips;
         }
 
-        private static List<int> FetchAllDatesByCarId(Int16 carid) {
+        private static List<int> FetchAllDatesByCarId(Int16 carId) {
             DBController dbc = new DBController();
-            List<int> allDates = dbc.GetAllDatesByCarId(carid, true, true);
+            List<int> allDates = dbc.GetAllDatesByCarId(carId, true, true);
             dbc.Close();
             return allDates;
         }

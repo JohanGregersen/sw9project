@@ -5,16 +5,16 @@ using System.IO;
 
 namespace CarDataProject {
     class PerWeekCalculator {
-        public static void SaveAllPerWeekData(Int16 carid) {
+        public static void SaveAllPerWeekData(Int16 carId) {
             string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string dataPath = @"\data\";
-            string foldername = "OldCar" + carid;
+            string foldername = "Car" + carId;
 
             string pathString = Path.Combine(solutionPath + dataPath, foldername);
             Directory.CreateDirectory(pathString);
 
             //FileWriter.DefaultTripStatistics(carid, tripid, foldername);
-            FileWriter.WeeklyKilometersPerTrip(GetWeeklyKPTPlot(carid), foldername);
+            FileWriter.WeeklyKilometersPerTrip(carId, GetWeeklyKPTPlot(carId));
             GnuplotHelper.PlotGraph("WeeklyKilometerGraph", foldername, "weeklykm", true, 1, 3, "Kilometers Per Week");
         }
 
@@ -26,16 +26,16 @@ namespace CarDataProject {
             Dictionary<int, int> tripsofweek = new Dictionary<int, int>();
             Dictionary<int, double> finaldict = new Dictionary<int, double>();
             int weekno;
-            Int64 amountOfTrips = PerCarCalculator.GetTripsTaken(carid);
+            Int64 amountOfTrips = CarStatistic.GetTripsTaken(carid);
 
             for (int i = 1; i < amountOfTrips; i++) {
                 List<Timestamp> time = dbc.GetTimestampsByCarAndTripId(carid, i);
                 weekno = cal.GetWeekOfYear(time[0].timestamp, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
                 if (!weeklykm.ContainsKey(weekno)) {
-                    weeklykm.Add(weekno, PerTripCalculator.GetKilometersDriven(carid, i));
+                    weeklykm.Add(weekno, TripStatistic.GetKilometersDriven(carid, i));
                     tripsofweek.Add(weekno, 1);
                 } else {
-                    weeklykm[weekno] = weeklykm[weekno] + PerTripCalculator.GetKilometersDriven(carid, i);
+                    weeklykm[weekno] = weeklykm[weekno] + TripStatistic.GetKilometersDriven(carid, i);
                     tripsofweek[weekno] = tripsofweek[weekno] + 1;
                 }
             }

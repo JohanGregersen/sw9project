@@ -7,39 +7,28 @@ using System.Linq;
 namespace CarDataProject {
     static class INFATI {
         public static void AdjustAllLogs() {
-            //Find all files in the INFATI directory
-            List<string> paths = new List<string>(Directory.GetFiles(Global.Path.SolutionPath + Global.Batch.INFATI.Path));
+            //Find all logs in the INFATI directory
+            List<string> logs = new List<string>(Directory.GetFiles(Global.Batch.INFATI.Path));
 
             //Adjust all logs using the helper method
-            foreach (string path in paths) {
-                AdjustLogHelper(path);
+            foreach (string log in logs) {
+                AdjustLogHelper(log);
             }
         }
 
-        public static void AdjustLog(int team, int car) {
-            //Find the exact path for the requested log
-            string path = Global.Path.SolutionPath;
-            string batch = Global.Batch.INFATI.Path;
-            string fileName = Global.Batch.INFATI.LogFile(team, car);
-            string type = Global.FileType.txt;
-
+        public static void AdjustLog(Int16 teamId, Int16 carId) {
             //Adjust log using the helper method
-            AdjustLogHelper(path + batch + fileName + type);
+            AdjustLogHelper(Global.Batch.INFATI.Path + Global.Batch.INFATI.LogFile(teamId, carId));
         }
 
-        public static List<Fact> ReadLog(int team, int car) {
+        public static List<Fact> ReadLog(Int16 teamId, Int16 carId) {
             //Open file from path
-            string path = Global.Path.SolutionPath;
-            string batch = Global.Batch.INFATI.Path;
-            string fileName = Global.Batch.INFATI.LogFile(team, car);
-            string type = Global.FileType.txt;
+            StreamReader file = new StreamReader(Global.Batch.INFATI.Path + Global.Batch.INFATI.LogFile(teamId, carId));
 
-            StreamReader file = new StreamReader(path + batch + fileName + type);
-
-            //Discard the data header
+            //Discard data header
             file.ReadLine();
 
-            //Read the remaining file, split every row into its columns
+            //Read remaining file, split every row into its columns
             string entry;
             List<List<string>> rows = new List<List<string>>();
 
@@ -56,21 +45,22 @@ namespace CarDataProject {
             List<Fact> facts = new List<Fact>();
 
             foreach (List<string> row in rows) {
-                TemporalInformation temporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(Int32.Parse(row[4]), Int32.Parse(row[5])));
+                TemporalInformation temporal = new TemporalInformation(ConvertToDateTime(Int32.Parse(row[4]), Int32.Parse(row[5])));
                 SpatialInformation spatial = new SpatialInformation(new GeoCoordinate(Int32.Parse(row[6]), Int32.Parse(row[7])), new GeoCoordinate(Int32.Parse(row[6]), Int32.Parse(row[7])));
                 QualityInformation quality = new QualityInformation(Int16.Parse(row[10]), Int16.Parse(row[11]));
                 MeasureInformation measure = new MeasureInformation(double.Parse(row[13]));
-                SegmentInformation segment = new SegmentInformation(Int64.Parse(row[15]));
+                SegmentInformation segment = SegmentInformation.CreateWithId(Int64.Parse(row[15]);
 
                 facts.Add(new Fact(quality, segment, temporal, spatial, measure));
             }
+
             //Return all facts
             return facts;
         }
 
-        private static void AdjustLogHelper(string path) {
+        private static void AdjustLogHelper(string logPath) {
             //Load all rows of file into memory
-            List<string> rows = new List<string>(File.ReadAllLines(path));
+            List<string> rows = new List<string>(File.ReadAllLines(logPath));
 
             //Read the column names from the header
             List<string> columns = rows[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -100,8 +90,24 @@ namespace CarDataProject {
 
                 adjustedRows.Add(row);
             }
+
             //Write all adjusted rows back to the file
-            File.WriteAllLines(path, adjustedRows);
+            File.WriteAllLines(logPath, adjustedRows);
+        }
+
+        private static DateTime ConvertToDateTime(int date, int time) {
+            string dateString = date.ToString("D6");
+            string timeString = time.ToString("D6");
+
+            Int16 year = Int16.Parse(dateString.Substring(4, 2));
+            Int16 month = Int16.Parse(dateString.Substring(2, 2));
+            Int16 day = Int16.Parse(dateString.Substring(0, 2));
+
+            Int16 hour = Int16.Parse(timeString.Substring(0, 2));
+            Int16 minute = Int16.Parse(timeString.Substring(2, 2));
+            Int16 second = Int16.Parse(timeString.Substring(4, 2));
+
+            return new DateTime(year, month, day, hour, minute, second);
         }
     }
 }

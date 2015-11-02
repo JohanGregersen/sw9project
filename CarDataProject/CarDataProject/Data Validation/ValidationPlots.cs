@@ -4,79 +4,55 @@ using System.Device.Location;
 
 namespace CarDataProject {
     class ValidationPlots {
-        public static void GetAllPlots(Int16 carid, int tripid) {
-            GetMpointPlot(carid, tripid);
-            GetTimePlot(carid, tripid);
-            GetHdopSatPlot(carid, tripid);
+        public static void GetAllPlots(Int16 carId, Int64 tripId) {
+            GetMpointPlot(carId, tripId);
+            GetTimePlot(carId, tripId);
+            GetSatHdopPlot(carId, tripId);
         }
 
-        public static List<Timestamp> GetTimeData(Int16 carid, int tripid) {
+        public static void GetTimePlot(Int16 carId, Int64 tripId) {
             DBController dbc = new DBController();
-            List<Timestamp> data = dbc.GetTimestampsByCarAndTripId(carid, tripid);
+            List<TemporalInformation> temporalData = dbc.GetTimestampsByCarIdAndTripId(carId, tripId);
             dbc.Close();
-            return data;
-        }
 
-        public static void GetTimePlot(Int16 carid, int tripid) {
-            List<Timestamp> timeData = GetTimeData(carid, tripid);
+            List<TimeSpan> intervals = new List<TimeSpan>();
 
-            List<double> timestampDifferences = new List<double>();
-            for (int i = 0; i < timeData.Count - 1; i++) {
-                double timeDifference = Math.Abs(DateTimeHelper.ToUnixTime(timeData[i].timestamp) - DateTimeHelper.ToUnixTime(timeData[i + 1].timestamp));
-                timestampDifferences.Add(timeDifference);
+            for (int i = 1; i < temporalData.Count; i++) {
+                TimeSpan interval = temporalData[i].Timestamp - temporalData[i - 1].Timestamp;
+                intervals.Add(interval);
             }
-
-            // FileWriter.DifferenceInTime(timestampDifferences);
-            // GnuplotHelper.PlotGraph(9, "timeplot");
         }
 
-        public static List<Point> GetMPointData(Int16 carid, int tripid) {
+        public static void GetMpointPlot(Int16 carId, Int64 tripId) {
             DBController dbc = new DBController();
-            List<Point> data = dbc.GetMPointByCarAndTripId(carid, tripid);
+            List<SpatialInformation> spatialData = dbc.GetMPointsByCarIdAndTripId(carId, tripId);
             dbc.Close();
-            return data;
-        }
 
-        public static void GetMpointPlot(Int16 carid, int tripid) {
-            List<Point> MpointData = GetMPointData(carid, tripid);
+            List<double> distances = new List<double>();
+            Dictionary<GeoCoordinate, GeoCoordinate> outliers = new Dictionary<GeoCoordinate, GeoCoordinate>();
 
-            List<double> distanceMeasures = new List<double>();
-            List<Tuple<GeoCoordinate, GeoCoordinate>> outofscopePoints = new List<Tuple<GeoCoordinate, GeoCoordinate>>();
-
-
-            for (int i = 0; i < MpointData.Count - 1; i++) {
-                distanceMeasures.Add(MpointData[i].Mpoint.GetDistanceTo(MpointData[i + 1].Mpoint));
-                if (MpointData[i].Mpoint.GetDistanceTo(MpointData[i + 1].Mpoint) > 250) {
-                    outofscopePoints.Add(new Tuple<GeoCoordinate, GeoCoordinate>(MpointData[i].Mpoint, MpointData[i + 1].Mpoint));
+            for (int i = 1; i < spatialData.Count; i++) {
+                distances.Add(spatialData[i].MPoint.GetDistanceTo(spatialData[i - 1].MPoint));
+                
+                //TODO: Hvor kommer 250 fra???
+                if (spatialData[i].MPoint.GetDistanceTo(spatialData[i - 1].MPoint) > 250) {
+                    outliers.Add(spatialData[i].MPoint, spatialData[i - 1].MPoint);
                 }
             }
-            //FileWriter.DifferenceOutliers(outofscopePoints);
-            //FileWriter.DifferenceInDistance(distanceMeasures);
-
-            // GnuplotHelper.PlotGraph(8, "mpointplot");
         }
 
-        public static List<SatHdop> GetSatHdopData(Int16 carid, int tripid) {
+        public static void GetSatHdopPlot(Int16 carId, Int64 tripId) {
             DBController dbc = new DBController();
-            List<SatHdop> data = dbc.GetSatHdopForTrip(carid, tripid);
+            List<QualityInformation> qualityData = dbc.GetQualityByCarIdAndTripId(carId, tripId);
             dbc.Close();
-            return data;
-        }
 
-        public static void GetHdopSatPlot(Int16 carid, int tripid) {
-            List<SatHdop> SatHdopData = GetSatHdopData(carid, tripid);
-
-            List<Int16> Hdop = new List<Int16>();
             List<Int16> Sat = new List<Int16>();
+            List<double> Hdop = new List<double>();
 
-            for (int i = 0; i < SatHdopData.Count; i++) {
-                Hdop.Add(SatHdopData[i].Hdop);
-                Sat.Add(SatHdopData[i].Sat);
+            foreach(QualityInformation quality in qualityData) {
+                Sat.Add(quality.Sat);
+                Hdop.Add(quality.Hdop);
             }
-
-            // FileWriter.HdopAndSatPerPoint(SatHdopData);
-            // GnuplotHelper.PlotGraph(7, "hdopsat");
         }
-
     }
 }
