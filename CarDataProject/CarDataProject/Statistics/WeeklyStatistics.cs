@@ -21,7 +21,7 @@ namespace CarDataProject {
             Calendar calendar = formatInformation.Calendar;
 
             //Dictionary of <Year, Week>, <TripCount, Distance>
-            Dictionary<KeyValuePair<int, int>, KeyValuePair<int, double>> results = new Dictionary<KeyValuePair<int, int>, KeyValuePair<int, double>();
+            Dictionary<KeyValuePair<int, int>, KeyValuePair<int, double>> results = new Dictionary<KeyValuePair<int, int>, KeyValuePair<int, double>>();
 
             //Get trips to get distances from
             DBController dbc = new DBController();

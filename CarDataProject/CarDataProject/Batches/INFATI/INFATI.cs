@@ -49,7 +49,7 @@ namespace CarDataProject {
                 SpatialInformation spatial = new SpatialInformation(new GeoCoordinate(Int32.Parse(row[6]), Int32.Parse(row[7])), new GeoCoordinate(Int32.Parse(row[6]), Int32.Parse(row[7])));
                 QualityInformation quality = new QualityInformation(Int16.Parse(row[10]), Int16.Parse(row[11]));
                 MeasureInformation measure = new MeasureInformation(double.Parse(row[13]));
-                SegmentInformation segment = SegmentInformation.CreateWithId(Int64.Parse(row[15]);
+                SegmentInformation segment = SegmentInformation.CreateWithId(Int64.Parse(row[15]));
 
                 facts.Add(new Fact(quality, segment, temporal, spatial, measure));
             }

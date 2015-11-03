@@ -7,7 +7,7 @@ namespace CarDataProject {
             int breakpoint = 0;
         }
 
-        static void InsertCarLogIntoDB() {
+        /*static void InsertCarLogIntoDB() {
             List<Fact> facts = INFATI.ReadLog(1, 1);
             DBController dbc = new DBController();
 
@@ -20,6 +20,6 @@ namespace CarDataProject {
             
             dbc.UpdateEntryWithPointAndMpoint(1);
             dbc.Close();
-        }
+        }*/
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 
 /*
  * Skal slettes, men der er måske noget kode der skal genbruges?
- */
 
 namespace CarDataProject {
     class OldCar {
@@ -43,4 +42,6 @@ namespace CarDataProject {
             dbc.Close();
         }
     }
+    
 }
+*/
