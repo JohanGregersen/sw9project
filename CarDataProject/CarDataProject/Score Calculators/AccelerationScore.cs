@@ -5,7 +5,7 @@ using System.Linq;
 namespace CarDataProject {
     class AccelerationScore {
         List<List<Fact>> accelerationData { get; set; }
-        private Dictionary<int, List<Tuple<int, double>>> dataOutsideThreshold { get; set; }
+        private List<List<Fact>> dataOutsideThreshold { get; set; }
         private Int16 carId { get; set; }
         private List<Int64> tripIds { get; set; }
         private double accUpperThreshold { get; set; }
@@ -30,13 +30,12 @@ namespace CarDataProject {
         }
 
         //Finds all newtripid as key, Tuple<entryId, accelerations as value which exceeds the threshold values.
-        public Dictionary<int, List<Tuple<int, double>>> FindValidDataPoints() {
-            Dictionary<int, List<Tuple<int, double>>> ValidDataPoints = new Dictionary<int, List<Tuple<int, double>>>();
+        public List<List<Fact>> FindValidDataPoints() {
+            List<List<Fact>> ValidDataPoints = new List<List<Fact>>();
             foreach (List<Fact> trip in accelerationData) {
-                    List<Tuple<int, double>> accPoints = trip.Value.Where(acc => acc.Item2 >= accUpperThreshold || acc.Item2 <= accLowerThreshold).ToList();
-                    ValidDataPoints.Add(trip.Key, accPoints);
+                    List<Fact> accPoints = trip.Where(acc => acc.Measure.Acceleration >= accUpperThreshold || acc.Measure.Acceleration <= accLowerThreshold).ToList();
+                    ValidDataPoints.Add(accPoints);
             }
-
             return ValidDataPoints;
         }
     }
