@@ -18,12 +18,13 @@ namespace CarDataProject {
             }
         }
 
-        public static void WeeklyKilometersPerTrip(Int16 carId, Dictionary<int, double> kilometersPerWeek) {
-            using (StreamWriter writer = new StreamWriter(Global.CarStatistics.WeeklyKilometersFile(carId))) {
+        public static void WeeklyAverageTripDistance(Int16 carId, Dictionary<KeyValuePair<int, int>, double> weeklyAverageTripDistance) {
+            using (StreamWriter writer = new StreamWriter(Global.CarStatistics.WeeklyAverageTripDistanceFile(carId))) {
                 writer.WriteLine("#X, Week, Distance");
 
-                foreach (KeyValuePair<int, double> kvp in kilometersPerWeek) {
-                    writer.WriteLine(kvp.Key + " " + "Week" + kvp.Key + " " + kilometersPerWeek[kvp.Key]);
+                //TODO: writing kvp.Key in console might produce something weird since it is now "<int, int>" instead of just "int" - Verify please
+                foreach (KeyValuePair<KeyValuePair<int, int>, double> kvp in weeklyAverageTripDistance) {
+                    writer.WriteLine(kvp.Key + " " + "Week" + kvp.Key + " " + weeklyAverageTripDistance[kvp.Key]);
                 }
             }
         }
