@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CarDataProject {
-    public static class WeekdayCalculator {
+    public static class WeekdayStatistics {
         public static void WriteAll(Int16 carId) {
             FileWriter.PlotsPerWeekday(carId, PlotsPerWeekday(carId));
             FileWriter.TimePerWeekday(carId, TimePerWeekday(carId)); 
@@ -85,43 +84,35 @@ namespace CarDataProject {
             return timePerDay;
         }
 
-        //Kode OK hertil
-        private static Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> setupDay(Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> dictionary, DayOfWeek day) {
+        public static Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> TimePerHourPerWeekday(Int16 carId) {
+            Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> timePerHourPerWeekday = new Dictionary<DayOfWeek, Dictionary<int, TimeSpan>>();
+            setupDay(timePerHourPerWeekday, DayOfWeek.Monday);
+            setupDay(timePerHourPerWeekday, DayOfWeek.Tuesday);
+            setupDay(timePerHourPerWeekday, DayOfWeek.Wednesday);
+            setupDay(timePerHourPerWeekday, DayOfWeek.Thursday);
+            setupDay(timePerHourPerWeekday, DayOfWeek.Friday);
+            setupDay(timePerHourPerWeekday, DayOfWeek.Saturday);
+            setupDay(timePerHourPerWeekday, DayOfWeek.Sunday);
 
-            dictionary.Add(day, new Dictionary<int, TimeSpan>());
-
-            for (int i = 0; i < 24; i++) {
-                dictionary[day].Add(i, new TimeSpan(0, 0, 0));
-            }
-
-            return dictionary;
-        }
-
-        public static Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> TimePerHourPerWeekday(Int16 carid, List<Trip> trips) {
-            Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> timePerHour = new Dictionary<DayOfWeek, Dictionary<int, TimeSpan>>();
-            setupDay(timePerHour, DayOfWeek.Monday);
-            setupDay(timePerHour, DayOfWeek.Tuesday);
-            setupDay(timePerHour, DayOfWeek.Wednesday);
-            setupDay(timePerHour, DayOfWeek.Thursday);
-            setupDay(timePerHour, DayOfWeek.Friday);
-            setupDay(timePerHour, DayOfWeek.Saturday);
-            setupDay(timePerHour, DayOfWeek.Sunday);
-            
             int hour = 60;
             int minute = 60;
 
+            DBController dbc = new DBController();
+            List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
+
             //For all trips
-            foreach (Trip trip in trips) {
+            foreach (Int64 tripId in tripIds) {
+                List<TemporalInformation> entries = dbc.GetTimestampsByCarIdAndTripId(carId, tripId);
 
                 //If last timestamp has later date or hour than the first timestamp
-                if (trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Date > trip.allTimestamps[0].Item2.Date || trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Hour > trip.allTimestamps[0].Item2.Hour) {
+                if (entries[entries.Count - 1].Timestamp.Date > entries[0].Timestamp.Date || entries[entries.Count - 1].Timestamp.Hour > entries[0].Timestamp.Hour) {
 
                     //Add all time from first timestamp until the beginning of the next hour
-                    timePerHour[trip.allTimestamps[0].Item2.DayOfWeek][trip.allTimestamps[0].Item2.Hour] += new TimeSpan(0, hour - trip.allTimestamps[0].Item2.Minute, minute - trip.allTimestamps[0].Item2.Second);
+                    timePerHourPerWeekday[entries[0].Timestamp.DayOfWeek][entries[0].Timestamp.Hour] += new TimeSpan(0, hour - entries[0].Timestamp.Minute, minute - entries[0].Timestamp.Second);
 
                     //Keep track of the hour and date of the day
-                    int currentHour = trip.allTimestamps[0].Item2.Hour + 1;
-                    DateTime currentDate = trip.allTimestamps[0].Item2;
+                    int currentHour = entries[0].Timestamp.Hour + 1;
+                    DateTime currentDate = entries[0].Timestamp;
 
                     //If past midnight, add a day to currentDate and reset currentHour
                     if (currentHour == 24) {
@@ -130,8 +121,8 @@ namespace CarDataProject {
                     }
 
                     //For the next hours where the trip does not end, add an hour to total time.
-                    while (currentHour < trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Hour || currentDate.Date < trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Date) {
-                        timePerHour[currentDate.DayOfWeek][currentHour] += new TimeSpan(1, 0, 0);
+                    while (currentHour < entries[entries.Count - 1].Timestamp.Hour || currentDate.Date < entries[entries.Count - 1].Timestamp.Date) {
+                        timePerHourPerWeekday[currentDate.DayOfWeek][currentHour] += new TimeSpan(1, 0, 0);
                         currentHour++;
 
                         if (currentHour == 24) {
@@ -141,25 +132,24 @@ namespace CarDataProject {
                     }
 
                     //On the last hour where the trip ends, add all remaining minutes and seconds
-                    timePerHour[currentDate.DayOfWeek][currentHour] += new TimeSpan(0, trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Minute, trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.Second);
+                    timePerHourPerWeekday[currentDate.DayOfWeek][currentHour] += new TimeSpan(0, entries[entries.Count - 1].Timestamp.Minute, entries[entries.Count - 1].Timestamp.Second);
                 } else {
                     //If trip ends on the same hour as it starts, just subtract starttime from endtime to get the timespan
-                    timePerHour[trip.allTimestamps[0].Item2.DayOfWeek][trip.allTimestamps[0].Item2.Hour] += trip.allTimestamps[trip.allTimestamps.Count - 1].Item2.TimeOfDay - trip.allTimestamps[0].Item2.TimeOfDay;
+                    timePerHourPerWeekday[entries[0].Timestamp.DayOfWeek][entries[0].Timestamp.Hour] += entries[entries.Count - 1].Timestamp.TimeOfDay - entries[entries.Count - 1].Timestamp.TimeOfDay;
                 }
             }
 
-
-
-            return timePerHour;
+            return timePerHourPerWeekday;
         }
 
-        private static string DateAndTimeConverter(int dt) {
-            string strDT = dt.ToString();
+        private static Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> setupDay(Dictionary<DayOfWeek, Dictionary<int, TimeSpan>> dictionary, DayOfWeek day) {
+            dictionary.Add(day, new Dictionary<int, TimeSpan>());
 
-            if (strDT.Length == 5) {
-                strDT = "0" + strDT;
+            for (int i = 0; i < 24; i++) {
+                dictionary[day].Add(i, new TimeSpan(0, 0, 0));
             }
-            return strDT;
+
+            return dictionary;
         }
     }
 }

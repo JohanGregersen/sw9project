@@ -69,8 +69,8 @@
     <Compile Include="Statistics\CarStatistics.cs" />
     <Compile Include="Statistics\TripStatistics.cs" />
     <Compile Include="Statistics\WeeklyStatistics.cs" />
-    <Compile Include="Statistics\SpeedingCalculator.cs" />
-    <Compile Include="Statistics\WeekdayCalculator.cs" />
+    <Compile Include="Statistics\SpeedingStatistics.cs" />
+    <Compile Include="Statistics\WeekdayStatistics.cs" />
     <Compile Include="DBController.cs" />
     <Compile Include="Objects\OldCar.cs" />
     <Compile Include="Objects\FactObjects\QualityInformation.cs" />

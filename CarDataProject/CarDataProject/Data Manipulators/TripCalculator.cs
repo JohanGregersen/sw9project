@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace CarDataProject {
     public static class TripCalculator {
+        /*
         public static List<Trip> CalculateTripsByCarId(Int16 carId) {
             //Fetch all dates a given car is being used.
             List<int> allDates = FetchAllDatesByCarId(carId);
@@ -64,5 +65,6 @@ namespace CarDataProject {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return Convert.ToInt64((date - epoch).TotalSeconds);
         }
+        */
     }
 }
