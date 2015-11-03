@@ -87,6 +87,9 @@ namespace CarDataProject {
             public static string WeeklyAverageTripDistanceGraph(Int16 carId) {
                 return CarPath(carId) + @"\WeeklyAverageTripDistance" + FileType.png;
             }
+            public static string PlotsPerWeekdayGraph(Int16 carId) {
+                return CarPath(carId) + @"\PlotsPerWeekday" + FileType.png;
+            }
         }
 
         public static class Batch {

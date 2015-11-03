@@ -51,7 +51,7 @@ namespace CarDataProject {
             if (uniqueOnly) {
                 sql += unique;
             }
-            sql += "Date FROM facttable WHERE carid = " + carid;
+            sql += "idate FROM facttable WHERE carid = " + carid;
             if (sortAscending) {
                 sql += ascending;
             }
@@ -60,7 +60,7 @@ namespace CarDataProject {
             List<int> dates = new List<int>();
             if (result.Count >= 1) {
                 foreach (DataRow date in result) {
-                    dates.Add(date.Field<int>("date"));
+                    dates.Add(date.Field<int>("idate"));
                 }
             }
 
