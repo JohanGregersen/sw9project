@@ -70,7 +70,6 @@ namespace CarDataProject {
 
             return NonQuery(command, "segmentinformation");
         }
-    }
         #endregion Creators
 
 
@@ -162,7 +161,7 @@ namespace CarDataProject {
 
                 SortingHelper.FactsByDateTime(facts);
 
-                foreach(Fact fact in facts) {
+                foreach (Fact fact in facts) {
                     mPoints.Add(fact.Spatial);
                 }
             }
@@ -227,7 +226,7 @@ namespace CarDataProject {
                                          ON(facttable.segmentid = segmentinformation.segmentid)
                                          WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
             DataRowCollection res = Query(sql);
-            
+
             List<Fact> speedInformation = new List<Fact>();
             if (res.Count > 0) {
                 foreach (DataRow row in res) {
@@ -273,7 +272,7 @@ namespace CarDataProject {
 
         #region Updaters
 
-        public int AddCarLogEntry(CarLogEntry entry) {
+        /*public int AddCarLogEntry(CarLogEntry entry) {
             StringBuilder sql = new StringBuilder();
             sql.Append("INSERT INTO cardata(id, entryid, carid, driverid, rdate, rtime, xcoord, ycoord, mpx, mpy, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno)");
             sql.Append(" VALUES (@id, @entryid, @carid, @driverid, @rdate, @rtime, @xcoord, @ycoord, @mpx, @mpy, @sat, @hdop, @maxspd, @spd, @strtcod, @segmentkey, @tripid, @tripsegmentno)");
@@ -299,7 +298,7 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@tripsegmentno", entry.tripsegmentno);
 
             return NonQuery(command, "cardata");
-        }
+        }*/
 
         public int UpdateWithNewId(int newId, int currentId) {
             string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentId);
@@ -341,7 +340,7 @@ namespace CarDataProject {
         }
 
         public void UpdateAllMlines(Int16 carId) {
-            int tripsTaken = CarStatistic.GetTripsTaken(carId);
+            Int64 tripsTaken = CarStatistics.TripCount(carId);
             for (int i = 1; i < tripsTaken; i++) {
                 string sql = String.Format("UPDATE cardata SET mline = myline FROM(SELECT newtripid, id, ST_MakeLine(mpoint, next_mpoint) AS myline FROM(SELECT newtripid, id, mpoint, lead(mpoint) OVER w as next_mpoint, lead(newtripid) OVER w as next_newtripid FROM cardata WINDOW w AS(ORDER BY id)) AS res WHERE newtripid = '{0}' AND next_newtripid = newtripid) AS calclines WHERE cardata.id = calclines.id", i);
                 NpgsqlCommand command = new NpgsqlCommand(sql, connection);
