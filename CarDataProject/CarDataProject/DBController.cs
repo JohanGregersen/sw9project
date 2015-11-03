@@ -41,6 +41,39 @@ namespace CarDataProject {
             }
         }
 
+        #region Creators
+        public int AddCar() {
+            string sql = "INSERT INTO carinformation DEFAULT VALUES ";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+
+            return NonQuery(command, "carinformation");
+        }
+
+        public int AddSegment(SegmentInformation segment, int speedlimitForward, int speedlimitBackward, string lineString) {
+            string sql = @"INSERT INTO segmentinformation(segmentid, osmid, roadname, roadtype, oneway, bridge, tunnel, speedbackward, speedforward, segmentline) 
+                            VALUES (@segmentid, @osmid, @roadname, @roadtype, @oneway, @bridge, @tunnel, @speedbackward, @speedforward, @segmentline)";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@segmentid", segment.SegmentId);
+            command.Parameters.AddWithValue("@osmid", segment.OSMId);
+            command.Parameters.AddWithValue("@roadname", segment.RoadName);
+            command.Parameters.AddWithValue("@roadtype", segment.RoadType);
+            command.Parameters.AddWithValue("@oneway", segment.Oneway);
+            command.Parameters.AddWithValue("@speedforward", speedlimitForward);
+            command.Parameters.AddWithValue("@speedbackward", speedlimitBackward);
+            command.Parameters.AddWithValue("@segmentline", lineString);
+
+            //Im am not entirely sure that lineString will be added this way, but it is possible
+            //http://www.bostongis.com/postgis_geomfromtext.snippet
+            //referring to this link.
+
+            return NonQuery(command, "segmentinformation");
+        }
+    }
+        #endregion Creators
+
+
         #region Getters
 
         public List<int> GetDatesByCarId(Int16 carid, bool uniqueOnly, bool sortAscending) {
