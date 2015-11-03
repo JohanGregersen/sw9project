@@ -15,48 +15,77 @@ namespace CarDataProject {
         }
 
         //Returns average kilometers per trip for each week number
-        public static Dictionary<int, double> AverageTripDistance(Int16 carId) {
+        public static Dictionary<KeyValuePair<int, int>, double> AverageTripDistance(Int16 carId) {
             //Get calendar for week number reference
             DateTimeFormatInfo formatInformation = DateTimeFormatInfo.CurrentInfo;
             Calendar calendar = formatInformation.Calendar;
 
+            //Dictionary of <Year, Week>, <TripCount, Distance>
+            Dictionary<KeyValuePair<int, int>, KeyValuePair<int, double>> results = new Dictionary<KeyValuePair<int, int>, KeyValuePair<int, double>();
 
-            Dictionary<int, double> weeklyDistance = new Dictionary<int, double>();
-            Dictionary<int, int> weeklyTrips = new Dictionary<int, int>();
-            Dictionary<int, double> weeklyAverageTripDistance = new Dictionary<int, double>();
-            int weekno;
-            
+            //Get trips to get distances from
             DBController dbc = new DBController();
             List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
 
+
             foreach (Int64 tripId in tripIds) {
-                List<TemporalInformation> temporals = dbc.GetTimestampsByCarIdAndTripId(carId, tripId);
+                List<Fact> facts = dbc.GetSpatioTemporalByCarIdAndTripId(carId, tripId);
+                //Save starting points of trip, in case trip is split up later
+                int startIndex = 0;
+                double distanceForWeek = 0;
+                int startWeek = calendar.GetWeekOfYear(facts[0].Temporal.Timestamp, formatInformation.CalendarWeekRule, formatInformation.FirstDayOfWeek);
+                int startYear = facts[0].Temporal.Timestamp.Year;
 
-            }
+                for (int i = 1; i < facts.Count; i++) {
 
-            for (int i = 1; i <= tripCount; i++) {
-                List<Timestamp> time = dbc.GetTimestampsByCarIdAndTripId(carId, i);
-                weekno = cal.GetWeekOfYear(time[0].timestamp, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
-                if (!weeklykm.ContainsKey(weekno)) {
-                    weeklykm.Add(weekno, TripStatistics.GetKilometersDriven(carId, i));
-                    tripsofweek.Add(weekno, 1);
+                    //If week or year changes in the trip, save that part from startIndex to current index
+                    int week = calendar.GetWeekOfYear(facts[i].Temporal.Timestamp, formatInformation.CalendarWeekRule, formatInformation.FirstDayOfWeek);
+                    int year = facts[i].Temporal.Timestamp.Year;
+                    if (week != startWeek || year != startYear) {
+                        for (int j = startIndex; j <= i; j++) {
+                            distanceForWeek += facts[j].Spatial.DistanceToLag;
+                        }
+
+                        KeyValuePair<int, int> tripPartKey = new KeyValuePair<int, int>(startYear, startWeek);
+
+                        if (results.ContainsKey(tripPartKey)) {
+                            results[tripPartKey] = new KeyValuePair<int, double>(results[tripPartKey].Key + 1, results[tripPartKey].Value + distanceForWeek);
+                        } else {
+                            results.Add(new KeyValuePair<int, int>(startYear, startWeek), new KeyValuePair<int, double>(1, distanceForWeek));
+                        }
+
+                        //Update starting points for new part of trip
+                        startIndex = i;
+                        startWeek = week;
+                        startYear = year;
+                        distanceForWeek = 0;
+                    }
+                }
+
+                //At the end of the trip, save current part from startIndex to current index.
+                for (int j = startIndex; j < facts.Count; j++) {
+                    distanceForWeek += facts[j].Spatial.DistanceToLag;
+                }
+
+                KeyValuePair<int, int> key = new KeyValuePair<int, int>(startYear, startWeek);
+
+                if (results.ContainsKey(key)) {
+                    results[key] = new KeyValuePair<int, double>(results[key].Key + 1, results[key].Value + distanceForWeek);
                 } else {
-                    weeklykm[weekno] = weeklykm[weekno] + TripStatistics.GetKilometersDriven(carId, i);
-                    tripsofweek[weekno] = tripsofweek[weekno] + 1;
+                    results.Add(new KeyValuePair<int, int>(startYear, startWeek), new KeyValuePair<int, double>(1, distanceForWeek));
                 }
             }
 
             dbc.Close();
 
-            foreach (KeyValuePair<int, double> kvp in weeklykm) {
-                finaldict.Add(kvp.Key, (kvp.Value / tripsofweek[kvp.Key]));
+            //Calculate average distance per week, and return result
+            Dictionary<KeyValuePair<int, int>, double> weeklyAverageTripDistance = new Dictionary<KeyValuePair<int, int>, double>();
+
+            foreach (KeyValuePair<KeyValuePair<int, int>, KeyValuePair<int, double>> kvp in results) {
+                weeklyAverageTripDistance.Add(kvp.Key, (kvp.Value.Value / kvp.Value.Key));
             }
 
-            return finaldict;
+            return weeklyAverageTripDistance;
         }
-
-        private void GroupTemporalInformationByWeek(List<TemporalInformation> temporal) {
-            var dfi = DateTimeFormatInfo.CurrentInfo;
-            var ordered = temporal.Where(x => x.Timestamp).OrderBy(x => dfi.Calendar.GetWeekOfYear(x.Value, CalendarWeekRule.FirstDay, DayOfWeek.Monday));
-        }
+    }
 }
