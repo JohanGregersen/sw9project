@@ -94,10 +94,10 @@ namespace CarDataProject {
 
         public static class Batch {
             public static class INFATI {
-                public static string Path = Global.Path.Batch + "INFATI";
+                public static string Path = Global.Path.Batch + @"INFATI\";
                 public const char RowSeperator = '#';
                 public static string LogFile(Int16 teamId, Int16 carId) {
-                    return String.Format("team'{0}'_car'{1:D2}'_no_home{'2'}", teamId, carId, FileType.txt);
+                    return String.Format("team{0}_car{1:D2}_no_home{2}", teamId, carId, FileType.txt);
                 }
             }
         }

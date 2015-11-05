@@ -3,7 +3,7 @@
 namespace CarDataProject {
     public class Fact {
         public Int64 EntryId { get; }
-        public int CarId { get; }
+        public int CarId { get; set; }
         public Int64 TripId { get; }
         public QualityInformation Quality { get; }
         public SegmentInformation Segment { get; }
