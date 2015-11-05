@@ -61,5 +61,16 @@ namespace CarDataProject {
 
             return totalDistance;
         }
+
+        public static TimeSpan TotalTime(Int16 carId) {
+            TimeSpan totalTime = new TimeSpan(0, 0, 0);
+            List<TimeSpan> timePerTrip = TimePerTrip(carId);
+
+            foreach (TimeSpan time in timePerTrip) {
+                totalTime += time;
+            }
+
+            return totalTime;
+        }
     }
 }
