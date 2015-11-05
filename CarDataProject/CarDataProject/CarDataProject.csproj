@@ -58,6 +58,7 @@
     <Compile Include="Data Validation\ValidationPlots.cs" />
     <Compile Include="Helpers\SortingHelper.cs" />
     <Compile Include="MetaStatistics\MetaCarStatistics.cs" />
+    <Compile Include="MetaStatistics\MetaSpeedingStatistics.cs" />
     <Compile Include="MetaStatistics\MetaTripStatistics.cs" />
     <Compile Include="MetaStatistics\MetaWeekStatistics.cs" />
     <Compile Include="Objects\CarObjects\Car.cs" />
