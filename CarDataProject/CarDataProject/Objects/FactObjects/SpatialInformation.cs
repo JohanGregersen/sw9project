@@ -25,6 +25,12 @@ namespace CarDataProject {
             this.MPoint = MPoint;
         }
 
+        public SpatialInformation(Int64 EntryId, GeoCoordinate MPoint, double DistanceToLag) {
+            this.EntryId = EntryId;
+            this.MPoint = MPoint;
+            this.DistanceToLag = DistanceToLag;
+        }
+
         public SpatialInformation(Int64 EntryId, GeoCoordinate MPoint) {
             this.EntryId = EntryId;
             this.MPoint = MPoint;

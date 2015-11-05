@@ -332,18 +332,8 @@ namespace CarDataProject {
 
             return tripIds;
         }
-	public List<Int16> GetCarIds() {
-            string sql = String.Format(@"SELECT carid
-                                         FROM carinformation");
-            DataRowCollection result = Query(sql);
-            List<Int16> carIds = new List<Int16>();
-            foreach (DataRow row in result) {
-                carIds.Add(row.Field<Int16>("carid"));
-            }
 
-            return carIds;
-        } 
-
+<<<<<<< HEAD
         //INFATI Loading
         public int GetQualityInformationIdBySatHdop(Int16 sat, double hdop) {
             string sql = String.Format(@"SELECT qualityid
@@ -354,8 +344,20 @@ namespace CarDataProject {
             return result[0].Field<int>("qualityid");
         }
 
-       
-	#endregion Getters
+=======
+        public List<Int16> GetCarIds() {
+            string sql = String.Format(@"SELECT carid
+                                         FROM carinformation");
+            DataRowCollection result = Query(sql);
+            List<Int16> carIds = new List<Int16>();
+            foreach (DataRow row in result) {
+                carIds.Add(row.Field<Int16>("carid"));
+            }
+
+            return carIds;
+        }
+>>>>>>> 55d605459d8c118589d68e635c6744d6241233c1
+        #endregion Getters
 
         #region Updaters
 
