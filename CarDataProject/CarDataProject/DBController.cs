@@ -12,7 +12,7 @@ namespace CarDataProject {
         DataTable dataTable = new DataTable();
 
         public DBController() {
-            string connectionSettings = String.Format("Server={0};User Id={1};Password={2};Database={3};Encoding=Unicode;",
+            string connectionSettings = String.Format("Server={0};User Id={1};Password={2};Database={3};",
                 Global.Database.Host, Global.Database.User, Global.Database.Password, Global.Database.Name);
 
             connection = new NpgsqlConnection(connectionSettings);
@@ -43,7 +43,8 @@ namespace CarDataProject {
 
         #region Creators
         public int AddCar() {
-            string sql = "INSERT INTO carinformation DEFAULT VALUES ";
+            string sql = @"INSERT INTO carinformation 
+                        DEFAULT VALUES ";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, connection);
 
@@ -51,8 +52,8 @@ namespace CarDataProject {
         }
 
         public int AddSegment(SegmentInformation segment, int speedlimitForward, int speedlimitBackward, string lineString) {
-            string sql = @"INSERT INTO segmentinformation(segmentid, osmid, roadname, roadtype, oneway, bridge, tunnel, speedbackward, speedforward, segmentline) 
-                            VALUES (@segmentid, @osmid, @roadname, @roadtype, @oneway, @bridge, @tunnel, @speedbackward, @speedforward, @segmentline)";
+            string sql = @"INSERT INTO segmentinformation(segmentid, osmid, roadname, roadtype, oneway, speedbackward, speedforward, segmentline) 
+                            VALUES (@segmentid, @osmid, @roadname, @roadtype, @oneway, @speedbackward, @speedforward, ST_GeomFromText(@lineString, 4326))";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, connection);
             command.Parameters.AddWithValue("@segmentid", segment.SegmentId);
@@ -60,16 +61,70 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@roadname", segment.RoadName);
             command.Parameters.AddWithValue("@roadtype", segment.RoadType);
             command.Parameters.AddWithValue("@oneway", segment.Oneway);
-            command.Parameters.AddWithValue("@speedforward", speedlimitForward);
-            command.Parameters.AddWithValue("@speedbackward", speedlimitBackward);
-            command.Parameters.AddWithValue("@segmentline", lineString);
+            command.Parameters.AddWithValue("@speedforward", (Int16)speedlimitForward);
+            command.Parameters.AddWithValue("@speedbackward", (Int16)speedlimitBackward);
+            command.Parameters.AddWithValue("@lineString", lineString);
 
             //Im am not entirely sure that lineString will be added this way, but it is possible
             //http://www.bostongis.com/postgis_geomfromtext.snippet
             //referring to this link.
-
-            return NonQuery(command, "segmentinformation");
+            try {
+                return NonQuery(command, "segmentinformation");
+            } catch(Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+            return 0;
         }
+
+        public int AddQualityInformation(QualityInformation QI) {
+            string sql = @"INSERT INTO qualityinformation(satellites, hdop) VALUES (@satellites, @hdop)";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@satellites", QI.Sat);
+            command.Parameters.AddWithValue("@hdop", QI.Hdop);
+
+            return NonQuery(command, "qualityinformation");
+        }
+
+        public int AddFact(Fact fact) {
+            string sql = @"INSERT INTO facttable(carid, segmentid, qualityid,dayofweek, idate, itime, point, mpoint, speed) 
+                        VALUES (@carid, @segmentid, @qualityid, @dayofweek, @idate, @itime, ST_MakePoint(@point, 4326), ST_MakePoint(@mpoint, 4326), @speed)";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@carid", fact.CarId);
+            command.Parameters.AddWithValue("@segmentid", fact.Segment.SegmentId);
+            command.Parameters.AddWithValue("@qualityid", fact.Quality.EntryId);
+            command.Parameters.AddWithValue("@dayofweek", fact.Temporal.Timestamp.DayOfWeek);
+            command.Parameters.AddWithValue("@idate", fact.Temporal.Timestamp.Date.ToString("ddMMyy"));
+            command.Parameters.AddWithValue("@itime", fact.Temporal.Timestamp.TimeOfDay.ToString("HHmmss"));
+            command.Parameters.AddWithValue("@point", fact.Spatial.Point);
+            command.Parameters.AddWithValue("@mpoint", fact.Spatial.MPoint);
+            command.Parameters.AddWithValue("@speed", fact.Measure.Speed);
+
+            return NonQuery(command, "facttable");
+        }
+            /*
+    entryid bigserial NOT NULL,
+  carid integer,
+  tripid bigint,
+  segmentid integer,
+  qualityid smallint,
+  dayofweek smallint,
+  idate integer,
+  itime integer,
+  point geometry(Point,4326),
+  mpoint geometry(Point,4326),
+  linesegment geometry(LineString,4326),
+  direction boolean,
+  speed real,
+  acceleration real,
+  jerk real,
+  speeding boolean,
+  braking boolean,
+  distancetolag real,
+  timetolag real,
+
+            */
         #endregion Creators
 
 
@@ -268,6 +323,17 @@ namespace CarDataProject {
 
             return tripIds;
         }
+
+        //INFATI Loading
+        public int GetQualityInformationIdBySatHdop(Int16 sat, double hdop) {
+            string sql = String.Format(@"SELECT qualityid
+                                         FROM qualityinformation
+                                         WHERE sat = {'0'} AND hdop = {'1'}", sat, hdop);
+            DataRowCollection result = Query(sql);
+
+            return result[0].Field<int>("qualityid");
+        }
+
         #endregion Getters
 
         #region Updaters
