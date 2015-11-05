@@ -10,6 +10,9 @@ namespace CarDataProject {
             Int16 month = Int16.Parse(dateString.Substring(2, 2));
             Int16 day = Int16.Parse(dateString.Substring(0, 2));
 
+            //Year is represented in two digits only
+            year += 2000;
+
             Int16 hour = Int16.Parse(timeString.Substring(0, 2));
             Int16 minute = Int16.Parse(timeString.Substring(2, 2));
             Int16 second = Int16.Parse(timeString.Substring(4, 2));

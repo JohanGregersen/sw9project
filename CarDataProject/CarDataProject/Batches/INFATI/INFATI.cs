@@ -21,7 +21,7 @@ namespace CarDataProject {
             AdjustLogHelper(Global.Batch.INFATI.Path + Global.Batch.INFATI.LogFile(teamId, carId));
         }
 
-        public static List<Fact> ReadLog(Int16 teamId, Int16 carId) {
+        public static List<INFATIEntry> ReadLog(Int16 teamId, Int16 carId) {
             //Open file from path
             StreamReader file = new StreamReader(Global.Batch.INFATI.Path + Global.Batch.INFATI.LogFile(teamId, carId));
 
@@ -42,20 +42,29 @@ namespace CarDataProject {
             file.Close();
 
             //Assemble the entries into facts
-            List<Fact> facts = new List<Fact>();
+            List<INFATIEntry> entries = new List<INFATIEntry>();
 
             foreach (List<string> row in rows) {
-                TemporalInformation temporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(Int32.Parse(row[4]), Int32.Parse(row[5])));
-                SpatialInformation spatial = new SpatialInformation(new GeoCoordinate(Int32.Parse(row[6]), Int32.Parse(row[7])), new GeoCoordinate(Int32.Parse(row[6]), Int32.Parse(row[7])));
-                QualityInformation quality = new QualityInformation(Int16.Parse(row[10]), Int16.Parse(row[11]));
-                MeasureInformation measure = new MeasureInformation(double.Parse(row[13]));
-                SegmentInformation segment = SegmentInformation.CreateWithId(Int64.Parse(row[15]));
+                DateTime timestamp = DateTimeHelper.ConvertToDateTime(Int32.Parse(row[4]), Int32.Parse(row[5]));
+                int UTMx = Int32.Parse(row[6]);
+                int UTMy = Int32.Parse(row[7]);
+                int UTMmx = Int32.Parse(row[8]);
+                int UTMmy = Int32.Parse(row[9]);
+                Int16 sat = Int16.Parse(row[10]);
+                Int16 hdop = Int16.Parse(row[11]);
+                Int16 speed = Int16.Parse(row[13]);
 
-                facts.Add(new Fact(quality, segment, temporal, spatial, measure));
+                if (row.Count > 15) {
+                    Int64 segmentId = Int64.Parse(row[15]);
+                    entries.Add(new INFATIEntry(timestamp, UTMx, UTMy, UTMmx, UTMmy, sat, hdop, speed, segmentId));
+                } else {
+                    entries.Add(new INFATIEntry(timestamp, UTMx, UTMy, UTMmx, UTMmy, sat, hdop, speed));
+                }
+
             }
 
-            //Return all facts
-            return facts;
+            //Return all entries
+            return entries;
         }
 
         private static void AdjustLogHelper(string logPath) {
@@ -80,11 +89,11 @@ namespace CarDataProject {
                 List<string> rowEntries = rows[i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 string row = rowEntries[0];
 
-                for (int j = 1; i < rowEntries.Count; i++) {
-                    row += Global.Batch.INFATI.RowSeperator + row[j];
+                for (int j = 1; j < rowEntries.Count; j++) {
+                    row += Global.Batch.INFATI.RowSeperator + rowEntries[j];
                 }
 
-                for (int j = rowEntries.Count; j < columns.Count; j++) {
+                for (int j = rowEntries.Count; j <= columns.Count; j++) {
                     row += Global.Batch.INFATI.RowSeperator;
                 }
 

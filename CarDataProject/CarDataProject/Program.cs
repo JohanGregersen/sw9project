@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace CarDataProject {
     class Program {
         static void Main(string[] args) {
-            int breakpoint = 0;
+            INFATI.ReadLog(1, 1);
         }
 
         /*static void InsertCarLogIntoDB() {

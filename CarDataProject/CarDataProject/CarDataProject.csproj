@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Batches\INFATI\INFATI.cs" />
+    <Compile Include="Batches\INFATI\INFATIEntry.cs" />
     <Compile Include="Batches\INFATI\INFATILoader.cs" />
     <Compile Include="Data Validation\TripGaps.cs" />
     <Compile Include="Global.cs" />
