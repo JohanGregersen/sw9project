@@ -24,25 +24,42 @@ namespace CarDataProject {
         }
         
         public static List<double> DistancePerTrip(Int16 carId) {
-            Int64 tripCount = TripCount(carId);
+            DBController dbc = new DBController();
+            List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
+            dbc.Close();
+
             List<double> kilometersPerTrip = new List<double>();
 
-            for (int i = 1; i < tripCount; i++) {
-                kilometersPerTrip.Add(TripStatistics.Distance(carId, i));
+            foreach (Int64 tripId in tripIds) {
+                kilometersPerTrip.Add(TripStatistics.Distance(carId, tripId));
             }
 
             return kilometersPerTrip;
         }
         
         public static List<TimeSpan> TimePerTrip(Int16 carId) {
-            Int64 tripCount = TripCount(carId);
+            DBController dbc = new DBController();
+            List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
+            dbc.Close();
+
             List<TimeSpan> minutesPerTrip = new List<TimeSpan>();
 
-            for (int i = 1; i < tripCount; i++) {
-                minutesPerTrip.Add(TripStatistics.Duration(carId, i));
+            foreach (Int64 tripId in tripIds) {
+                minutesPerTrip.Add(TripStatistics.Duration(carId, tripId));
             }
 
             return minutesPerTrip;
+        }
+
+        public static double TotalDistance(Int16 carId) {
+            double totalDistance = 0;
+            List<double> distancePerTrip = DistancePerTrip(carId);
+
+            foreach (double distance in distancePerTrip) {
+                totalDistance += distance;
+            }
+
+            return totalDistance;
         }
     }
 }

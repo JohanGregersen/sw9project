@@ -192,7 +192,7 @@ namespace CarDataProject {
         }
 
         public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
-            string sql = String.Format(@"SELECT entryid, idate, itime, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
+            string sql = String.Format(@"SELECT entryid, idate, itime, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude, distancetolag
                                          FROM facttable
                                          WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
             DataRowCollection result = Query(sql);
@@ -205,10 +205,11 @@ namespace CarDataProject {
                     int time = row.Field<int>("itime");
                     double latitude = row.Field<double>("latitude");
                     double longitude = row.Field<double>("longitude");
+                    double distanceToLag = row.Field<double>("distancetolag");
 
                     facts.Add(new Fact(entryId,
                                        new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time)),
-                                       new SpatialInformation(entryId, new GeoCoordinate(latitude, longitude))));
+                                       new SpatialInformation(entryId, new GeoCoordinate(latitude, longitude), distanceToLag)));
                 }
 
                 SortingHelper.FactsByDateTime(facts);
@@ -256,6 +257,14 @@ namespace CarDataProject {
             return result[0].Field<Int64>("tripcount");
         }
 
+        public Int64 GetTripCount() {
+            string sql = String.Format(@"SELECT COUNT(tripid) AS tripcount
+                                         FROM tripinformation");
+            DataRowCollection result = Query(sql);
+
+            return result[0].Field<Int64>("tripcount");
+        }
+
         public List<Int64> GetTripIdsByCarId(Int16 carId) {
             string sql = String.Format(@"SELECT tripid
                                          FROM tripinformation
@@ -267,6 +276,18 @@ namespace CarDataProject {
             }
 
             return tripIds;
+        }
+
+        public List<Int16> GetCarIds() {
+            string sql = String.Format(@"SELECT carid
+                                         FROM carinformation");
+            DataRowCollection result = Query(sql);
+            List<Int16> carIds = new List<Int16>();
+            foreach (DataRow row in result) {
+                carIds.Add(row.Field<Int16>("carid"));
+            }
+
+            return carIds;
         }
         #endregion Getters
 
