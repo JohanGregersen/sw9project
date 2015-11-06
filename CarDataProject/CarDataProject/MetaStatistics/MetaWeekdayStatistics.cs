@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace CarDataProject {
-    class MetaWeekStatistics {
+    class MetaWeekdayStatistics {
         public static Dictionary<DayOfWeek, double> AverageTripDistancePerDay() {
             Dictionary<DayOfWeek, double> distancePerDay = new Dictionary<DayOfWeek, double>();
             distancePerDay.Add(DayOfWeek.Monday, 0);

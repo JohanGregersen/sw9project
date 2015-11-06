@@ -16,8 +16,9 @@ namespace CarDataProject {
             this.Jerk = Jerk;
         }
 
-        public MeasureInformation(double Speed) {
+        public MeasureInformation(double Speed, double Acceleration) {
             this.Speed = Speed;
+            this.Acceleration = Acceleration;
         }
     }
 }

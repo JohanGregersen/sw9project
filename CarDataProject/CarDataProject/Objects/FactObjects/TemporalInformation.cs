@@ -19,6 +19,10 @@ namespace CarDataProject {
             this.Timestamp = Timestamp;
         }
 
+        public TemporalInformation(DateTime Timestamp, TimeSpan TimeToLag) {
+            this.Timestamp = Timestamp;
+        }
+
         public TemporalInformation(DateTime Timestamp) {
             this.Timestamp = Timestamp;
         }

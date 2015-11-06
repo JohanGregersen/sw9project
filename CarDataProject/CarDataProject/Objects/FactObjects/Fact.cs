@@ -32,6 +32,13 @@ namespace CarDataProject {
             this.Measure = Measure;
         }
 
+        public Fact(Int64 EntryId, SegmentInformation Segment, TemporalInformation Temporal, SpatialInformation Spatial, MeasureInformation Measure) {
+            this.Segment = Segment;
+            this.Temporal = Temporal;
+            this.Spatial = Spatial;
+            this.Measure = Measure;
+        }
+
         public Fact(Int64 EntryId, SegmentInformation Segment, TemporalInformation Temporal, MeasureInformation Measure) {
             this.EntryId = EntryId;
             this.Segment = Segment;

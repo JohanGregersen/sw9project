@@ -13,7 +13,6 @@ namespace CarDataProject {
         public static void PlotAll(Int16 carId) {
             GnuplotHelper.Plot(Global.CarStatistics.KilometersPerTripFile(carId), Global.CarStatistics.KilometersPerTripGraph(carId), true, 1, 2, "Kilometers per trip");
             GnuplotHelper.Plot(Global.CarStatistics.MinutesPerTripFile(carId), Global.CarStatistics.MinutesPerTripGraph(carId), true, 1, 2, "Minutes per trip");
-
         }
 
         public static Int64 TripCount(Int16 carId) {
@@ -35,6 +34,22 @@ namespace CarDataProject {
             }
 
             return kilometersPerTrip;
+        }
+
+        public static double AverageDistancePerTrip(Int16 carId) {
+            double totalDistance = 0;
+
+            DBController dbc = new DBController();
+            Int64 tripCount = dbc.GetTripCountByCarId(carId);
+            dbc.Close();
+
+            List<double> distancePerTrip = DistancePerTrip(carId);
+
+            foreach (double distance in distancePerTrip) {
+                totalDistance += distance;
+            }
+
+            return totalDistance / tripCount;
         }
         
         public static List<TimeSpan> TimePerTrip(Int16 carId) {

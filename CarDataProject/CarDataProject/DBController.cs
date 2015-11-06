@@ -7,29 +7,29 @@ using System.Device.Location;
 
 namespace CarDataProject {
     public class DBController {
-        NpgsqlConnection connection;
-        DataSet dataSet = new DataSet();
-        DataTable dataTable = new DataTable();
+        NpgsqlConnection Connection;
+        DataSet DataSet = new DataSet();
+        DataTable DataTable = new DataTable();
 
         public DBController() {
             string connectionSettings = String.Format("Server={0};User Id={1};Password={2};Database={3};",
                 Global.Database.Host, Global.Database.User, Global.Database.Password, Global.Database.Name);
 
-            connection = new NpgsqlConnection(connectionSettings);
-            connection.Open();
+            Connection = new NpgsqlConnection(connectionSettings);
+            Connection.Open();
         }
 
         public void Close() {
-            connection.Close();
+            Connection.Close();
         }
 
         private DataRowCollection Query(string sql) {
-            NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(sql, connection);
-            dataSet.Reset();
-            dataAdapter.Fill(dataSet);
-            dataTable = dataSet.Tables[0];
+            NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter(sql, Connection);
+            DataSet.Reset();
+            dataAdapter.Fill(DataSet);
+            DataTable = DataSet.Tables[0];
 
-            return dataTable.Rows;
+            return DataTable.Rows;
         }
 
         private int NonQuery(NpgsqlCommand command, string table) {
@@ -60,7 +60,7 @@ namespace CarDataProject {
             string sql = @"INSERT INTO carinformation 
                         DEFAULT VALUES RETURNING carid";
 
-            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
 
             return NonQueryWithReturnValue(command, "carinformation");
         }
@@ -82,7 +82,7 @@ namespace CarDataProject {
             string sql = @"INSERT INTO segmentinformation(segmentid, osmid, roadname, roadtype, oneway, speedbackward, speedforward, segmentline) 
                             VALUES (@segmentid, @osmid, @roadname, @roadtype, @oneway, @speedbackward, @speedforward, ST_GeomFromText(@lineString, 4326))";
 
-            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@segmentid", segment.SegmentId);
             command.Parameters.AddWithValue("@osmid", segment.OSMId);
             command.Parameters.AddWithValue("@roadname", segment.RoadName);
@@ -106,7 +106,7 @@ namespace CarDataProject {
         public int AddQualityInformation(QualityInformation QI) {
             string sql = @"INSERT INTO qualityinformation(satellites, hdop) VALUES (@satellites, @hdop)";
 
-            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@satellites", QI.Sat);
             command.Parameters.AddWithValue("@hdop", QI.Hdop);
 
@@ -148,7 +148,6 @@ namespace CarDataProject {
             return 0;
         }
         #endregion Creators
-
 
         #region Getters
 
@@ -318,7 +317,7 @@ namespace CarDataProject {
         }
 
         public List<Fact> GetSpeedInformationByCarIdAndTripId(Int16 carId, Int64 tripId) {
-            string sql = String.Format(@"SELECT entryid, itime, idate, speed, CASE 
+            string sql = String.Format(@"SELECT entryid, itime, idate, speed, distancetolag, timetolag, acceleration,  CASE 
                                             WHEN direction = TRUE THEN speedforward
                                             ELSE speedbackward
                                             END AS maxspeed
@@ -335,10 +334,14 @@ namespace CarDataProject {
                     int time = row.Field<int>("itime");
                     double speed = row.Field<double>("speed");
                     Int16 maxSpeed = row.Field<Int16>("maxspeed");
+                    double distanceToLag = row.Field<double>("distancetolag");
+                    Int16 timeToLag = row.Field<Int16>("timetolag");
+                    double acceleration = row.Field<double>("acceleration");
 
                     speedInformation.Add(new Fact(entryId, SegmentInformation.CreateWithMaxSpeed(maxSpeed),
-                                       new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time)),
-                                       new MeasureInformation(speed)));
+                                       new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time), new TimeSpan(0, 0, timeToLag)),
+                                       new SpatialInformation(distanceToLag),
+                                       new MeasureInformation(speed, acceleration)));
                 }
 
                 SortingHelper.FactsByDateTime(speedInformation);
@@ -468,7 +471,7 @@ namespace CarDataProject {
 
             foreach (int entryId in entryIds) {
                 string sql2 = String.Format("UPDATE cardata SET point = ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326), mpoint = ST_Transform(ST_SetSrid(ST_MakePoint(mpx, mpy), 32632), 4326) WHERE id = '{0}'", entryId);
-                NpgsqlCommand command = new NpgsqlCommand(sql2, connection);
+                NpgsqlCommand command = new NpgsqlCommand(sql2, Connection);
                 NonQuery(command, "cardata");
             }
         }
@@ -477,7 +480,7 @@ namespace CarDataProject {
             Int64 tripsTaken = CarStatistics.TripCount(carId);
             for (int i = 1; i < tripsTaken; i++) {
                 string sql = String.Format("UPDATE cardata SET mline = myline FROM(SELECT newtripid, id, ST_MakeLine(mpoint, next_mpoint) AS myline FROM(SELECT newtripid, id, mpoint, lead(mpoint) OVER w as next_mpoint, lead(newtripid) OVER w as next_newtripid FROM cardata WINDOW w AS(ORDER BY id)) AS res WHERE newtripid = '{0}' AND next_newtripid = newtripid) AS calclines WHERE cardata.id = calclines.id", i);
-                NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+                NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
                 NonQuery(command, "cardata");
             }
         }
