@@ -41,14 +41,41 @@ namespace CarDataProject {
             }
         }
 
+        private int NonQueryWithReturnValue(NpgsqlCommand command, string table) {
+            NpgsqlDataReader reader = command.ExecuteReader();
+
+            int returnValue = -1;
+
+            while (reader.Read()) {
+                returnValue = reader.GetInt32(0);
+            }
+            reader.Close();
+
+            return returnValue;
+        }
+
+
         #region Creators
-        public int AddCar() {
+        public int AddCarInformation() {
             string sql = @"INSERT INTO carinformation 
-                        DEFAULT VALUES ";
+                        DEFAULT VALUES RETURNING carid";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, connection);
 
-            return NonQuery(command, "carinformation");
+            return NonQueryWithReturnValue(command, "carinformation");
+        }
+
+        public Int64 AddTripInformation(int CarId) {
+            string sql = @"INSERT INTO tripinformation(carid) VALUES (@carid) RETURNING tripid";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@carid", CarId);
+            try {
+                return NonQueryWithReturnValue(command, "tripinformation");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+            return 0;
         }
 
         public int AddSegment(SegmentInformation segment, int speedlimitForward, int speedlimitBackward, string lineString) {
@@ -70,7 +97,7 @@ namespace CarDataProject {
             //referring to this link.
             try {
                 return NonQuery(command, "segmentinformation");
-            } catch(Exception e) {
+            } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
             return 0;
@@ -86,45 +113,40 @@ namespace CarDataProject {
             return NonQuery(command, "qualityinformation");
         }
 
-        public int AddFact(Fact fact) {
-            string sql = @"INSERT INTO facttable(carid, segmentid, qualityid,dayofweek, idate, itime, point, mpoint, speed) 
-                        VALUES (@carid, @segmentid, @qualityid, @dayofweek, @idate, @itime, ST_MakePoint(@point, 4326), ST_MakePoint(@mpoint, 4326), @speed)";
+        public int AddINFATIEntry(INFATIEntry entry) {
+            string sql = @"INSERT INTO facttable(carid, segmentid, qualityid, dayofweek, idate, itime, point, mpoint, speed) 
+                        VALUES (@carid, @segmentid, @qualityid, @dayofweek, @idate, @itime, 
+                        ST_Transform(ST_SetSrid(ST_MakePoint(@UTMx, @UTMy), 32632), 4326), ST_Transform(ST_SetSrid(ST_MakePoint(@UTMmx, @UTMmy), 32632), 4326), @speed)";
+
+
+            // ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326)
 
             NpgsqlCommand command = new NpgsqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@carid", fact.CarId);
-            command.Parameters.AddWithValue("@segmentid", fact.Segment.SegmentId);
-            command.Parameters.AddWithValue("@qualityid", fact.Quality.EntryId);
-            command.Parameters.AddWithValue("@dayofweek", fact.Temporal.Timestamp.DayOfWeek);
-            command.Parameters.AddWithValue("@idate", fact.Temporal.Timestamp.Date.ToString("ddMMyy"));
-            command.Parameters.AddWithValue("@itime", fact.Temporal.Timestamp.TimeOfDay.ToString("HHmmss"));
-            command.Parameters.AddWithValue("@point", fact.Spatial.Point);
-            command.Parameters.AddWithValue("@mpoint", fact.Spatial.MPoint);
-            command.Parameters.AddWithValue("@speed", fact.Measure.Speed);
+            command.Parameters.AddWithValue("@carid", entry.CarId);
 
-            return NonQuery(command, "facttable");
+            if (entry.SegmentId != 0) {
+                command.Parameters.AddWithValue("@segmentid", entry.SegmentId);
+            } else {
+                command.Parameters.AddWithValue("@segmentid", DBNull.Value);
+            }
+            command.Parameters.AddWithValue("@qualityid", entry.QualityId);
+            command.Parameters.AddWithValue("@dayofweek", (int)entry.Timestamp.DayOfWeek);
+            command.Parameters.AddWithValue("@idate", Convert.ToInt32(entry.Timestamp.ToString("ddMMyy")));
+            command.Parameters.AddWithValue("@itime", Convert.ToInt32(entry.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@UTMx", entry.UTMx);
+            command.Parameters.AddWithValue("@UTMy", entry.UTMy);
+            command.Parameters.AddWithValue("@UTMmx", entry.UTMmx);
+            command.Parameters.AddWithValue("@UTMmy", entry.UTMmy);
+            command.Parameters.AddWithValue("@speed", entry.Speed);
+
+
+            try {
+                return NonQuery(command, "facttable");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+            return 0;
         }
-            /*
-    entryid bigserial NOT NULL,
-  carid integer,
-  tripid bigint,
-  segmentid integer,
-  qualityid smallint,
-  dayofweek smallint,
-  idate integer,
-  itime integer,
-  point geometry(Point,4326),
-  mpoint geometry(Point,4326),
-  linesegment geometry(LineString,4326),
-  direction boolean,
-  speed real,
-  acceleration real,
-  jerk real,
-  speeding boolean,
-  braking boolean,
-  distancetolag real,
-  timetolag real,
-
-            */
         #endregion Creators
 
 
@@ -237,9 +259,31 @@ namespace CarDataProject {
                     int time = row.Field<int>("itime");
 
                     timestamps.Add(new TemporalInformation(entryId, DateTimeHelper.ConvertToDateTime(date, time)));
-                    SortingHelper.TemporalInformationByDateTime(timestamps);
                 }
 
+                SortingHelper.TemporalInformationByDateTime(timestamps);
+            }
+
+            return timestamps;
+        }
+
+
+        public List<TemporalInformation> GetTimestampsByCarId(Int16 carId) {
+            string sql = String.Format(@"SELECT entryid, idate, itime
+                                         FROM facttable
+                                         WHERE carid = '{0}'", carId);
+            DataRowCollection result = Query(sql);
+
+            List<TemporalInformation> timestamps = new List<TemporalInformation>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    Int64 entryId = row.Field<Int64>("entryid");
+                    int date = row.Field<int>("idate");
+                    int time = row.Field<int>("itime");
+
+                    timestamps.Add(new TemporalInformation(entryId, DateTimeHelper.ConvertToDateTime(date, time)));
+
+                }
                 SortingHelper.TemporalInformationByDateTime(timestamps);
             }
 
@@ -332,7 +376,8 @@ namespace CarDataProject {
 
             return tripIds;
         }
-	public List<Int16> GetCarIds() {
+
+        public List<Int16> GetCarIds() {
             string sql = String.Format(@"SELECT carid
                                          FROM carinformation");
             DataRowCollection result = Query(sql);
@@ -342,20 +387,20 @@ namespace CarDataProject {
             }
 
             return carIds;
-        } 
+        }
 
         //INFATI Loading
         public int GetQualityInformationIdBySatHdop(Int16 sat, double hdop) {
             string sql = String.Format(@"SELECT qualityid
                                          FROM qualityinformation
-                                         WHERE sat = {'0'} AND hdop = {'1'}", sat, hdop);
+                                         WHERE satellites = '{0}' AND hdop = '{1}'", sat, hdop);
             DataRowCollection result = Query(sql);
 
             return result[0].Field<int>("qualityid");
         }
 
-       
-	#endregion Getters
+
+        #endregion Getters
 
         #region Updaters
 
@@ -387,23 +432,25 @@ namespace CarDataProject {
             return NonQuery(command, "cardata");
         }*/
 
-        public int UpdateWithNewId(int newId, int currentId) {
-            string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentId);
-            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
-            return NonQuery(command, "cardata");
-        }
+        public int InsertTripAndUpdateFactTable(INFATITrip trip) {
+            Int64 tripId = AddTripInformation(trip.CarId);
 
-        public int UpdateWithNewIdWithMultipleEntries(int newId, List<Tuple<int, DateTime>> currentIds) {
-            string sql = String.Format("UPDATE cardata SET newtripid = '{0}' WHERE id = '{1}'", newId, currentIds[0].Item1);
+            string sql = String.Format("UPDATE facttable SET tripid = '{0}' WHERE entryid = '{1}'", tripId, trip.Timestamps[0].EntryId);
 
             StringBuilder sb = new StringBuilder(sql);
 
-            for (int i = 1; i < currentIds.Count; i++) {
-                sb.Append(String.Format("OR id = '{0}'", currentIds[i].Item1));
+            for (int i = 1; i < trip.Timestamps.Count; i++) {
+                sb.Append(String.Format(" OR entryid = '{0}'", trip.Timestamps[i].EntryId));
             }
 
             NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), connection);
-            return NonQuery(command, "cardata");
+            try {
+                return NonQuery(command, "facttable");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+            return 0;
+
         }
 
         public void UpdateEntryWithPointAndMpoint(Int16 carId) {

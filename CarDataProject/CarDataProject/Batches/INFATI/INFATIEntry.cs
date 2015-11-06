@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CarDataProject {
-    class INFATIEntry {
+    public class INFATIEntry {
         public DateTime Timestamp;
+        public int CarId;
         public int UTMx;
         public int UTMy;
         public int UTMmx;
@@ -15,6 +16,7 @@ namespace CarDataProject {
         public Int16 Hdop;
         public Int16 Speed;
         public Int64 SegmentId;
+        public int QualityId;
 
         public INFATIEntry(DateTime timestamp, int UTMx, int UTMy, int UTMmx, int UTMmy, Int16 Sat, Int16 Hdop, Int16 Speed, Int64 SegmentId) {
             this.Timestamp = timestamp;
