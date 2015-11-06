@@ -274,7 +274,7 @@ namespace CarDataProject {
         }
 
         public List<Fact> GetSpeedInformationByCarIdAndTripId(Int16 carId, Int64 tripId) {
-            string sql = String.Format(@"SELECT entryid, itime, idate, speed, distancetolag,  CASE 
+            string sql = String.Format(@"SELECT entryid, itime, idate, speed, distancetolag, timetolag, acceleration,  CASE 
                                             WHEN direction = TRUE THEN speedforward
                                             ELSE speedbackward
                                             END AS maxspeed
@@ -292,11 +292,13 @@ namespace CarDataProject {
                     double speed = row.Field<double>("speed");
                     Int16 maxSpeed = row.Field<Int16>("maxspeed");
                     double distanceToLag = row.Field<double>("distancetolag");
+                    Int16 timeToLag = row.Field<Int16>("timetolag");
+                    double acceleration = row.Field<double>("acceleration");
 
                     speedInformation.Add(new Fact(entryId, SegmentInformation.CreateWithMaxSpeed(maxSpeed),
-                                       new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time)),
+                                       new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time), new TimeSpan(0, 0, timeToLag)),
                                        new SpatialInformation(distanceToLag),
-                                       new MeasureInformation(speed)));
+                                       new MeasureInformation(speed, acceleration)));
                 }
 
                 SortingHelper.FactsByDateTime(speedInformation);

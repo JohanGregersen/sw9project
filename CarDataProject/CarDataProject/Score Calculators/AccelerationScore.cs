@@ -23,7 +23,7 @@ namespace CarDataProject {
             accelerationData = new List<List<Fact>>();
 
             foreach (Int64 tripId in tripIds) {
-                accelerationData.Add(TripStatistics.Acceleration(carId, tripId));
+                accelerationData.Add(TripStatistics.Accelerations(carId, tripId));
             }
 
             dataOutsideThreshold = FindValidDataPoints();   
