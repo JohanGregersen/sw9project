@@ -68,7 +68,7 @@ namespace CarDataProject {
         public Int64 AddTripInformation(int CarId) {
             string sql = @"INSERT INTO tripinformation(carid) VALUES (@carid) RETURNING tripid";
 
-            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@carid", CarId);
             try {
                 return NonQueryWithReturnValue(command, "tripinformation");
@@ -121,7 +121,7 @@ namespace CarDataProject {
 
             // ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326)
 
-            NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@carid", entry.CarId);
 
             if (entry.SegmentId != 0) {
@@ -446,7 +446,7 @@ namespace CarDataProject {
                 sb.Append(String.Format(" OR entryid = '{0}'", trip.Timestamps[i].EntryId));
             }
 
-            NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), connection);
+            NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), Connection);
             try {
                 return NonQuery(command, "facttable");
             } catch (Exception e) {
