@@ -47,10 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Batches\INFATI\DBInitializer.cs" />
     <Compile Include="Batches\INFATI\INFATI.cs" />
     <Compile Include="Batches\INFATI\INFATIEntry.cs" />
     <Compile Include="Batches\INFATI\INFATILoader.cs" />
-    <Compile Include="Batches\INFATI\INFATITrip.cs" />
+    <Compile Include="Batches\INFATI\INFATIObjects\INFATITime.cs" />
+    <Compile Include="Batches\INFATI\INFATIObjects\INFATITrip.cs" />
     <Compile Include="Data Validation\TripGaps.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
