@@ -73,7 +73,7 @@ namespace CarDataProject {
 
             //Segment Information
             if(row["segmentid"] is DBNull) {
-                row["segmentid"] = 0;
+                row["segmentid"] = -1;
             }
             this.Segment = new SegmentInformation(row.Field<int>("segmentid"), row.Field<Int16>("maxspeed"));
 
