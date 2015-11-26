@@ -57,7 +57,7 @@ namespace CarDataProject {
                 List<TemporalInformation> entries = dbc.GetTimestampsByCarIdAndTripId(carId, tripId);
 
                 for (int i = 1; i < entries.Count; i++) {
-                    timePerDay[entries[i].Timestamp.DayOfWeek] += entries[i].TimeToLag;
+                    timePerDay[entries[i].Timestamp.DayOfWeek] += entries[i].SecondsToLag;
                 }
             }
 
@@ -109,7 +109,7 @@ namespace CarDataProject {
                 List<TemporalInformation> entries = dbc.GetTimestampsByCarIdAndTripId(carId, tripId);
 
                 for (int i = 1; i < entries.Count; i++) {
-                    timePerHourPerWeekday[entries[i].Timestamp.DayOfWeek][entries[i].Timestamp.Hour] += entries[i].TimeToLag;
+                    timePerHourPerWeekday[entries[i].Timestamp.DayOfWeek][entries[i].Timestamp.Hour] += entries[i].SecondsToLag;
                 }
             }
             return timePerHourPerWeekday;

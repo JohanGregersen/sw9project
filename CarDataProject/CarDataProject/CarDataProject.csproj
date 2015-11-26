@@ -53,6 +53,8 @@
     <Compile Include="Batches\INFATI\INFATILoader.cs" />
     <Compile Include="Batches\INFATI\INFATIObjects\INFATITime.cs" />
     <Compile Include="Batches\INFATI\INFATIObjects\INFATITrip.cs" />
+    <Compile Include="Data Manipulators\GPSFactUpdater.cs" />
+    <Compile Include="Data Manipulators\MeasureCalculator.cs" />
     <Compile Include="Data Validation\TripGaps.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
@@ -65,6 +67,8 @@
     <Compile Include="MetaStatistics\MetaTripStatistics.cs" />
     <Compile Include="MetaStatistics\MetaWeekdayStatistics.cs" />
     <Compile Include="Objects\CarObjects\Car.cs" />
+    <Compile Include="Objects\FactObjects\DimDate.cs" />
+    <Compile Include="Objects\FactObjects\DimTime.cs" />
     <Compile Include="Objects\FactObjects\Fact.cs" />
     <Compile Include="Objects\FactObjects\FlagInformation.cs" />
     <Compile Include="Objects\FactObjects\MeasureInformation.cs" />

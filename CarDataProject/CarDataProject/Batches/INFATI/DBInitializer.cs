@@ -162,7 +162,7 @@ namespace CarDataProject {
                     string lineStringC12 = row[11];
 
                     dbc.AddSegment(segmentC12, speedlimitForwardC12, speedlimitBackwardC12, lineStringC12);
-                    //REFACTOR POTENTIAL
+                    //REFACTOR POTENTIAL BECAUSE approx 165 cases has length 12... the code is just copy-pasted in again and adjusted the index-keys
                     continue;
                 }
 

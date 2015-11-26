@@ -92,7 +92,7 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@speedbackward", (Int16)speedlimitBackward);
             command.Parameters.AddWithValue("@lineString", lineString);
 
-            //Im am not entirely sure that lineString will be added this way, but it is possible
+            //lineString will be added this way
             //http://www.bostongis.com/postgis_geomfromtext.snippet
             //referring to this link.
             try {
@@ -168,9 +168,9 @@ namespace CarDataProject {
         }
 
         public int AddINFATIEntry(INFATIEntry entry) {
-            string sql = @"INSERT INTO gpsfact(carid, qualityid, segmentid, timeid, dateid, point, mpoint, speed) 
+            string sql = @"INSERT INTO gpsfact(carid, qualityid, segmentid, timeid, dateid, point, mpoint, speed, maxspeed) 
                         VALUES (@carid, @qualityid, @segmentid, @timeid, @dateid, 
-                        ST_Transform(ST_SetSrid(ST_MakePoint(@UTMx, @UTMy), 23032), 4326), ST_Transform(ST_SetSrid(ST_MakePoint(@UTMmx, @UTMmy), 23032), 4326), @speed)";
+                        ST_Transform(ST_SetSrid(ST_MakePoint(@UTMx, @UTMy), 23032), 4326), ST_Transform(ST_SetSrid(ST_MakePoint(@UTMmx, @UTMmy), 23032), 4326), @speed, @maxspeed)";
 
 
             // ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326)
@@ -191,6 +191,7 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@UTMmx", entry.UTMmx);
             command.Parameters.AddWithValue("@UTMmy", entry.UTMmy);
             command.Parameters.AddWithValue("@speed", entry.Speed);
+            command.Parameters.AddWithValue("@maxspeed", entry.MaxSpeed);
 
             try {
                 return NonQuery(command, "gpsfact");
@@ -202,6 +203,36 @@ namespace CarDataProject {
         #endregion Creators
 
         #region Getters
+        public List<Fact> GetFactsByCarIdAndTripId(Int16 carId, int tripId) {
+
+            string sql = String.Format(@"SELECT *, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
+                                        FROM gpsfact
+                                        WHERE carid = '{0}' AND tripId = '{1}'
+                                        ORDER BY gpsfact.dateid ASC, gpsfact.timeid", carId, tripId);
+
+
+            /*
+            string sql = String.Format(@"SELECT *, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
+                                        FROM gpsfact
+                                        INNER JOIN dimdate
+                                        ON gpsfact.dateid = dimdate.dateid
+                                        INNER JOIN dimtime
+                                        ON gpsfact.timeid = dimtime.timeid
+                                        WHERE carid = '{0}' AND tripId = '{1}'
+                                        ORDER BY gpsfact.dateid ASC, gpsfact.timeid", carId, tripId);
+            */
+            DataRowCollection result = Query(sql);
+
+            List<Fact> facts = new List<Fact>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    facts.Add(new Fact(row));
+                }
+            }
+
+            return facts;
+        }
+
         public List<TemporalInformation> GetTimesByCarIdAndDate(Int16 carId, int date) {
             string sql = String.Format(@"SELECT entryid, timeid
                                          FROM gpsfact
@@ -378,9 +409,9 @@ namespace CarDataProject {
         }
 
         public Int64 GetTripCountByCarId(Int16 carId) {
-            string sql = String.Format(@"SELECT COUNT(tripid) AS tripcount
-                                         FROM tripinformation
-                                         WHERE carid = {'0'}", carId);
+            string sql = String.Format(@"SELECT COUNT(tripid) AS tripcount 
+                                         FROM tripfact 
+                                         WHERE carid = '{0}'", carId);
             DataRowCollection result = Query(sql);
 
             return result[0].Field<Int64>("tripcount");
@@ -388,7 +419,7 @@ namespace CarDataProject {
 
         public Int64 GetTripCount() {
             string sql = String.Format(@"SELECT COUNT(tripid) AS tripcount
-                                         FROM tripinformation");
+                                         FROM tripfact");
             DataRowCollection result = Query(sql);
 
             return result[0].Field<Int64>("tripcount");
@@ -396,8 +427,8 @@ namespace CarDataProject {
 
         public List<Int64> GetTripIdsByCarId(Int16 carId) {
             string sql = String.Format(@"SELECT tripid
-                                         FROM tripinformation
-                                         WHERE carid = {'0'}", carId);
+                                         FROM tripfact
+                                         WHERE carid = '{0}'", carId);
             DataRowCollection result = Query(sql);
             List<Int64> tripIds = new List<Int64>();
             foreach (DataRow row in result) {
@@ -433,33 +464,60 @@ namespace CarDataProject {
 
         #region Updaters
 
-        /*public int AddCarLogEntry(CarLogEntry entry) {
-            StringBuilder sql = new StringBuilder();
-            sql.Append("INSERT INTO cardata(id, entryid, carid, driverid, rdate, rtime, xcoord, ycoord, mpx, mpy, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno)");
-            sql.Append(" VALUES (@id, @entryid, @carid, @driverid, @rdate, @rtime, @xcoord, @ycoord, @mpx, @mpy, @sat, @hdop, @maxspd, @spd, @strtcod, @segmentkey, @tripid, @tripsegmentno)");
+        public int UpdateGPSFactWithMeasures(List<Fact> UpdatedFacts) {
+            //PathLine
 
-            NpgsqlCommand command = new NpgsqlCommand(sql.ToString(), connection);
-            command.Parameters.AddWithValue("@id", entry.id);
-            command.Parameters.AddWithValue("@entryid", entry.entryid);
-            command.Parameters.AddWithValue("@carid", entry.carid);
-            command.Parameters.AddWithValue("@driverid", entry.driverid);
-            command.Parameters.AddWithValue("@rdate", entry.rdate);
-            command.Parameters.AddWithValue("@rtime", entry.rtime);
-            command.Parameters.AddWithValue("@xcoord", entry.xcoord);
-            command.Parameters.AddWithValue("@ycoord", entry.ycoord);
-            command.Parameters.AddWithValue("@mpx", entry.mpx);
-            command.Parameters.AddWithValue("@mpy", entry.mpy);
-            command.Parameters.AddWithValue("@sat", entry.sat);
-            command.Parameters.AddWithValue("@hdop", entry.hdop);
-            command.Parameters.AddWithValue("@maxspd", entry.maxspd);
-            command.Parameters.AddWithValue("@spd", entry.spd);
-            command.Parameters.AddWithValue("@strtcod", entry.strtcod);
-            command.Parameters.AddWithValue("@segmentkey", entry.segmentkey);
-            command.Parameters.AddWithValue("@tripid", entry.tripid);
-            command.Parameters.AddWithValue("@tripsegmentno", entry.tripsegmentno);
+            //Measures
+            //Acceleration
+            //Jerk
 
-            return NonQuery(command, "cardata");
-        }*/
+            //Spatial
+            //DistanceToLag
+
+            //Temporal
+            //SecondsToLag
+
+            //FlagInformation
+            //Speeding
+            //Braking
+            //SteadySpeed
+            //SELECT ST_SetSRID(ST_MakePoint(-71.1043443253471, 42.3150676015829),4326);
+            for (int i = 1; i < UpdatedFacts.Count; i++) {
+                string sql = String.Format(@"UPDATE gpsfact
+                                            SET pathline = ST_MakeLine(ST_SetSRID(ST_MakePoint(@prevMPointLng, @prevMpointLat), 4326), ST_SetSRID(ST_MakePoint(@MPointLng, @MpointLat),4326)),
+                                            acceleration = @acceleration,
+                                            jerk = @jerk,
+                                            distancetolag = @distancetolag,
+                                            secondstolag = @secondstolag,
+                                            speeding = @speeding,
+                                            braking = @braking,
+                                            steadyspeed = @steadyspeed
+                                            WHERE entryid = @entryid");
+
+                NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+                
+                command.Parameters.AddWithValue("@entryid", UpdatedFacts[i].EntryId);
+                command.Parameters.AddWithValue("@prevMPointLng", UpdatedFacts[i - 1].Spatial.MPoint.Longitude);
+                command.Parameters.AddWithValue("@prevMpointLat", UpdatedFacts[i - 1].Spatial.MPoint.Latitude);
+                command.Parameters.AddWithValue("@MPointLng", UpdatedFacts[i].Spatial.MPoint.Longitude);
+                command.Parameters.AddWithValue("@MpointLat", UpdatedFacts[i].Spatial.MPoint.Latitude);
+                command.Parameters.AddWithValue("@acceleration", UpdatedFacts[i].Measure.Acceleration);
+                command.Parameters.AddWithValue("@jerk", UpdatedFacts[i].Measure.Jerk);
+                command.Parameters.AddWithValue("@distancetolag", UpdatedFacts[i].Spatial.DistanceToLag);
+                command.Parameters.AddWithValue("@secondstolag", UpdatedFacts[i].Temporal.SecondsToLag.Seconds);
+                command.Parameters.AddWithValue("@speeding", UpdatedFacts[i].Flag.Speeding);
+                command.Parameters.AddWithValue("@braking", UpdatedFacts[i].Flag.Braking);
+                command.Parameters.AddWithValue("@steadyspeed", UpdatedFacts[i].Flag.SteadySpeed);
+
+                try {
+                    NonQuery(command, "gpsfact");
+                } catch (Exception e) {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+
+            return 0;
+        }
 
         public int InsertTripAndUpdateFactTable(INFATITrip trip) {
             Int64 tripId = AddTripInformation(trip.CarId);

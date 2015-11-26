@@ -27,6 +27,11 @@ namespace CarDataProject {
             this.RoadLine = RoadLine;
         }
 
+        public SegmentInformation(Int64 SegmentId, Int16 MaxSpeed) {
+            this.SegmentId = SegmentId;
+            this.MaxSpeed = MaxSpeed;
+        }
+
         public static SegmentInformation CreateWithId(Int64 SegmentId) {
             SegmentInformation segment = new SegmentInformation();
             segment.SegmentId = SegmentId;

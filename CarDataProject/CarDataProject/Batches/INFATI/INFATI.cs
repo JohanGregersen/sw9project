@@ -52,13 +52,15 @@ namespace CarDataProject {
                 int UTMmy = Int32.Parse(row[9]);
                 Int16 sat = Int16.Parse(row[10]);
                 Int16 hdop = Int16.Parse(row[11]);
+                Int16 maxspeed = Int16.Parse(row[12]);
                 Int16 speed = Int16.Parse(row[13]);
+
 
                 if (row.Count > 15) {
                     Int64 segmentId = Int64.Parse(row[15]);
-                    entries.Add(new INFATIEntry(timestamp, UTMx, UTMy, UTMmx, UTMmy, sat, hdop, speed, segmentId));
+                    entries.Add(new INFATIEntry(timestamp, UTMx, UTMy, UTMmx, UTMmy, sat, hdop, speed, maxspeed, segmentId));
                 } else {
-                    entries.Add(new INFATIEntry(timestamp, UTMx, UTMy, UTMmx, UTMmy, sat, hdop, speed));
+                    entries.Add(new INFATIEntry(timestamp, UTMx, UTMy, UTMmx, UTMmy, sat, hdop, speed, maxspeed));
                 }
 
             }

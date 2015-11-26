@@ -241,9 +241,9 @@ namespace CarDataProject {
                     speedingDistance += speedData[i].Spatial.DistanceToLag;
 
                     if (percentageOfMaxSpeed >= lowerPercentage && percentageOfMaxSpeed <= upperPercentage) {
-                        timeInThreshold += speedData[i].Temporal.TimeToLag;
+                        timeInThreshold += speedData[i].Temporal.SecondsToLag;
                     } else {
-                        timeOutsideThreshold += speedData[i].Temporal.TimeToLag;
+                        timeOutsideThreshold += speedData[i].Temporal.SecondsToLag;
                     }
                     //If not previously speeding, remember the time where driver began speeding
                     if (!speeding) {
