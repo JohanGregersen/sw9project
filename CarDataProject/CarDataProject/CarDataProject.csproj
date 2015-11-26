@@ -55,6 +55,7 @@
     <Compile Include="Batches\INFATI\INFATIObjects\INFATITrip.cs" />
     <Compile Include="Data Manipulators\GPSFactUpdater.cs" />
     <Compile Include="Data Manipulators\MeasureCalculator.cs" />
+    <Compile Include="Data Manipulators\TripFactUpdater.cs" />
     <Compile Include="Data Validation\TripGaps.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
@@ -74,7 +75,6 @@
     <Compile Include="Objects\FactObjects\MeasureInformation.cs" />
     <Compile Include="Objects\FactObjects\SpatialInformation.cs" />
     <Compile Include="Objects\FactObjects\SegmentInformation.cs" />
-    <Compile Include="Objects\TripObjects\ScoreInformation.cs" />
     <Compile Include="Objects\TripObjects\Trip.cs" />
     <Compile Include="Score Calculators\AccelerationScore.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
