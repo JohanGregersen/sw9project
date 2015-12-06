@@ -14,8 +14,6 @@ namespace CarDataProject {
         public SpatialInformation Spatial { get; set; }
         public MeasureInformation Measure { get; set; }
         public FlagInformation Flag { get; set; }
-        public DimDate Date { get; }
-        public DimTime Time { get; }
 
         public Fact(Int64 EntryId, int CarId, Int64 TripId, QualityInformation Quality, SegmentInformation Segment, TemporalInformation Temporal, SpatialInformation Spatial, MeasureInformation Measure, FlagInformation Flag) {
             this.EntryId = EntryId;
@@ -63,20 +61,32 @@ namespace CarDataProject {
             this.TripId = row.Field<Int64>("tripid");
 
             //Spatial Information
-            this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")));
+            row["distancetolag"] = row["distancetolag"] is DBNull ? -1.0 : row["distancetolag"];
+            row["pathline"] = row["pathline"] is DBNull ? null : row["pathline"];
+            this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")), (double)row.Field<Single>("distancetolag"), row.Field<PostgisLineString>("pathline"));
 
             //Temporal Information
-            this.Temporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("dateid"), row.Field<int>("timeid")));
+            row["secondstolag"] = row["secondstolag"] is DBNull ? 0 : row["secondstolag"];
+            this.Temporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("dateid"), row.Field<int>("timeid")), new TimeSpan(0, 0, row.Field<Int16>("secondstolag")));
 
             //Measure Information
-            this.Measure = new MeasureInformation((double)row.Field<Single>("speed"));
+            row["acceleration"] = row["acceleration"] is DBNull ? 0 : row["acceleration"];
+            row["jerk"] = row["jerk"] is DBNull ? 0 : row["jerk"];
+            this.Measure = new MeasureInformation((double)row.Field<Single>("speed"), (double)row.Field<Single>("acceleration"), (double)row.Field<Single>("jerk"));
+
+            //Flag Information
+            row["speeding"] = row["speeding"] is DBNull ? false : row["speeding"];
+            row["braking"] = row["braking"] is DBNull ? false : row["braking"];
+            row["steadyspeed"] = row["steadyspeed"] is DBNull ? false : row["steadyspeed"];
+            this.Flag = new FlagInformation(row.Field<bool>("speeding"), row.Field<bool>("braking"), row.Field<bool>("steadyspeed"));
 
             //Segment Information
-            if(row["segmentid"] is DBNull) {
-                row["segmentid"] = -1;
-            }
+            row["segmentid"] = row["segmentid"] is DBNull ? -1 : row["segmentid"];
             this.Segment = new SegmentInformation(row.Field<int>("segmentid"), row.Field<Int16>("maxspeed"));
 
+            //Quality Information
+            row["qualityid"] = row["qualityid"] is DBNull ? -1 : row["qualityid"];
+            this.Quality = new QualityInformation(row.Field<Int16>("qualityid"));
         }
     }
 }

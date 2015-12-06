@@ -203,24 +203,13 @@ namespace CarDataProject {
         #endregion Creators
 
         #region Getters
-        public List<Fact> GetFactsByCarIdAndTripId(Int16 carId, int tripId) {
+        public List<Fact> GetFactsByCarIdAndTripId(Int16 carId, Int64 tripId) {
 
             string sql = String.Format(@"SELECT *, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
                                         FROM gpsfact
                                         WHERE carid = '{0}' AND tripId = '{1}'
-                                        ORDER BY gpsfact.dateid ASC, gpsfact.timeid", carId, tripId);
+                                        ORDER BY gpsfact.dateid ASC, gpsfact.timeid ASC, gpsfact.entryid ASC", carId, tripId);
 
-
-            /*
-            string sql = String.Format(@"SELECT *, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
-                                        FROM gpsfact
-                                        INNER JOIN dimdate
-                                        ON gpsfact.dateid = dimdate.dateid
-                                        INNER JOIN dimtime
-                                        ON gpsfact.timeid = dimtime.timeid
-                                        WHERE carid = '{0}' AND tripId = '{1}'
-                                        ORDER BY gpsfact.dateid ASC, gpsfact.timeid", carId, tripId);
-            */
             DataRowCollection result = Query(sql);
 
             List<Fact> facts = new List<Fact>();
@@ -408,6 +397,19 @@ namespace CarDataProject {
             return speedInformation;
         }
 
+        public Trip GetTripByCarIdAndTripId(Int16 carId, Int64 tripId) {
+            string sql = String.Format(@"SELECT *
+                                        FROM TripFact
+                                        WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
+            DataRowCollection result = Query(sql);
+
+            if (result.Count >= 1) {
+                return new Trip(result[0]);
+            }
+
+            return null;
+        }
+
         public Int64 GetTripCountByCarId(Int16 carId) {
             string sql = String.Format(@"SELECT COUNT(tripid) AS tripcount 
                                          FROM tripfact 
@@ -428,8 +430,10 @@ namespace CarDataProject {
         public List<Int64> GetTripIdsByCarId(Int16 carId) {
             string sql = String.Format(@"SELECT tripid
                                          FROM tripfact
-                                         WHERE carid = '{0}'", carId);
+                                         WHERE carid = '{0}'
+                                         ORDER BY tripid ASC", carId);
             DataRowCollection result = Query(sql);
+
             List<Int64> tripIds = new List<Int64>();
             foreach (DataRow row in result) {
                 tripIds.Add(row.Field<Int64>("tripid"));
@@ -495,7 +499,7 @@ namespace CarDataProject {
                                             WHERE entryid = @entryid");
 
                 NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
-                
+
                 command.Parameters.AddWithValue("@entryid", UpdatedFacts[i].EntryId);
                 command.Parameters.AddWithValue("@prevMPointLng", UpdatedFacts[i - 1].Spatial.MPoint.Longitude);
                 command.Parameters.AddWithValue("@prevMpointLat", UpdatedFacts[i - 1].Spatial.MPoint.Latitude);
@@ -515,6 +519,66 @@ namespace CarDataProject {
                     Console.WriteLine(e.ToString());
                 }
             }
+
+            return 0;
+        }
+
+        public int UpdateTripFactWithMeasures(Trip UpdatedTrip) {
+            string sql = String.Format(@"UPDATE tripfact
+                                            SET previoustripid = @previoustripid,
+                                            startdate = @startdate,
+                                            starttime = @starttime,
+                                            enddate = @enddate,
+                                            endtime = @endtime,
+                                            secondsdriven = @secondsdriven,
+                                            metersdriven = @metersdriven,
+                                            jerkcount = @jerkcount,
+                                            brakecount = @brakecount,
+                                            accelerationcount = @accelerationcount,
+                                            meterssped = @meterssped,
+                                            timesped = @timesped,
+                                            steadyspeeddistance = @steadyspeeddistance,
+                                            steadyspeedtime = @steadyspeedtime,
+                                            secondstolag = @secondstolag
+                                            WHERE tripid = @tripid");
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+
+            command.Parameters.AddWithValue("@tripid", UpdatedTrip.TripId);
+
+
+            if (UpdatedTrip.PreviousTripId != 0) {
+                command.Parameters.AddWithValue("@previoustripid", UpdatedTrip.PreviousTripId);
+
+            } else {
+                command.Parameters.AddWithValue("@previoustripid", DBNull.Value);
+
+            }
+
+            command.Parameters.AddWithValue("@startdate", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("yyyyMMdd")));
+            command.Parameters.AddWithValue("@starttime", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@enddate", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("yyyyMMdd")));
+            command.Parameters.AddWithValue("@endtime", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@secondsdriven", UpdatedTrip.SecondsDriven.TotalSeconds);
+            command.Parameters.AddWithValue("@metersdriven", UpdatedTrip.MetersDriven);
+            //price?
+            //optimal score?
+            //trip score=
+            command.Parameters.AddWithValue("@jerkcount", UpdatedTrip.JerkCount);
+            command.Parameters.AddWithValue("@brakecount", UpdatedTrip.BrakeCount);
+            command.Parameters.AddWithValue("@accelerationcount", UpdatedTrip.AccelerationCount);
+            command.Parameters.AddWithValue("@meterssped", UpdatedTrip.MetersSped);
+            command.Parameters.AddWithValue("@timesped", UpdatedTrip.TimeSped.TotalSeconds);
+            command.Parameters.AddWithValue("@steadyspeeddistance", UpdatedTrip.SteadySpeedDistance);
+            command.Parameters.AddWithValue("@steadyspeedtime", UpdatedTrip.SteadySpeedTime.TotalSeconds);
+            command.Parameters.AddWithValue("@secondstolag", UpdatedTrip.SecondsToLag.TotalSeconds);
+
+            try {
+                NonQuery(command, "tripfact");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
 
             return 0;
         }

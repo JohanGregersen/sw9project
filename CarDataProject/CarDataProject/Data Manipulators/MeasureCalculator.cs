@@ -46,6 +46,20 @@ namespace CarDataProject {
             return false;
         }
 
+        public static bool Jerking (MeasureInformation MI) {
+            if (Math.Abs(MI.Jerk) >= 5) {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool Accelerating(MeasureInformation MI) {
+            if (Math.Abs(MI.Acceleration) >= 5) {
+                return true;
+            }
+            return false;
+        }
+
         public static bool SteadySpeed(List<Fact> facts) {
             if(facts.Count != 5) {
                 throw new ArgumentException("Steady Speed must be calculated with exactly 5 elements");

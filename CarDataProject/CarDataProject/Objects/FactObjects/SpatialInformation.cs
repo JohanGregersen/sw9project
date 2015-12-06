@@ -11,7 +11,7 @@ namespace CarDataProject {
         public double DistanceToLag { get; }
         public PostgisLineString PathLine { get; }
 
-        public SpatialInformation(Int64 TripId, Int64 EntryId, GeoCoordinate Point, GeoCoordinate MPoint, double DistanceToLag, PostgisLineString PathLine) {
+        public SpatialInformation(Int64 TripId, Int64 EntryId, GeoCoordinate MPoint, double DistanceToLag, PostgisLineString PathLine) {
             this.TripId = TripId;
             this.EntryId = EntryId;
             this.Point = Point;
@@ -24,6 +24,12 @@ namespace CarDataProject {
             this.EntryId = EntryId;
             this.MPoint = MPoint;
             this.DistanceToLag = DistanceToLag;
+        }
+
+        public SpatialInformation(GeoCoordinate MPoint, double DistanceToLag, PostgisLineString PathLine) {
+            this.MPoint = MPoint;
+            this.DistanceToLag = DistanceToLag;
+            this.PathLine = PathLine;
         }
 
         public SpatialInformation(GeoCoordinate MPoint) {
