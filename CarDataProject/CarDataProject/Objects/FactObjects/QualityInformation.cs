@@ -25,9 +25,16 @@ namespace CarDataProject {
             this.Hdop = Hdop;
         }
 
+        public QualityInformation(Int16 QualityId, Int16 Sat, double Hdop) {
+            this.QualityId = QualityId;
+            this.Sat = Sat;
+            this.Hdop = Hdop;
+        }
+
         public QualityInformation(Int16 Sat, double Hdop) {
             this.Sat = Sat;
             this.Hdop = Hdop;
         }
+
     }
 }

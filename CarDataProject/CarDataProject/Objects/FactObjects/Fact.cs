@@ -86,7 +86,9 @@ namespace CarDataProject {
 
             //Quality Information
             row["qualityid"] = row["qualityid"] is DBNull ? -1 : row["qualityid"];
-            this.Quality = new QualityInformation(row.Field<Int16>("qualityid"));
+            row["satellites"] = row["satellites"] is DBNull ? -1 : row["satellites"];
+            row["hdop"] = row["hdop"] is DBNull ? -1 : row["hdop"];
+            this.Quality = new QualityInformation(row.Field<Int16>("qualityid"), row.Field<Int16>("satellites"), (double)row.Field<Single>("hdop"));
         }
     }
 }

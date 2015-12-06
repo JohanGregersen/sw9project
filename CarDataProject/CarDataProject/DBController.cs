@@ -207,6 +207,8 @@ namespace CarDataProject {
 
             string sql = String.Format(@"SELECT *, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
                                         FROM gpsfact
+                                        INNER JOIN qualityinformation
+                                        ON gpsfact.qualityid = qualityinformation.qualityid
                                         WHERE carid = '{0}' AND tripId = '{1}'
                                         ORDER BY gpsfact.dateid ASC, gpsfact.timeid ASC, gpsfact.entryid ASC", carId, tripId);
 
@@ -539,7 +541,8 @@ namespace CarDataProject {
                                             timesped = @timesped,
                                             steadyspeeddistance = @steadyspeeddistance,
                                             steadyspeedtime = @steadyspeedtime,
-                                            secondstolag = @secondstolag
+                                            secondstolag = @secondstolag,
+                                            dataquality = @dataquality
                                             WHERE tripid = @tripid");
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
@@ -572,6 +575,7 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@steadyspeeddistance", UpdatedTrip.SteadySpeedDistance);
             command.Parameters.AddWithValue("@steadyspeedtime", UpdatedTrip.SteadySpeedTime.TotalSeconds);
             command.Parameters.AddWithValue("@secondstolag", UpdatedTrip.SecondsToLag.TotalSeconds);
+            command.Parameters.AddWithValue("@dataquality", UpdatedTrip.DataQuality);
 
             try {
                 NonQuery(command, "tripfact");

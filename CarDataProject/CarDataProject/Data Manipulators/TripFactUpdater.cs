@@ -49,6 +49,7 @@ namespace CarDataProject {
             trip.EndTemporal = facts.Last().Temporal;
             trip.SecondsDriven = MeasureCalculator.SecondsToLag(facts.Last().Temporal.Timestamp, facts.First().Temporal.Timestamp);
 
+            //Fact related calculations
             trip.MetersDriven = 0;
             trip.JerkCount = 0;
             trip.BrakeCount = 0;
@@ -57,6 +58,8 @@ namespace CarDataProject {
             trip.TimeSped = new TimeSpan();
             trip.SteadySpeedDistance = 0;
             trip.SteadySpeedTime = new TimeSpan();
+            trip.DataQuality = 0;
+
             for (int i = 1; i < facts.Count; i++) {
                 trip.MetersDriven += MeasureCalculator.DistanceToLag(facts[i].Spatial.MPoint, facts[i - 1].Spatial.MPoint);
 
@@ -76,12 +79,12 @@ namespace CarDataProject {
                 }
 
                 //Meters Sped
-                if (facts[i].Flag.Speeding == true) {
+                if (facts[i].Flag.Speeding == true && facts[i].Segment.MaxSpeed != 0) {
                     trip.MetersSped += facts[i].Spatial.DistanceToLag;
                 }
 
                 //Time Sped
-                if (facts[i].Flag.Speeding == true) {
+                if (facts[i].Flag.Speeding == true && facts[i].Segment.MaxSpeed != 0) {
                     trip.TimeSped += facts[i].Temporal.SecondsToLag;
                 }
 
@@ -94,7 +97,13 @@ namespace CarDataProject {
                 if (facts[i].Flag.SteadySpeed == true) {
                     trip.SteadySpeedTime += facts[i].Temporal.SecondsToLag;
                 }
+
+                trip.DataQuality += facts[i].Quality.Hdop;
             }
+
+            //Data Quality
+            trip.DataQuality = trip.DataQuality / facts.Count;
+
 
             //Price?
             //Optimal Score?
