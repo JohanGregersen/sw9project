@@ -9,23 +9,22 @@ namespace CarDataProject {
     public static class GPSFactUpdater {
         public static void Update(Int16 CarId) {
 
-
             DBController dbc = new DBController();
-            Int64 tripCount = dbc.GetTripCountByCarId(CarId);
-            
-
-            for(int i = 1; i <= tripCount; i++) {
-                List<Fact> facts = dbc.GetFactsByCarIdAndTripId(1, i);
+            List<Int64> tripIds = dbc.GetTripIdsByCarId(CarId);
+            foreach (Int64 tripId in tripIds) {
+                List<Fact> facts = dbc.GetFactsByCarIdAndTripId(CarId, tripId);
                 dbc.UpdateGPSFactWithMeasures(UpdatedFacts(facts));
             }
+
             dbc.Close();
+
         }
 
         private static List<Fact> UpdatedFacts(List<Fact> facts) {
             for (int i = 1; i < facts.Count; i++) {
 
                 //PathLine
-                //Handled in DBController
+                //Handled in DBController because it has to use PostGis command ST_MakeLine
 
                 //Measures
                 //Acceleration

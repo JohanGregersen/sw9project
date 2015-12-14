@@ -16,9 +16,15 @@ namespace CarDataProject {
                 Global.Database.Host, Global.Database.User, Global.Database.Password, Global.Database.Name);
 
             Connection = new NpgsqlConnection(connectionSettings);
-            Connection.Open();
-        }
 
+            try {
+
+                Connection.Open();
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+        }
         public void Close() {
             Connection.Close();
         }
@@ -56,13 +62,21 @@ namespace CarDataProject {
 
 
         #region Creators
-        public int AddCarInformation() {
-            string sql = @"INSERT INTO carinformation 
-                        DEFAULT VALUES RETURNING carid";
+        public int AddCarInformation(Int16 CarId) {
+            string sql = @"INSERT INTO carinformation(carid) 
+                           VALUES (@carid)";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@carid", CarId);
 
-            return NonQueryWithReturnValue(command, "carinformation");
+            try {
+                return NonQuery(command, "carinformation");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+            return 0;
+
+
         }
 
         public Int64 AddTripInformation(int CarId) {
@@ -590,6 +604,42 @@ namespace CarDataProject {
         public int InsertTripAndUpdateFactTable(INFATITrip trip) {
             Int64 tripId = AddTripInformation(trip.CarId);
 
+
+            if (trip.Timestamps.Count > 2000) {
+                List<INFATITrip> subTrips = new List<INFATITrip>();
+                INFATITrip subTrip;
+
+                int index = 0;
+                while (true) {
+                    if (index + 2000 > trip.Timestamps.Count) {
+                        subTrip = new INFATITrip(trip.CarId);
+                        subTrip.Timestamps = trip.Timestamps.GetRange(index, trip.Timestamps.Count - index);
+                        subTrips.Add(subTrip);
+                        break;
+                    } else {
+                        subTrip = new INFATITrip(trip.CarId);
+                        subTrip.Timestamps = trip.Timestamps.GetRange(index, 2000);
+                        subTrips.Add(subTrip);
+                    }
+
+                    index = index + 2000;
+                }
+
+                foreach (INFATITrip sub in subTrips) {
+                    UpdateFactTable(tripId, sub);
+                }
+
+
+            } else {
+                UpdateFactTable(tripId, trip);
+            }
+
+
+            return 0;
+
+        }
+
+        public int UpdateFactTable(Int64 tripId, INFATITrip trip) {
             string sql = String.Format("UPDATE gpsfact SET tripid = '{0}' WHERE entryid = '{1}'", tripId, trip.Timestamps[0].EntryId);
 
             StringBuilder sb = new StringBuilder(sql);
@@ -604,8 +654,8 @@ namespace CarDataProject {
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
-            return 0;
 
+            return 0;
         }
 
         public void UpdateEntryWithPointAndMpoint(Int16 carId) {

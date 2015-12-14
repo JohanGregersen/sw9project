@@ -110,35 +110,6 @@ namespace CarDataProject {
             //Trip Score?
 
 
-
-            /*
-            previoustripid bigint,
-            carid integer,
-            startdate integer,
-            enddate integer,
-            starttime integer,
-            endtime integer,
-            secondsdriven integer,
-            metersdriven real,
-            price real,
-            optimalscore real,
-            tripscore real,
-            jerkcount smallint,
-            brakecount smallint,
-            accelerationcount smallint,
-            meterssped real,
-            timesped real,
-            steadyspeeddistance real,
-            steadyspeedtime real,
-            secondstolag integer,
-            dataquality real,
-            */
-
-
-
-
-
-
             return trip;
         }
     }

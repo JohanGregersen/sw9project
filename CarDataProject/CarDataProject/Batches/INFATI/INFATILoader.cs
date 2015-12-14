@@ -9,27 +9,29 @@ using System.Threading.Tasks;
 namespace CarDataProject {
     public static class INFATILoader {
 
-        public static void LoadCarData(int numberOfCarsToLoad) {
+        public static void LoadCarData(Int16 teamId, Int16 carId) {
             DBController dbc = new DBController();
-            for (Int16 i = 1; i <= numberOfCarsToLoad; i++) {
-                INFATI.AdjustLog(1, i);
-                INFATILoader.DBLoader(INFATI.ReadLog(1, i));
-                List<INFATITrip> trips = TripCalculator.CalculateTripsByCarId(i);
+            INFATI.AdjustLog(teamId, carId);
+            INFATILoader.DBLoader(carId, INFATI.ReadLog(teamId, carId));
 
+            List<TemporalInformation> datapoints = dbc.GetTimestampsByCarId(carId);
+            Console.WriteLine("Found " + datapoints.Count + "gps-entries for car " + carId);
+            List<INFATITrip> trips = TripCalculator.CalculateTripsByCarId(carId);
+            Console.WriteLine("Found " + trips.Count + "trips for car " + carId);
 
-                foreach (INFATITrip trip in trips) {
-                    dbc.InsertTripAndUpdateFactTable(trip);
-                }
+            foreach (INFATITrip trip in trips) {
+                dbc.InsertTripAndUpdateFactTable(trip);
             }
             dbc.Close();
+
         }
 
-        private static void DBLoader(List<INFATIEntry> entries) {
+        private static void DBLoader(Int16 carId, List<INFATIEntry> entries) {
             DBController dbc = new DBController();
 
             //CarInformation
 
-            int carId = dbc.AddCarInformation();
+            dbc.AddCarInformation(carId);
 
 
 
@@ -49,7 +51,7 @@ namespace CarDataProject {
 
             dbc.Close();
         }
-        
+
 
 
 
