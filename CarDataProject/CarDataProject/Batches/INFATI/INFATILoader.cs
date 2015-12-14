@@ -15,9 +15,9 @@ namespace CarDataProject {
             INFATILoader.DBLoader(carId, INFATI.ReadLog(teamId, carId));
 
             List<TemporalInformation> datapoints = dbc.GetTimestampsByCarId(carId);
-            Console.WriteLine("Found " + datapoints.Count + "gps-entries for car " + carId);
+            Console.WriteLine("Found " + datapoints.Count + " gps-entries for car " + carId);
             List<INFATITrip> trips = TripCalculator.CalculateTripsByCarId(carId);
-            Console.WriteLine("Found " + trips.Count + "trips for car " + carId);
+            Console.WriteLine("Found " + trips.Count + " trips for car " + carId);
 
             foreach (INFATITrip trip in trips) {
                 dbc.InsertTripAndUpdateFactTable(trip);

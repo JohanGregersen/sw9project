@@ -12,7 +12,6 @@ namespace CarDataProject {
             //Fetch all temporalinformation for a cardId
             List<TemporalInformation> datapoints = dbc.GetTimestampsByCarId(carId);
             dbc.Close();
-            Console.WriteLine("data fetched");
             //Instantiate the containers for trips and timestamps fetched by a single date at a time
             List<INFATITrip> allTrips = new List<INFATITrip>();
             INFATITrip trip = new INFATITrip(carId);

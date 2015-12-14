@@ -28,7 +28,7 @@ namespace CarDataProject {
 
                 trip = UpdateTrip(trip, facts);
 
-                Console.WriteLine("Updating trip {0} with FactsCount = {1} and prevTripId = {2}", trip.TripId, facts.Count, trip.PreviousTripId);
+                Console.WriteLine("Updating Car {0} - Trip {1} with prevTripId = {2} and FactsCount = {3}", carId, trip.TripId, trip.PreviousTripId, facts.Count);
 
                 dbc.UpdateTripFactWithMeasures(trip);
 
