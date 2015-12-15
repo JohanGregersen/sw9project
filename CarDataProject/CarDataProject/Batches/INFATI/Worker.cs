@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace CarDataProject {
     public class Worker {
@@ -18,17 +13,13 @@ namespace CarDataProject {
         }
 
         public void Start() {
-
             Console.WriteLine("trying to work this shit out on thread " + this.carId);
             
             INFATILoader.LoadCarData(teamId, carId);
-
             GPSFactUpdater.Update(carId);
-
             TripFactUpdater.Update(carId);
 
             Console.WriteLine("worked out shit on " + this.carId + ". TERMINATED");
-
         }
 
         public override string ToString() {

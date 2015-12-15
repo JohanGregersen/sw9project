@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-
-using NpgsqlTypes;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarDataProject {
     public static class INFATILoader {
-
         public static void LoadCarData(Int16 teamId, Int16 carId) {
             DBController dbc = new DBController();
             INFATI.AdjustLog(teamId, carId);
@@ -23,7 +17,6 @@ namespace CarDataProject {
                 dbc.InsertTripAndUpdateFactTable(trip);
             }
             dbc.Close();
-
         }
 
         private static void DBLoader(Int16 carId, List<INFATIEntry> entries) {
@@ -33,13 +26,9 @@ namespace CarDataProject {
 
             dbc.AddCarInformation(carId);
 
-
-
-
-
             foreach (INFATIEntry entry in entries) {
                 entry.CarId = carId;
-                //TemportalInformation
+                //TemporalInformation
                 //Handled in DBController
 
                 //QualityInformation
@@ -51,10 +40,5 @@ namespace CarDataProject {
 
             dbc.Close();
         }
-
-
-
-
-
     }
 }

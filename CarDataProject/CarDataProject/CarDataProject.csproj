@@ -78,6 +78,7 @@
     <Compile Include="Objects\TripObjects\Trip.cs" />
     <Compile Include="Score Calculators\AccelerationScore.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
+    <Compile Include="Score Calculators\Subscore.cs" />
     <Compile Include="UserStatistics\CarStatistics.cs" />
     <Compile Include="UserStatistics\TripStatistics.cs" />
     <Compile Include="UserStatistics\WeeklyStatistics.cs" />
