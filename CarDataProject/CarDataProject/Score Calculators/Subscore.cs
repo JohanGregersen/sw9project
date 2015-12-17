@@ -73,7 +73,6 @@ namespace CarDataProject {
 
             //x becomes the amount of meters that should be added to the trip
             return totalMultiplier * accelerations * accelerationPrice;
-
         }
 
         /*
@@ -123,9 +122,18 @@ namespace CarDataProject {
         */
         private static double AccumulatedMultiplier(Dictionary<double, double> weightedIntervals) {
             double result = 0;
+            double intervalTotal = 0;
 
             foreach (KeyValuePair<double, double> weightedInterval in weightedIntervals) {
+                intervalTotal += weightedInterval.Value;
                 result += weightedInterval.Key * weightedInterval.Value;
+            }
+
+            //Fix missing rounding data as well as possible
+            if (intervalTotal < 100) {
+                result += (100 % intervalTotal);
+            } else if (intervalTotal > 100) {
+                result -= (intervalTotal - 100);
             }
 
             return result / 100 - 1;

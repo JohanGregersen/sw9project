@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NpgsqlTypes;
 
 namespace CarDataProject {
     public static class GPSFactUpdater {
@@ -17,12 +13,10 @@ namespace CarDataProject {
             }
 
             dbc.Close();
-
         }
 
         private static List<Fact> UpdatedFacts(List<Fact> facts) {
             for (int i = 1; i < facts.Count; i++) {
-
                 //PathLine
                 //Handled in DBController because it has to use PostGis command ST_MakeLine
 
@@ -46,7 +40,6 @@ namespace CarDataProject {
 
                 facts[i].Temporal = new TemporalInformation(facts[i].Temporal.Timestamp, SecondsToLag);
 
-
                 //FlagInformation
                 //Speeding
                 bool speeding = MeasureCalculator.Speeding(facts[i].Measure.Speed, facts[i].Segment.MaxSpeed);
@@ -66,7 +59,5 @@ namespace CarDataProject {
 
             return facts;
         }
-
     }
-
 }

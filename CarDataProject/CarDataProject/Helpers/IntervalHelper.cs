@@ -5,9 +5,10 @@ namespace CarDataProject {
     /*
     * Parses the database representation of intervals
     *
-    * Interval format is: xxx1122334455667788
+    * Interval format is: xxi1122334455667788
     * Where 11 - 88 are intervals representing 0 - 99%
-    * and xxx is either 000 or 100, where 100 means the first interval with a non-zero value should be read as 100%
+    * and i is either 0 or 1, where 1 means the first interval with a non-zero value should be read as 100%
+    * and xx is an insurance company policy ID
     */
     public static class IntervalHelper {
         public static Int64 Encode(List<double> intervals) {
@@ -76,7 +77,7 @@ namespace CarDataProject {
                     Int16 value = Int16.Parse(encoding.Substring(encodingIndex, 2));
                     intervalTotal += value;
 
-                    if (value > 100) {
+                    if (value > 108 || value <= 92) {
                         throw new ArgumentException("Combined intervals are greater than 100%");
                     }
 
