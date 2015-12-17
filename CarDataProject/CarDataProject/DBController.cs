@@ -25,6 +25,7 @@ namespace CarDataProject {
             }
 
         }
+
         public void Close() {
             Connection.Close();
         }
@@ -60,7 +61,6 @@ namespace CarDataProject {
             return returnValue;
         }
 
-
         #region Creators
         public int AddCarInformation(Int16 CarId) {
             string sql = @"INSERT INTO carinformation(carid) 
@@ -74,13 +74,14 @@ namespace CarDataProject {
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
+
             return 0;
-
-
         }
 
         public Int64 AddTripInformation(int CarId) {
-            string sql = @"INSERT INTO tripfact(carid) VALUES (@carid) RETURNING tripid";
+            string sql = @"INSERT INTO tripfact(carid)
+                           VALUES (@carid)
+                           RETURNING tripid";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@carid", CarId);
@@ -89,12 +90,13 @@ namespace CarDataProject {
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
+
             return 0;
         }
 
         public int AddSegment(SegmentInformation segment, int speedlimitForward, int speedlimitBackward, string lineString) {
             string sql = @"INSERT INTO segmentinformation(segmentid, osmid, roadname, roadtype, oneway, speedbackward, speedforward, segmentline) 
-                            VALUES (@segmentid, @osmid, @roadname, @roadtype, @oneway, @speedbackward, @speedforward, ST_GeomFromText(@lineString, 4326))";
+                           VALUES (@segmentid, @osmid, @roadname, @roadtype, @oneway, @speedbackward, @speedforward, ST_GeomFromText(@lineString, 4326))";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@segmentid", segment.SegmentId);
@@ -109,11 +111,13 @@ namespace CarDataProject {
             //lineString will be added this way
             //http://www.bostongis.com/postgis_geomfromtext.snippet
             //referring to this link.
+
             try {
                 return NonQuery(command, "segmentinformation");
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
+
             return 0;
         }
 
@@ -135,11 +139,13 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@hour", dimTime.Hour);
             command.Parameters.AddWithValue("@minute", dimTime.Minute);
             command.Parameters.AddWithValue("@second", dimTime.Second);
+
             try {
                 return NonQuery(command, "DimTime");
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
+
             return 0;
         }
 
@@ -162,6 +168,7 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@month", dimDate.Month);
             command.Parameters.AddWithValue("@day", dimDate.Day);
             command.Parameters.AddWithValue("@dayofweek", (Int16)dimDate.DayOfWeek);
+
             if ((int)dimDate.DayOfWeek == 0 || (int)dimDate.DayOfWeek == 6) {
                 command.Parameters.AddWithValue("@weekend", true);
             } else {
@@ -178,6 +185,7 @@ namespace CarDataProject {
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
+
             return 0;
         }
 
@@ -185,7 +193,6 @@ namespace CarDataProject {
             string sql = @"INSERT INTO gpsfact(carid, qualityid, segmentid, timeid, dateid, point, mpoint, speed, maxspeed) 
                         VALUES (@carid, @qualityid, @segmentid, @timeid, @dateid, 
                         ST_Transform(ST_SetSrid(ST_MakePoint(@UTMx, @UTMy), 23032), 4326), ST_Transform(ST_SetSrid(ST_MakePoint(@UTMmx, @UTMmy), 23032), 4326), @speed, @maxspeed)";
-
 
             // ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326)
 
@@ -197,6 +204,7 @@ namespace CarDataProject {
             } else {
                 command.Parameters.AddWithValue("@segmentid", DBNull.Value);
             }
+
             command.Parameters.AddWithValue("@qualityid", entry.QualityId);
             command.Parameters.AddWithValue("@timeid", Convert.ToInt32(entry.Timestamp.ToString("HHmmss")));
             command.Parameters.AddWithValue("@dateid", Convert.ToInt32(entry.Timestamp.ToString("yyyyMMdd")));
@@ -212,6 +220,7 @@ namespace CarDataProject {
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
+
             return 0;
         }
         #endregion Creators
@@ -304,6 +313,7 @@ namespace CarDataProject {
                     mPoints.Add(fact.Spatial);
                 }
             }
+
             return mPoints;
         }
 
@@ -329,7 +339,6 @@ namespace CarDataProject {
             return timestamps;
         }
 
-
         public List<TemporalInformation> GetTimestampsByCarId(Int16 carId) {
             string sql = String.Format(@"SELECT entryid, dateid, timeid
                                          FROM gpsfact
@@ -346,6 +355,7 @@ namespace CarDataProject {
                     timestamps.Add(new TemporalInformation(entryId, DateTimeHelper.ConvertToDateTime(date, time)));
 
                 }
+
                 SortingHelper.TemporalInformationByDateTime(timestamps);
             }
 
@@ -569,13 +579,10 @@ namespace CarDataProject {
 
             command.Parameters.AddWithValue("@tripid", UpdatedTrip.TripId);
 
-
             if (UpdatedTrip.PreviousTripId != 0) {
                 command.Parameters.AddWithValue("@previoustripid", UpdatedTrip.PreviousTripId);
-
             } else {
                 command.Parameters.AddWithValue("@previoustripid", DBNull.Value);
-
             }
 
             command.Parameters.AddWithValue("@startdateid", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("yyyyMMdd")));
@@ -612,19 +619,17 @@ namespace CarDataProject {
                 Console.WriteLine(e.ToString());
             }
 
-
             return 0;
         }
 
         public int InsertTripAndUpdateFactTable(INFATITrip trip) {
             Int64 tripId = AddTripInformation(trip.CarId);
 
-
             if (trip.Timestamps.Count > 2000) {
                 List<INFATITrip> subTrips = new List<INFATITrip>();
                 INFATITrip subTrip;
-
                 int index = 0;
+
                 while (true) {
                     if (index + 2000 > trip.Timestamps.Count) {
                         subTrip = new INFATITrip(trip.CarId);
@@ -643,20 +648,15 @@ namespace CarDataProject {
                 foreach (INFATITrip sub in subTrips) {
                     UpdateFactTable(tripId, sub);
                 }
-
-
             } else {
                 UpdateFactTable(tripId, trip);
             }
 
-
             return 0;
-
         }
 
         public int UpdateFactTable(Int64 tripId, INFATITrip trip) {
             string sql = String.Format("UPDATE gpsfact SET tripid = '{0}' WHERE entryid = '{1}'", tripId, trip.Timestamps[0].EntryId);
-
             StringBuilder sb = new StringBuilder(sql);
 
             for (int i = 1; i < trip.Timestamps.Count; i++) {
@@ -674,8 +674,6 @@ namespace CarDataProject {
         }
 
         public void UpdateEntryWithPointAndMpoint(Int16 carId) {
-
-
             string sql = String.Format("SELECT id AS entryids FROM cardata where carid = '{0}' ORDER BY id ASC", carId);
             DataRowCollection res = Query(sql);
             List<int> entryIds = new List<int>();
@@ -684,7 +682,6 @@ namespace CarDataProject {
                     entryIds.Add(logEntry.Field<int>("entryids"));
                 }
             }
-
 
             foreach (int entryId in entryIds) {
                 string sql2 = String.Format("UPDATE cardata SET point = ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326), mpoint = ST_Transform(ST_SetSrid(ST_MakePoint(mpx, mpy), 32632), 4326) WHERE id = '{0}'", entryId);
@@ -703,56 +700,5 @@ namespace CarDataProject {
         }
 
         #endregion Updaters
-
-        /*public List<CarLogEntry> GetAllLogEntries() {
-            string sql = String.Format("SELECT * FROM cardata");
-            DataRowCollection res = Query(sql);
-            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
-            if (res.Count >= 1) {
-                foreach (DataRow logEntry in res) {
-                    allLogEntries.Add(new CarLogEntry(logEntry));
-                }
-                return allLogEntries;
-            } else {
-                return allLogEntries;
-            }
-        }
-
-        public List<CarLogEntry> GetAllLogEntriesWithJSONPoint() {
-            string sql = String.Format("SELECT id, entryid, carid, driverid, rdate, rtime, sat, hdop, maxspd, spd, strtcod, segmentkey, tripid, tripsegmentno, ST_X(point) AS xcoord, ST_Y(point) AS ycoord, ST_X(mpoint) AS mpx, ST_Y(mpoint) AS mpy FROM cardata");
-            DataRowCollection res = Query(sql);
-            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
-            if (res.Count >= 1) {
-                foreach (DataRow logEntry in res) {
-                    allLogEntries.Add(new CarLogEntry(logEntry));
-                }
-                return allLogEntries;
-            } else {
-                return allLogEntries;
-            }
-        }
-
-        //Lau, giver den her mening??
-        public List<CarLogEntry> GetEntriesByIds(List<int> ids) {
-            string sql = String.Format("SELECT * FROM cardata WHERE id = '{0}'", ids[0]);
-
-            StringBuilder sb = new StringBuilder(sql);
-
-            for (int i = 1; i < ids.Count; i++) {
-                sb.Append(String.Format("OR id = '{0}'", ids[i]));
-            }
-
-            DataRowCollection res = Query(sql);
-            List<CarLogEntry> allLogEntries = new List<CarLogEntry>();
-            if (res.Count >= 1) {
-                foreach (DataRow logEntry in res) {
-                    allLogEntries.Add(new CarLogEntry(logEntry));
-                }
-                return allLogEntries;
-            } else {
-                return allLogEntries;
-            }
-        }
-        */
     }
 }

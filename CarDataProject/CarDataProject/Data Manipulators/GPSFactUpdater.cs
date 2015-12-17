@@ -4,13 +4,11 @@ using System.Linq;
 
 namespace CarDataProject {
     public static class GPSFactUpdater {
-
         private static double speedLock = 0;
         private static double speedThreshold = 3;
         private static double steadySpeedCounter = 0;
 
         public static void Update(Int16 CarId) {
-
             DBController dbc = new DBController();
             List<Int64> tripIds = dbc.GetTripIdsByCarId(CarId);
             foreach (Int64 tripId in tripIds) {
