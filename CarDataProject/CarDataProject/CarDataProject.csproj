@@ -76,6 +76,7 @@
     <Compile Include="Objects\FactObjects\MeasureInformation.cs" />
     <Compile Include="Objects\FactObjects\SpatialInformation.cs" />
     <Compile Include="Objects\FactObjects\SegmentInformation.cs" />
+    <Compile Include="Objects\TripObjects\IntervalInformation.cs" />
     <Compile Include="Objects\TripObjects\Trip.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
     <Compile Include="Score Calculators\Subscore.cs" />

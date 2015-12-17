@@ -8,6 +8,8 @@ namespace CarDataProject {
         static void Main(string[] args) {
             int breakpoint = 0;
 
+            
+
             DBController dbc = new DBController();
 
             List<Worker> workerPool = new List<Worker>();
@@ -39,7 +41,7 @@ namespace CarDataProject {
 
 
 
-
+            
 
             Console.WriteLine("done");
             Console.ReadLine();

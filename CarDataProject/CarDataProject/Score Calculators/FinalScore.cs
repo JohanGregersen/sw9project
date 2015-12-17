@@ -41,10 +41,10 @@ namespace CarDataProject {
 
             return metersDriven + Subscore.RoadTypes(metersDriven, intervals, weightSet) +
                                   Subscore.CriticalTimePeriod(metersDriven, intervals, weightSet) +
-                                  Subscore.Speeding(metersDriven, metersSped, intervals, weightSet, a, b, c, poly) +
-                                  Subscore.Accelerations(metersDriven, accelerations, intervals, accelerationPrice, weightSet, a, b, c, poly) +
-                                  Subscore.Brakes(metersDriven, brakes, intervals, brakePrice, weightSet, a, b, c, poly) +
-                                  Subscore.Jerks(metersDriven, jerks, intervals, jerkPrice, weightSet, a, b, c, poly);
+                                  Subscore.Speeding(metersSped, intervals, weightSet, a, b, c, poly) +
+                                  Subscore.Accelerations(accelerations, intervals, accelerationPrice, weightSet, a, b, c, poly) +
+                                  Subscore.Brakes(brakes, intervals, brakePrice, weightSet, a, b, c, poly) +
+                                  Subscore.Jerks(jerks, intervals, jerkPrice, weightSet, a, b, c, poly);
         }
 
         public double CalculateOptimal(Int64 tripId, List<double> optimalSpeedingProfile,
@@ -81,10 +81,10 @@ namespace CarDataProject {
 
             return metersDriven + Subscore.RoadTypes(metersDriven, intervals, weightSet) +
                                   Subscore.CriticalTimePeriod(metersDriven, intervals, weightSet) +
-                                  Subscore.Speeding(metersDriven, metersSped, intervals, weightSet, a, b, c, poly) +
-                                  Subscore.Accelerations(metersDriven, accelerations, intervals, accelerationPrice, weightSet, a, b, c, poly) +
-                                  Subscore.Brakes(metersDriven, brakes, intervals, brakePrice, weightSet, a, b, c, poly) +
-                                  Subscore.Jerks(metersDriven, jerks, intervals, jerkPrice, weightSet, a, b, c, poly);
+                                  Subscore.Speeding(metersSped, intervals, weightSet, a, b, c, poly) +
+                                  Subscore.Accelerations(accelerations, intervals, accelerationPrice, weightSet, a, b, c, poly) +
+                                  Subscore.Brakes(brakes, intervals, brakePrice, weightSet, a, b, c, poly) +
+                                  Subscore.Jerks(jerks, intervals, jerkPrice, weightSet, a, b, c, poly);
         }
     }
 }
