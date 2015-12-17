@@ -77,7 +77,6 @@
     <Compile Include="Objects\FactObjects\SpatialInformation.cs" />
     <Compile Include="Objects\FactObjects\SegmentInformation.cs" />
     <Compile Include="Objects\TripObjects\Trip.cs" />
-    <Compile Include="Score Calculators\AccelerationScore.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
     <Compile Include="Score Calculators\Subscore.cs" />
     <Compile Include="UserStatistics\CarStatistics.cs" />
@@ -86,7 +85,6 @@
     <Compile Include="UserStatistics\SpeedingStatistics.cs" />
     <Compile Include="UserStatistics\WeekdayStatistics.cs" />
     <Compile Include="DBController.cs" />
-    <Compile Include="Objects\OldCar.cs" />
     <Compile Include="Objects\FactObjects\QualityInformation.cs" />
     <Compile Include="Objects\FactObjects\TemporalInformation.cs" />
     <Compile Include="Program.cs" />
