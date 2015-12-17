@@ -23,9 +23,9 @@ namespace CarDataProject {
                     Int16 value = (Int16) Math.Round(interval);
                     intervalTotal += value;
                     if (value > 100 || value < 0) {
-                        throw new ArgumentException("Intervals must be between 0% and 100%");
+                        throw new ArgumentOutOfRangeException("Intervals must be between 0% and 100%");
                     } else if (intervalTotal > 100) {
-                        throw new ArgumentException("Combined intervals are greater than 100%");
+                        throw new ArgumentOutOfRangeException("Combined intervals are greater than 100%");
                     } else if (value == 100) {
                         encoding.Remove(0, 1).Insert(0, "1");
 

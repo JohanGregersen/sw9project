@@ -402,9 +402,9 @@ namespace CarDataProject {
                     double acceleration = row.Field<double>("acceleration");
 
                     speedInformation.Add(new Fact(entryId, SegmentInformation.CreateWithMaxSpeed(maxSpeed),
-                                       new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time), new TimeSpan(0, 0, timeToLag)),
-                                       new SpatialInformation(distanceToLag),
-                                       new MeasureInformation(speed, acceleration)));
+                                         new TemporalInformation(DateTimeHelper.ConvertToDateTime(date, time), new TimeSpan(0, 0, timeToLag)),
+                                         new SpatialInformation(distanceToLag),
+                                         new MeasureInformation(speed, acceleration)));
                 }
 
                 SortingHelper.FactsByDateTime(speedInformation);
@@ -541,23 +541,29 @@ namespace CarDataProject {
 
         public int UpdateTripFactWithMeasures(Trip UpdatedTrip) {
             string sql = String.Format(@"UPDATE tripfact
-                                            SET previoustripid = @previoustripid,
-                                            startdate = @startdate,
-                                            starttime = @starttime,
-                                            enddate = @enddate,
-                                            endtime = @endtime,
-                                            secondsdriven = @secondsdriven,
-                                            metersdriven = @metersdriven,
-                                            jerkcount = @jerkcount,
-                                            brakecount = @brakecount,
-                                            accelerationcount = @accelerationcount,
-                                            meterssped = @meterssped,
-                                            timesped = @timesped,
-                                            steadyspeeddistance = @steadyspeeddistance,
-                                            steadyspeedtime = @steadyspeedtime,
-                                            secondstolag = @secondstolag,
-                                            dataquality = @dataquality
-                                            WHERE tripid = @tripid");
+                                         SET previoustripid = @previoustripid,
+                                          startdateid = @startdateid,
+                                          starttimeid = @starttimeid,
+                                          enddateid = @enddateid,
+                                          endtimeid = @endtimeid,
+                                          secondsdriven = @secondsdriven,
+                                          metersdriven = @metersdriven,
+                                          jerkcount = @jerkcount,
+                                          brakecount = @brakecount,
+                                          accelerationcount = @accelerationcount,
+                                          meterssped = @meterssped,
+                                          timesped = @timesped,
+                                          steadyspeeddistance = @steadyspeeddistance,
+                                          steadyspeedtime = @steadyspeedtime,
+                                          secondstolag = @secondstolag,
+                                          roadtypesinterval = @roadtypesinterval,
+                                          criticaltimeinterval =  @criticaltimeinterval,
+                                          speedinterval = @speedinterval,
+                                          accelerationinterval = @accelerationinterval,
+                                          jerkinterval = @jerkinterval,
+                                          brakinginterval = @brakinginterval,
+                                          dataquality = @dataquality,
+                                         WHERE tripid = @tripid");
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
 
@@ -572,10 +578,10 @@ namespace CarDataProject {
 
             }
 
-            command.Parameters.AddWithValue("@startdate", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("yyyyMMdd")));
-            command.Parameters.AddWithValue("@starttime", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("HHmmss")));
-            command.Parameters.AddWithValue("@enddate", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("yyyyMMdd")));
-            command.Parameters.AddWithValue("@endtime", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@startdateid", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("yyyyMMdd")));
+            command.Parameters.AddWithValue("@starttimeid", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@enddateid", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("yyyyMMdd")));
+            command.Parameters.AddWithValue("@endtimeid", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("HHmmss")));
             command.Parameters.AddWithValue("@secondsdriven", UpdatedTrip.SecondsDriven.TotalSeconds);
             command.Parameters.AddWithValue("@metersdriven", UpdatedTrip.MetersDriven);
             //price?
@@ -589,6 +595,15 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@steadyspeeddistance", UpdatedTrip.SteadySpeedDistance);
             command.Parameters.AddWithValue("@steadyspeedtime", UpdatedTrip.SteadySpeedTime.TotalSeconds);
             command.Parameters.AddWithValue("@secondstolag", UpdatedTrip.SecondsToLag.TotalSeconds);
+
+            //Interval Information
+            command.Parameters.AddWithValue("@roadtypesinterval", UpdatedTrip.IntervalInformation.RoadTypesInterval);
+            command.Parameters.AddWithValue("@criticaltimeinterval", UpdatedTrip.IntervalInformation.CriticalTimeInterval);
+            command.Parameters.AddWithValue("@speedinterval", UpdatedTrip.IntervalInformation.SpeedInterval);
+            command.Parameters.AddWithValue("@accelerationinterval", UpdatedTrip.IntervalInformation.AccelerationInterval);
+            command.Parameters.AddWithValue("@jerkinterval", UpdatedTrip.IntervalInformation.JerkInterval);
+            command.Parameters.AddWithValue("@brakinginterval", UpdatedTrip.IntervalInformation.BrakingInterval);
+
             command.Parameters.AddWithValue("@dataquality", UpdatedTrip.DataQuality);
 
             try {

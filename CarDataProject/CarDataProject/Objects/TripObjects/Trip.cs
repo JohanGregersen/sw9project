@@ -22,6 +22,7 @@ namespace CarDataProject {
         public double SteadySpeedDistance { get; set; }
         public TimeSpan SteadySpeedTime { get; set; }
         public TimeSpan SecondsToLag { get; set; }
+        public IntervalInformation IntervalInformation {get; set; }
         public double DataQuality { get; set; }
 
         public Trip(Int64 TripId, int CarId) {
@@ -48,12 +49,12 @@ namespace CarDataProject {
             this.PreviousTripId = row.Field<Int64>("previoustripid");
 
             //Temporal Information
-            row["startdate"] = row["startdate"] is DBNull ? "19700101" : row["startdate"];
-            row["starttime"] = row["starttime"] is DBNull ? "0" : row["starttime"];
-            this.StartTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("startdate"), row.Field<int>("starttime")));
-            row["enddate"] = row["enddate"] is DBNull ? "19700101" : row["enddate"];
-            row["endtime"] = row["endtime"] is DBNull ? "0" : row["endtime"];
-            this.EndTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("enddate"), row.Field<int>("endtime")));
+            row["startdateid"] = row["startdateid"] is DBNull ? "19700101" : row["startdateid"];
+            row["starttimeid"] = row["starttimeid"] is DBNull ? "0" : row["starttimeid"];
+            this.StartTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("startdateid"), row.Field<int>("starttimeid")));
+            row["enddateid"] = row["enddateid"] is DBNull ? "19700101" : row["enddateid"];
+            row["endtimeid"] = row["endtimeid"] is DBNull ? "0" : row["endtimeid"];
+            this.EndTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("enddateid"), row.Field<int>("endtimeid")));
 
             row["secondsdriven"] = row["secondsdriven"] is DBNull ? -1 : row["secondsdriven"];
             this.SecondsDriven = new TimeSpan(0, 0, row.Field<int>("secondsdriven"));
@@ -96,6 +97,22 @@ namespace CarDataProject {
 
             row["steadyspeedtime"] = row["steadyspeedtime"] is DBNull ? 0 : row["steadyspeedtime"];
             this.TimeSped = new TimeSpan(0, 0, (int)row.Field<Single>("steadyspeedtime"));
+
+            //IntervalInformation
+            row["roadtypesinterval"] = row["roadtypesinterval"] is DBNull ? 0 : row["roadtypesinterval"];
+            row["criticaltimeinterval"] = row["criticaltimeinterval"] is DBNull ? 0 : row["criticaltimeinterval"];
+            row["speedinterval"] = row["speedinterval"] is DBNull ? 0 : row["speedinterval"];
+            row["accelerationinterval"] = row["accelerationinterval"] is DBNull ? 0 : row["accelerationinterval"];
+            row["jerkinterval"] = row["jerkinterval"] is DBNull ? 0 : row["jerkinterval"];
+            row["brakinginterval"] = row["brakinginterval"] is DBNull ? 0 : row["brakinginterval"];
+            this.IntervalInformation = new IntervalInformation(CarId,
+                                                               TripId,
+                                                               row.Field<Int64>("roadtypesinterval"),
+                                                               row.Field<Int64>("criticaltimeinterval"),
+                                                               row.Field<Int64>("speedinterval"),
+                                                               row.Field<Int64>("accelerationinterval"),
+                                                               row.Field<Int64>("jerkinterval"),
+                                                               row.Field<Int64>("brakinginterval"));
 
             //Data Quality
             row["dataquality"] = row["dataquality"] is DBNull ? -1 : row["dataquality"];
