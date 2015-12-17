@@ -11,28 +11,19 @@ namespace CarDataProject {
             DBController dbc = new DBController();
 
             List<Worker> workerPool = new List<Worker>();
-
-
-            /*
-            for(Int16 i = 13; i <= 17; i++) {
-                workerPool.Add(new Worker(2, i));
+            
+            
+            for(Int16 i = 1; i <= 11; i++) {
+                workerPool.Add(new Worker(1, i));
             }
-            */
+            
 
-            for (Int16 i = 18; i <= 21; i++) {
+            
+            for (Int16 i = 12; i <= 20; i++) {
                 workerPool.Add(new Worker(2, i));
             }
             
 
-            /*
-            for (Int16 i = 8; i <= 8; i++) {
-                workerPool.Add(new Worker(2, i));
-            }
-            for (Int16 i = 10; i <= 12; i++) {
-                workerPool.Add(new Worker(2, i));
-            }
-
-            */
 
             List<Thread> threads = new List<Thread>();
             foreach (Worker worker in workerPool) {

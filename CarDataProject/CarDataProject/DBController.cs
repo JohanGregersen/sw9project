@@ -12,7 +12,7 @@ namespace CarDataProject {
         DataTable DataTable = new DataTable();
 
         public DBController() {
-            string connectionSettings = String.Format("Server={0};User Id={1};Password={2};Database={3};",
+            string connectionSettings = String.Format("Server={0};User Id={1};Password={2};Database={3};Pooling=false;",
                 Global.Database.Host, Global.Database.User, Global.Database.Password, Global.Database.Name);
 
             Connection = new NpgsqlConnection(connectionSettings);
@@ -562,7 +562,7 @@ namespace CarDataProject {
                                           accelerationinterval = @accelerationinterval,
                                           jerkinterval = @jerkinterval,
                                           brakinginterval = @brakinginterval,
-                                          dataquality = @dataquality,
+                                          dataquality = @dataquality
                                          WHERE tripid = @tripid");
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
