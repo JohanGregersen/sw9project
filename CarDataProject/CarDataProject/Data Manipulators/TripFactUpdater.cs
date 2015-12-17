@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarDataProject {
     public static class TripFactUpdater {
         public static void Update(Int16 carId) {
             DBController dbc = new DBController();
             List<Int64> tripList = dbc.GetTripIdsByCarId(carId);
-
             List<Fact> facts = null;
             Trip trip = null;
             Int64 prevTripId = 0;
@@ -35,15 +32,12 @@ namespace CarDataProject {
                 //Variables for previous Calculations
                 prevTripId = trip.TripId;
                 prevEndTimestamp = trip.EndTemporal.Timestamp;
-
             }
 
             dbc.Close();
-
         }
 
         private static Trip UpdateTrip(Trip trip, List<Fact> facts) {
-
             //Temporal
             trip.StartTemporal = facts.First().Temporal;
             trip.EndTemporal = facts.Last().Temporal;

@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Npgsql, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Npgsql.3.1.0-alpha3\lib\net45\Npgsql.dll</HintPath>
+    <Reference Include="Npgsql, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.3.1.0-alpha6\lib\net45\Npgsql.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -61,9 +61,9 @@
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\FileWriter.cs" />
     <Compile Include="Helpers\GnuplotHelper.cs" />
-	<Compile Include="Helpers\SortingHelper.cs" />
-	<Compile Include="Helpers\IntervalHelper.cs" />
     <Compile Include="Data Validation\ValidationPlots.cs" />
+    <Compile Include="Helpers\IntervalHelper.cs" />
+    <Compile Include="Helpers\SortingHelper.cs" />
     <Compile Include="MetaStatistics\MetaCarStatistics.cs" />
     <Compile Include="MetaStatistics\MetaSpeedingStatistics.cs" />
     <Compile Include="MetaStatistics\MetaTripStatistics.cs" />
@@ -76,9 +76,7 @@
     <Compile Include="Objects\FactObjects\MeasureInformation.cs" />
     <Compile Include="Objects\FactObjects\SpatialInformation.cs" />
     <Compile Include="Objects\FactObjects\SegmentInformation.cs" />
-    <Compile Include="Objects\TripObjects\IntervalInformation.cs" />
     <Compile Include="Objects\TripObjects\Trip.cs" />
-    <Compile Include="Score Calculators\AccelerationScore.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
     <Compile Include="Score Calculators\Subscore.cs" />
     <Compile Include="UserStatistics\CarStatistics.cs" />
@@ -87,7 +85,6 @@
     <Compile Include="UserStatistics\SpeedingStatistics.cs" />
     <Compile Include="UserStatistics\WeekdayStatistics.cs" />
     <Compile Include="DBController.cs" />
-    <Compile Include="Objects\OldCar.cs" />
     <Compile Include="Objects\FactObjects\QualityInformation.cs" />
     <Compile Include="Objects\FactObjects\TemporalInformation.cs" />
     <Compile Include="Program.cs" />
