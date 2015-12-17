@@ -62,6 +62,7 @@
     <Compile Include="Helpers\FileWriter.cs" />
     <Compile Include="Helpers\GnuplotHelper.cs" />
     <Compile Include="Data Validation\ValidationPlots.cs" />
+    <Compile Include="Helpers\IntervalHelper.cs" />
     <Compile Include="Helpers\SortingHelper.cs" />
     <Compile Include="MetaStatistics\MetaCarStatistics.cs" />
     <Compile Include="MetaStatistics\MetaSpeedingStatistics.cs" />

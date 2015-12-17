@@ -8,22 +8,23 @@ namespace CarDataProject {
      */
     public class FinalScore {
         //Testvariabler for fiktiv tur
-        static double metersDriven = 23700;
-        static double metersSped = 10300;
-        static List<double> weightSet = new List<double> { 1, 1.2, 1.4, 1, 1, 1.8, 1, 1.1 };
-        static List<double> intervals = new List<double> { 12, 13, 12, 13, 12, 13, 12, 13 };
-        static Int64 tripId = 1;
+        double metersDriven = 23700;
+        double metersSped = 10300;
+        double accelerations = 37;
+        double brakes = 24;
+        double jerks = 45;
+        List<double> intervals = new List<double> { 12, 13, 12, 13, 12, 13, 12, 13 };
+        Int64 tripId = 1;
 
         //Forsikringsselskabet skal bestemme alt det her
-        List<double> optimalSpeedingProfile = new List<double> { 7, 3, 0, 0, 0, 0, 0, 0 };
-        List<double> optimalAccelrationProfile = new List<double> { 7, 3, 0, 0, 0, 0, 0, 0 };
-        List<double> optimalBrakesProfile = new List<double> { 7, 3, 0, 0, 0, 0, 0, 0 };
-        List<double> optimalJerksProfile = new List<double> { 7, 3, 0, 0, 0, 0, 0, 0 };
+        List<double> weightSet = new List<double> { 1, 1.2, 1.4, 1, 1, 1.8, 1, 1.1 };
         double a = 1.2;
         double b = 1.3;
         double c = 0;
         double poly = 1.08;
-
+        double brakePrice = 1.3;
+        double accelerationPrice = 1.1;
+        double jerkPrice = 0.4;
 
         public double CalculateReal(Int64 tripId) {
             //double metersDriven = DBController.MetersDriven(Int64 tripId);
@@ -34,13 +35,16 @@ namespace CarDataProject {
             //List<double> accelerationIntervals = DBController.AccelerationIntervals(Int64 tripId);
             //List<double> brakeIntervals = DBController.BrakeIntervals(Int64 tripId);
             //List<double> jerkIntervals = DBController.JerkIntervals(Int64 tripId);
+            //double accelerations = DBController.Accelerations(Int64 tripId);
+            //double brakes = DBController.Accelerations(Int64 tripId);
+            //double jerks = DBController.Accelerations(Int64 tripId);
 
             return metersDriven + Subscore.RoadTypes(metersDriven, intervals, weightSet) +
                                   Subscore.CriticalTimePeriod(metersDriven, intervals, weightSet) +
                                   Subscore.Speeding(metersDriven, metersSped, intervals, weightSet, a, b, c, poly) +
-                                  Subscore.Accelerations(metersDriven, intervals, weightSet, a, b, c, poly) +
-                                  Subscore.Brakes(metersDriven, intervals, weightSet, a, b, c, poly) +
-                                  Subscore.Jerks(metersDriven, intervals, weightSet, a, b, c, poly);
+                                  Subscore.Accelerations(metersDriven, accelerations, intervals, accelerationPrice, weightSet, a, b, c, poly) +
+                                  Subscore.Brakes(metersDriven, brakes, intervals, brakePrice, weightSet, a, b, c, poly) +
+                                  Subscore.Jerks(metersDriven, jerks, intervals, jerkPrice, weightSet, a, b, c, poly);
         }
 
         public double CalculateOptimal(Int64 tripId, List<double> optimalSpeedingProfile,
@@ -50,6 +54,7 @@ namespace CarDataProject {
             //double metersDriven = DBController.MetersDriven(Int64 tripId);
             //List<double> roadTypeIntervals = DBController.RoadTypeIntervals(Int64 tripId);
             //List<double> criticalTimePeriodIntervals = DBController.CriticalTimePeriodIntervals(Int64 tripId);
+
             double metersSped = 0;
             double accelerations = 0;
             double brakes = 0;
@@ -76,10 +81,10 @@ namespace CarDataProject {
 
             return metersDriven + Subscore.RoadTypes(metersDriven, intervals, weightSet) +
                                   Subscore.CriticalTimePeriod(metersDriven, intervals, weightSet) +
-                                  Subscore.Speeding(metersDriven, metersSped, optimalSpeedingProfile, weightSet, a, b, c, poly) +
-                                  Subscore.Accelerations(metersDriven, optimalAccelrationProfile, weightSet, a, b, c, poly) +
-                                  Subscore.Brakes(metersDriven, optimalBrakesProfile, weightSet, a, b, c, poly) +
-                                  Subscore.Jerks(metersDriven, optimalJerksProfile, weightSet, a, b, c, poly);
+                                  Subscore.Speeding(metersDriven, metersSped, intervals, weightSet, a, b, c, poly) +
+                                  Subscore.Accelerations(metersDriven, accelerations, intervals, accelerationPrice, weightSet, a, b, c, poly) +
+                                  Subscore.Brakes(metersDriven, brakes, intervals, brakePrice, weightSet, a, b, c, poly) +
+                                  Subscore.Jerks(metersDriven, jerks, intervals, jerkPrice, weightSet, a, b, c, poly);
         }
     }
 }

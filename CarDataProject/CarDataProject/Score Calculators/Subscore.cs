@@ -37,41 +37,49 @@ namespace CarDataProject {
         /*
         * Speeding score is based on the amount and severity of speeding during a trip
         */
-        public static double Speeding(double metersDriven, double metersSped, List<double> intervals, List<double> weights, double a, double b, double c, double poly) {
+        public static double Speeding(double metersSped, List<double> intervals, List<double> weights, double a, double b, double c, double poly) {
             Dictionary<double, double> weightedIntervals = new Dictionary<double, double>();
 
             for (int i = 0; i < weights.Count - 1; i++) {
                 weightedIntervals.Add(weights[i], intervals[i]);
             }
 
-            //Return the amount of meters added by the calculated multiplier
-            double x = metersSped * AccumulatedMultiplier(weightedIntervals);
 
-            //Provide polynomial functionality to make compounding speeding count for more 
-            return Math.Pow(a * x, poly) + b * x + c;
+            //Find a multiplier on the severity of speeding
+            double x = AccumulatedMultiplier(weightedIntervals);
+
+            //Provide polynomial functionality to make bad distributions count for more
+            double totalMultiplier = Math.Pow(a * x, poly) + b * x + c;
+
+            //x becomes the amount of meters that should be added to the trip
+            return totalMultiplier * metersSped;
         }
 
         /*
         * Acceleration score is based on the amount and severity of accelerations during a trip
         */
-        public static double Accelerations(double metersDriven, List<double> intervals, List<double> weights, double a, double b, double c, double poly) {
+        public static double Accelerations(double accelerations, List<double> intervals, double accelerationPrice, List<double> weights, double a, double b, double c, double poly) {
             Dictionary<double, double> weightedIntervals = new Dictionary<double, double>();
 
             for (int i = 0; i < weights.Count - 1; i++) {
                 weightedIntervals.Add(weights[i], intervals[i]);
             }
 
-            //x is the amount of meters added by the calculated multiplier
-            double x = metersDriven * AccumulatedMultiplier(weightedIntervals);
+            //Find a multiplier on the severity of accelerations
+            double x = AccumulatedMultiplier(weightedIntervals);
 
-            //Provide polynomial functionality to make compounding bad accelerations count for more 
-            return Math.Pow(a * x, poly) + b * x + c;
+            //Provide polynomial functionality to make bad distributions count for more
+            double totalMultiplier = Math.Pow(a * x, poly) + b * x + c;
+
+            //x becomes the amount of meters that should be added to the trip
+            return totalMultiplier * accelerations * accelerationPrice;
+
         }
 
         /*
         * Brakes score is based on the amount and severity of brakes during a trip
         */
-        public static double Brakes(double metersDriven, List<double> intervals, List<double> weights, double a, double b, double c, double poly) {
+        public static double Brakes(double brakes, List<double> intervals, double brakePrice, List<double> weights, double a, double b, double c, double poly) {
             Dictionary<double, double> weightedIntervals = new Dictionary<double, double>();
 
             for (int i = 0; i < weights.Count - 1; i++) {
@@ -79,28 +87,34 @@ namespace CarDataProject {
             }
 
 
-            //x is the amount of meters added by the calculated multiplier
-            double x = metersDriven * AccumulatedMultiplier(weightedIntervals);
+            //Find a multiplier on the severity of brakes
+            double x = AccumulatedMultiplier(weightedIntervals);
 
-            //Provide polynomial functionality to make compounding bad accelerations count for more 
-            return Math.Pow(a * x, poly) + b * x + c;
+            //Provide polynomial functionality to make bad distributions count for more
+            double totalMultiplier = Math.Pow(a * x, poly) + b * x + c;
+
+            //x becomes the amount of meters that should be added to the trip
+            return totalMultiplier * brakes * brakePrice;
         }
 
         /*
         * Jerks score is based on the amount and severity of jerks during a trip
         */
-        public static double Jerks(double metersDriven, List<double> intervals, List<double> weights, double a, double b, double c, double poly) {
+        public static double Jerks(double jerks, List<double> intervals, double jerkPrice, List<double> weights, double a, double b, double c, double poly) {
             Dictionary<double, double> weightedIntervals = new Dictionary<double, double>();
 
             for (int i = 0; i < weights.Count - 1; i++) {
                 weightedIntervals.Add(weights[i], intervals[i]);
             }
 
-            //x is the amount of meters added by the calculated multiplier
-            double x = metersDriven * AccumulatedMultiplier(weightedIntervals);
+            //Find a multiplier on the severity of jerks
+            double x = AccumulatedMultiplier(weightedIntervals);
 
-            //Provide polynomial functionality to make compounding bad accelerations count for more 
-            return Math.Pow(a * x, poly) + b * x + c;
+            //Provide polynomial functionality to make bad distributions count for more
+            double totalMultiplier = Math.Pow(a * x, poly) + b * x + c;
+
+            //x becomes the amount of meters that should be added to the trip
+            return totalMultiplier * jerks * jerkPrice;
         }
 
         /*
