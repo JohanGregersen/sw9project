@@ -49,12 +49,12 @@ namespace CarDataProject {
             this.PreviousTripId = row.Field<Int64>("previoustripid");
 
             //Temporal Information
-            row["startdate"] = row["startdate"] is DBNull ? "19700101" : row["startdate"];
-            row["starttime"] = row["starttime"] is DBNull ? "0" : row["starttime"];
-            this.StartTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("startdate"), row.Field<int>("starttime")));
-            row["enddate"] = row["enddate"] is DBNull ? "19700101" : row["enddate"];
-            row["endtime"] = row["endtime"] is DBNull ? "0" : row["endtime"];
-            this.EndTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("enddate"), row.Field<int>("endtime")));
+            row["startdateid"] = row["startdateid"] is DBNull ? "19700101" : row["startdateid"];
+            row["starttimeid"] = row["starttimeid"] is DBNull ? "0" : row["starttimeid"];
+            this.StartTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("startdateid"), row.Field<int>("starttimeid")));
+            row["enddateid"] = row["enddateid"] is DBNull ? "19700101" : row["enddateid"];
+            row["endtimeid"] = row["endtimeid"] is DBNull ? "0" : row["endtimeid"];
+            this.EndTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("enddateid"), row.Field<int>("endtimeid")));
 
             row["secondsdriven"] = row["secondsdriven"] is DBNull ? -1 : row["secondsdriven"];
             this.SecondsDriven = new TimeSpan(0, 0, row.Field<int>("secondsdriven"));

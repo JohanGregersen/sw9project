@@ -542,10 +542,10 @@ namespace CarDataProject {
         public int UpdateTripFactWithMeasures(Trip UpdatedTrip) {
             string sql = String.Format(@"UPDATE tripfact
                                          SET previoustripid = @previoustripid,
-                                          startdate = @startdate,
-                                          starttime = @starttime,
-                                          enddate = @enddate,
-                                          endtime = @endtime,
+                                          startdateid = @startdateid,
+                                          starttimeid = @starttimeid,
+                                          enddateid = @enddateid,
+                                          endtimeid = @endtimeid,
                                           secondsdriven = @secondsdriven,
                                           metersdriven = @metersdriven,
                                           jerkcount = @jerkcount,
@@ -578,10 +578,10 @@ namespace CarDataProject {
 
             }
 
-            command.Parameters.AddWithValue("@startdate", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("yyyyMMdd")));
-            command.Parameters.AddWithValue("@starttime", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("HHmmss")));
-            command.Parameters.AddWithValue("@enddate", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("yyyyMMdd")));
-            command.Parameters.AddWithValue("@endtime", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@startdateid", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("yyyyMMdd")));
+            command.Parameters.AddWithValue("@starttimeid", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@enddateid", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("yyyyMMdd")));
+            command.Parameters.AddWithValue("@endtimeid", Convert.ToInt32(UpdatedTrip.EndTemporal.Timestamp.ToString("HHmmss")));
             command.Parameters.AddWithValue("@secondsdriven", UpdatedTrip.SecondsDriven.TotalSeconds);
             command.Parameters.AddWithValue("@metersdriven", UpdatedTrip.MetersDriven);
             //price?
