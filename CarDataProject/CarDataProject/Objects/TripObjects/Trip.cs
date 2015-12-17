@@ -22,6 +22,7 @@ namespace CarDataProject {
         public double SteadySpeedDistance { get; set; }
         public TimeSpan SteadySpeedTime { get; set; }
         public TimeSpan SecondsToLag { get; set; }
+        public IntervalInformation IntervalInformation {get; set; }
         public double DataQuality { get; set; }
 
         public Trip(Int64 TripId, int CarId) {
@@ -96,6 +97,22 @@ namespace CarDataProject {
 
             row["steadyspeedtime"] = row["steadyspeedtime"] is DBNull ? 0 : row["steadyspeedtime"];
             this.TimeSped = new TimeSpan(0, 0, (int)row.Field<Single>("steadyspeedtime"));
+
+            //IntervalInformation
+            row["roadtypesinterval"] = row["roadtypesinterval"] is DBNull ? 0 : row["roadtypesinterval"];
+            row["criticaltimeinterval"] = row["criticaltimeinterval"] is DBNull ? 0 : row["criticaltimeinterval"];
+            row["speedinterval"] = row["speedinterval"] is DBNull ? 0 : row["speedinterval"];
+            row["accelerationinterval"] = row["accelerationinterval"] is DBNull ? 0 : row["accelerationinterval"];
+            row["jerkinterval"] = row["jerkinterval"] is DBNull ? 0 : row["jerkinterval"];
+            row["brakinginterval"] = row["brakinginterval"] is DBNull ? 0 : row["brakinginterval"];
+            this.IntervalInformation = new IntervalInformation(CarId,
+                                                               TripId,
+                                                               row.Field<Int64>("roadtypesinterval"),
+                                                               row.Field<Int64>("criticaltimeinterval"),
+                                                               row.Field<Int64>("speedinterval"),
+                                                               row.Field<Int64>("accelerationinterval"),
+                                                               row.Field<Int64>("jerkinterval"),
+                                                               row.Field<Int64>("brakinginterval"));
 
             //Data Quality
             row["dataquality"] = row["dataquality"] is DBNull ? -1 : row["dataquality"];
