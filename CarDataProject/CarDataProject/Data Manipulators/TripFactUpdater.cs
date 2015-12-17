@@ -100,7 +100,9 @@ namespace CarDataProject {
 
                 trip.DataQuality += facts[i].Quality.Hdop;
             }
-
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // Needs to be calculated right
+            ////////////////////////////////
             //Data Quality
             trip.DataQuality = trip.DataQuality / facts.Count;
 

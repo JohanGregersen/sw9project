@@ -59,31 +59,5 @@ namespace CarDataProject {
             }
             return false;
         }
-
-        public static bool SteadySpeed(List<Fact> facts) {
-            if(facts.Count != 5) {
-                throw new ArgumentException("Steady Speed must be calculated with exactly 5 elements");
-            }
-
-            double totalSpeedChange = 0;
-
-            //Average change in speed does not exceed 3, and no peak change above 5
-            for(int i = 1; i < facts.Count; i++) {
-                double speedChange = Math.Abs(facts[i].Measure.Speed - facts[i - 1].Measure.Speed);
-                if (speedChange >= 5) {
-                    return false;
-                }
-                totalSpeedChange += speedChange;
-            }
-
-            //Average Speed computation
-            
-            if ((totalSpeedChange / 5) >= 3) {
-                return false;
-            }
-
-            return true;
-        }
-
     }
 }
