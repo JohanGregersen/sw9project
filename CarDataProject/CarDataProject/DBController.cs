@@ -4,6 +4,7 @@ using Npgsql;
 using System.Data;
 using System.Text;
 using System.Device.Location;
+using System.Linq;
 
 namespace CarDataProject {
     public class DBController {
@@ -353,13 +354,35 @@ namespace CarDataProject {
                     int time = row.Field<int>("timeid");
 
                     timestamps.Add(new TemporalInformation(entryId, DateTimeHelper.ConvertToDateTime(date, time)));
-
                 }
 
                 SortingHelper.TemporalInformationByDateTime(timestamps);
             }
 
             return timestamps;
+        }
+
+        ///<summary>
+        ///<para>Gets list of roadtypes sorted by date and time</para>
+        ///<para>Null entries will be assigned as "noinfo"</para>
+        ///</summary>
+        public List<Global.Enums.RoadType> GetRoadTypesByTripId(Int64 tripId) {
+            string sql = String.Format(@"SELECT roadtype
+                                         FROM gpsfact JOIN segmentinformation
+                                         WHERE tripid = '{0}'
+                                         ORDER BY dateid ASC, timeid ASC", tripId);
+            DataRowCollection result = Query(sql);
+
+            List<Global.Enums.RoadType> roadTypes = new List<Global.Enums.RoadType>();
+            foreach (DataRow row in result) {
+                if (DBNull.Value.Equals(row["roadtype"])) {
+                    roadTypes.Add(Global.Enums.RoadType.noinfo);
+                } else {
+                    roadTypes.Add((Global.Enums.RoadType)(row.Field<Int16>("roadtype")));
+                }
+            }
+
+            return roadTypes;
         }
 
         public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {

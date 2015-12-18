@@ -2,7 +2,7 @@
 using System.IO;
 
 namespace CarDataProject {
-    static class Global {
+    public static class Global {
         public static class Database {
             public const string Host = "localhost";
             public const string Name = "CarDB";
@@ -15,6 +15,15 @@ namespace CarDataProject {
             public const string dat = ".dat";
             public const string png = ".png";
             public const string exe = ".exe";
+        }
+
+        public static class Enums {
+            public enum Direction { forward = 0, FORWARD = 0, backward = 0, BACKWARD = 0, both = 1, BOTH = 1 }
+            public enum RoadType {
+                motorway = 1, trunk, primary, secondary, tertiary, motorway_link, primary_link, unclassified, road,
+                residential, service, track, pedestrian, unpaved, living_street, trunk_link, secondary_link, ferry,
+                tertiary_link, motorway_link_entry = 6, motorway_link_exit = 6, noinfo = 99
+            };
         }
 
         public static class Path {

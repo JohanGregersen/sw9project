@@ -1,16 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarDataProject {
     public static class IntervalCalculator {
-        public static List<double> RoadType() {
-            List<double> intervals = new List<double>();
+        public static Dictionary<Global.Enums.RoadType, double> RoadType(Trip trip, List<Fact> facts) {
+            DBController dbc = new DBController();
+            List<Global.Enums.RoadType> roadTypes = dbc.GetRoadTypesByTripId(trip.TripId);
+            dbc.Close();
 
+            Dictionary<Global.Enums.RoadType, double> metersDistribution = new Dictionary<Global.Enums.RoadType, double>();
 
-            return intervals;
+            //Populate dictionary with all policy-required roadtypes
+            foreach (Global.Enums.RoadType roadType in DefaultPolicy.roadTypes) {
+                metersDistribution.Add(roadType, 0);
+            }
+
+            //Calculate meters driven on each roadtype
+            for (int i = 1; i < facts.Count; i++) {
+                metersDistribution[roadTypes[i]] += facts[i].Spatial.DistanceToLag;
+            }
+
+            //Calculate the distribution in percentages of whole trip
+            foreach (Global.Enums.RoadType roadType in DefaultPolicy.roadTypes) {
+                metersDistribution[roadType] /= trip.MetersDriven * 100;
+            }
+
+            return metersDistribution;
         }
 
         public static List<double> CriticalTime() {

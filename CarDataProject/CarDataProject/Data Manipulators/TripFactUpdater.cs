@@ -101,14 +101,15 @@ namespace CarDataProject {
             trip.DataQuality = trip.DataQuality / facts.Count;
 
             //Interval Information
+
             
 
-            //Price?
-            //Optimal Score?
-            //Trip Score?
+                //Price?
+                //Optimal Score?
+                //Trip Score?
 
 
-            return trip;
+                return trip;
         }
     }
 }

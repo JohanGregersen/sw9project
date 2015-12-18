@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 
 namespace CarDataProject {
     public static class DBInitializer {
-
-        private enum RoadTypes {motorway = 1, trunk, primary, secondary, tertiary, motorway_link, primary_link, unclassified, road, residential,
-            service, track, pedestrian, unpaved, living_street, trunk_link, secondary_link, ferry, tertiary_link, motorway_link_entry = 6, motorway_link_exit = 6};
-        private enum Direction { forward = 0, backward = 0, FORWARD = 0, BACKWARD = 0, both = 1, BOTH = 1 }
-
         public static void DBInitialization() {
             //Fill quality-information-table with data
             QualityInformationInitializer(0, 30, 0, 0, 33);
@@ -151,9 +146,8 @@ namespace CarDataProject {
                     Int64 osmIdC12 = Int64.Parse(row[1]);
                     string RoadNameC12 = row[2] + ";" + row[3];
 
-                    Int16 RoadTypeC12 = (Int16)(RoadTypes)Enum.Parse(typeof(RoadTypes), row[4]);
-                    Int16 OneWayC12 = (Int16)(Direction)Enum.Parse(typeof(Direction), row[7]);
-
+                    Int16 RoadTypeC12 = (Int16)(Global.Enums.RoadType)Enum.Parse(typeof(Global.Enums.RoadType), row[4]);
+                    Int16 OneWayC12 = (Int16)(Global.Enums.Direction)Enum.Parse(typeof(Global.Enums.Direction), row[7]);
 
                     SegmentInformation segmentC12 = new SegmentInformation(segmentIdC12, osmIdC12, RoadNameC12, RoadTypeC12, OneWayC12, 0, 0, 0, false, null);
 
@@ -170,9 +164,8 @@ namespace CarDataProject {
                 Int64 osmId = Int64.Parse(row[1]);
                 string RoadName = row[2];
 
-                Int16 RoadType = (Int16)(RoadTypes)Enum.Parse(typeof(RoadTypes), row[3]);
-                Int16 OneWay = (Int16)(Direction)Enum.Parse(typeof(Direction), row[6]);
-
+                Int16 RoadType = (Int16)(Global.Enums.RoadType)Enum.Parse(typeof(Global.Enums.RoadType), row[3]);
+                Int16 OneWay = (Int16)(Global.Enums.Direction)Enum.Parse(typeof(Global.Enums.Direction), row[6]);
 
                 SegmentInformation segment = new SegmentInformation(segmentId, osmId, RoadName, RoadType, OneWay, 0, 0, 0, false, null);
 
@@ -182,6 +175,7 @@ namespace CarDataProject {
 
                 dbc.AddSegment(segment, speedlimitForward, speedlimitBackward, lineString);
             }
+
             dbc.Close();
         }
     }
