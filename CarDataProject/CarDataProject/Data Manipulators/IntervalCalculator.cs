@@ -11,7 +11,7 @@ namespace CarDataProject {
             Dictionary<Global.Enums.RoadType, double> metersDistribution = new Dictionary<Global.Enums.RoadType, double>();
 
             //Populate dictionary with all policy-required roadtypes
-            foreach (Global.Enums.RoadType roadType in DefaultPolicy.roadTypes) {
+            foreach (Global.Enums.RoadType roadType in DefaultPolicy.RoadTypes) {
                 metersDistribution.Add(roadType, 0);
             }
 
@@ -21,17 +21,36 @@ namespace CarDataProject {
             }
 
             //Calculate the distribution in percentages of whole trip
-            foreach (Global.Enums.RoadType roadType in DefaultPolicy.roadTypes) {
+            foreach (Global.Enums.RoadType roadType in DefaultPolicy.RoadTypes) {
                 metersDistribution[roadType] /= trip.MetersDriven * 100;
             }
 
             return metersDistribution;
         }
 
-        public static List<double> CriticalTime() {
-            List<double> intervals = new List<double>();
+        public static Dictionary<TimeInterval , double> CriticalTime(Trip trip, List<Fact> facts) {
+            Dictionary<TimeInterval, double> criticalTimes = new Dictionary<TimeInterval, double>();
 
-            return intervals;
+            //Populate dictionary with all policy-required time-intervals
+            foreach (TimeInterval interval in DefaultPolicy.TimeIntervals) {
+                criticalTimes.Add(interval, 0);
+            }
+
+            //Calculate meters driven in every interval
+            for (int i = 1; i < facts.Count; i++) {
+                foreach(TimeInterval interval in DefaultPolicy.TimeIntervals) {
+                    if(interval.ActiveDays.Contains(facts[i].Temporal.Timestamp.DayOfWeek) && interval.StartTime <= facts[i].Temporal.Timestamp.TimeOfDay && interval.EndTime >= facts[i].Temporal.Timestamp.TimeOfDay) {
+                        criticalTimes[interval] += facts[i].Spatial.DistanceToLag;
+                    }
+                }
+            }
+
+            //Calculate the distribution in percentages of whole trip
+            for(int i = 0; i < DefaultPolicy.TimeIntervals.Count; i++) {
+                criticalTimes[DefaultPolicy.TimeIntervals[i]] /= trip.MetersDriven * 100;
+            }
+
+            return criticalTimes;
         }
 
         public static List<double> Speeding() {
