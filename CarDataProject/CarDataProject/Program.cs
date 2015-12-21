@@ -6,11 +6,12 @@ using System.Threading;
 namespace CarDataProject {
     class Program {
         static void Main(string[] args) {
+
             Console.WriteLine("Done!");
             Console.ReadLine();
         }
 
-        static void UpdateIntervalsInDB() {
+        /*static void UpdateIntervalsInDB() {
             List<Int64> tripIds;
             Trip trip;
             List<Fact> facts;
@@ -22,17 +23,15 @@ namespace CarDataProject {
                 for(int i = 0; i < tripIds.Count; i++) {
                     Console.Clear();
                     Console.WriteLine("Encoding intervals on car {0}/{1}, trip {2}/{3}", j+1, carIds.Count+1, i+1, tripIds.Count+1);
-                    trip = dbc.GetTripByCarIdAndTripId(carIds[j], tripIds[i]);
-                    facts = dbc.GetFactsByCarIdAndTripId(carIds[j], tripIds[i]);
+                    trip = dbc.GetTripByTripId(tripIds[i]);
+                    facts = dbc.GetFactsByTripId(tripIds[i]);
 
                     TripFactUpdater.UpdateTripWithIntervals(trip, facts);
                 }
             }
-        }
+        }*/
 
         static void LausThreadedDBStuff() {
-            DBController dbc = new DBController();
-
             List<Worker> workerPool = new List<Worker>();
             
             for(Int16 i = 1; i <= 11; i++) {

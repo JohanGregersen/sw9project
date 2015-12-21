@@ -14,7 +14,6 @@ namespace CarDataProject {
         double brakes = 24;
         double jerks = 45;
         List<double> intervals = new List<double> { 12, 13, 12, 13, 12, 13, 12, 13 };
-        Int64 tripId = 1;
 
         //Forsikringsselskabet skal bestemme alt det her
         List<double> weightSet = new List<double> { 1, 1.2, 1.4, 1, 1, 1.8, 1, 1.1 };

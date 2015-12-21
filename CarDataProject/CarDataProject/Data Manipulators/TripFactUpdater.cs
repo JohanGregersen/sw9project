@@ -6,44 +6,41 @@ namespace CarDataProject {
     public static class TripFactUpdater {
         public static void Update(Int16 carId) {
             DBController dbc = new DBController();
-            List<Int64> tripList = dbc.GetTripIdsByCarId(carId);
-            List<Fact> facts = null;
-            Trip trip = null;
-            Int64 prevTripId = 0;
-            DateTime prevEndTimestamp = new DateTime();
+            List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
+            List<Fact> facts;
+            Trip trip;
+            Int64 previousTripId = 0;
+            DateTime previousEndTimestamp = new DateTime();
 
-            for (int i = 0; i < tripList.Count; i++) {
-                trip = dbc.GetTripByCarIdAndTripId(carId, tripList[i]);
-                facts = dbc.GetFactsByCarIdAndTripId(carId, tripList[i]);
+            for (int i = 0; i < tripIds.Count; i++) {
+                trip = dbc.GetTripByTripId(tripIds[i]);
+                facts = dbc.GetFactsByTripId(tripIds[i]);
 
-                //Previous Trip Calculations
-                //Dont do this on the first trip.
-                if (i != 0) {
-                    trip.PreviousTripId = prevTripId;
-                    trip.SecondsToLag = MeasureCalculator.SecondsToLag(facts.First().Temporal.Timestamp, prevEndTimestamp);
+                //If a previous trip exists, save ID and the time passed between them
+                if (i > 0) {
+                    trip.PreviousTripId = previousTripId;
+                    trip.SecondsToLag = MeasureCalculator.SecondsToLag(facts[0].Temporal.Timestamp, previousEndTimestamp);
                 }
 
-                trip = UpdateTrip(trip, facts);
+                //Remember variables for next iteration
+                previousTripId = trip.TripId;
+                previousEndTimestamp = trip.EndTemporal.Timestamp;
 
-                Console.WriteLine("Updating Car {0} - Trip {1} with prevTripId = {2} and FactsCount = {3}", carId, trip.TripId, trip.PreviousTripId, facts.Count);
-
+                Console.WriteLine("Updating car {0}, trip {1} ({2} facts)", carId, trip.TripId, facts.Count);
+                trip = UpdateTrip(trip, facts, dbc);
                 dbc.UpdateTripFactWithMeasures(trip);
-
-                //Variables for previous Calculations
-                prevTripId = trip.TripId;
-                prevEndTimestamp = trip.EndTemporal.Timestamp;
             }
 
             dbc.Close();
         }
 
-        private static Trip UpdateTrip(Trip trip, List<Fact> facts) {
-            //Temporal
+        private static Trip UpdateTrip(Trip trip, List<Fact> facts, DBController dbc) {
+            //Temporal information
             trip.StartTemporal = facts.First().Temporal;
             trip.EndTemporal = facts.Last().Temporal;
             trip.SecondsDriven = MeasureCalculator.SecondsToLag(facts.Last().Temporal.Timestamp, facts.First().Temporal.Timestamp);
 
-            //Fact related calculations
+            //Counts
             trip.MetersDriven = 0;
             trip.JerkCount = 0;
             trip.BrakeCount = 0;
@@ -55,71 +52,85 @@ namespace CarDataProject {
             trip.DataQuality = 0;
 
             for (int i = 1; i < facts.Count; i++) {
+                //Meters driven
                 trip.MetersDriven += MeasureCalculator.DistanceToLag(facts[i].Spatial.MPoint, facts[i - 1].Spatial.MPoint);
 
-                //JerkCounting
-                if (MeasureCalculator.Jerking(facts[i].Measure) == true) {
-                    trip.JerkCount++;
-                }
-
-                //BrakeCounting
-                if (facts[i].Flag.Braking == true) {
-                    trip.BrakeCount++;
-                }
-
-                //AccelerateCounting
-                if (MeasureCalculator.Accelerating(facts[i].Measure) == true) {
-                    trip.AccelerationCount++;
-                }
-
-                //Meters Sped
-                if (facts[i].Flag.Speeding == true && facts[i].Segment.MaxSpeed != 0) {
+                //Meters sped
+                if (facts[i].Flag.Speeding && facts[i].Segment.MaxSpeed != 0) {
                     trip.MetersSped += facts[i].Spatial.DistanceToLag;
                 }
 
-                //Time Sped
-                if (facts[i].Flag.Speeding == true && facts[i].Segment.MaxSpeed != 0) {
+                //Time sped
+                if (facts[i].Flag.Speeding && facts[i].Segment.MaxSpeed != 0) {
                     trip.TimeSped += facts[i].Temporal.SecondsToLag;
                 }
 
-                //SteadySpeed Distance
-                if (facts[i].Flag.SteadySpeed == true) {
+                //Acceleration count
+                if (facts[i].Flag.Accelerating) {
+                    trip.AccelerationCount++;
+                }
+
+                //Brake count
+                if (facts[i].Flag.Braking) {
+                    trip.BrakeCount++;
+                }
+
+                //Jerk count
+                if (facts[i].Flag.Jerking) {
+                    trip.JerkCount++;
+                }
+
+                //Steady speed distance
+                if (facts[i].Flag.SteadySpeed) {
                     trip.SteadySpeedDistance += facts[i].Spatial.DistanceToLag;
                 }
 
-                //SteadySpeed Time
-                if (facts[i].Flag.SteadySpeed == true) {
+                //Steady speed time
+                if (facts[i].Flag.SteadySpeed) {
                     trip.SteadySpeedTime += facts[i].Temporal.SecondsToLag;
                 }
-
+                
                 trip.DataQuality += facts[i].Quality.Hdop;
             }
+
+            //Interval Information
+            trip = UpdateTripWithIntervals(trip, facts, dbc);
+
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // Needs to be calculated right
             ////////////////////////////////
             //Data Quality
             trip.DataQuality = trip.DataQuality / facts.Count;
 
-            //Interval Information
-
-            
-
                 //Price?
                 //Optimal Score?
                 //Trip Score?
 
-
-                return trip;
+            return trip;
         }
 
-        public static void UpdateTripWithIntervals(Trip trip, List<Fact> facts) {
-            //TODO: Konverter med encoderen, og smid i databasen
-            List<double> road = IntervalCalculator.RoadType(trip, facts);
-            List<double> time = IntervalCalculator.CriticalTime(trip, facts);
-            List<double> speed = IntervalCalculator.Speeding(trip, facts);
-            List<double> acc = IntervalCalculator.Acceleration(trip, facts);
-            List<double> brake = IntervalCalculator.Brake(trip, facts);
-            List<double> jerk = IntervalCalculator.Jerk(trip, facts);
+        private static Trip UpdateTripWithIntervals(Trip trip, List<Fact> facts, DBController dbc) {
+            List<double> intervals;
+
+            intervals = IntervalCalculator.RoadType(trip, facts, dbc);
+            trip.IntervalInformation.RoadTypesInterval = IntervalHelper.Encode(intervals);
+
+            intervals = IntervalCalculator.CriticalTime(trip, facts);
+            trip.IntervalInformation.CriticalTimeInterval = IntervalHelper.Encode(intervals);
+
+            intervals = IntervalCalculator.Speeding(trip, facts);
+            trip.IntervalInformation.SpeedInterval = IntervalHelper.Encode(intervals);
+
+            intervals = IntervalCalculator.Acceleration(trip, facts);
+            trip.IntervalInformation.AccelerationInterval = IntervalHelper.Encode(intervals);
+
+            intervals = IntervalCalculator.Brake(trip, facts);
+            trip.IntervalInformation.BrakingInterval = IntervalHelper.Encode(intervals);
+
+            intervals = IntervalCalculator.Jerk(trip, facts);
+            trip.IntervalInformation.JerkInterval = IntervalHelper.Encode(intervals);
+
+            return trip;
         }
     }
 }

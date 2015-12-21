@@ -13,13 +13,13 @@ namespace CarDataProject {
         }
 
         public void Start() {
-            Console.WriteLine("trying to work this shit out on thread " + this.carId);
-            
+            Console.WriteLine("Starting thread for car " + this.carId);
+
             INFATILoader.LoadCarData(teamId, carId);
             GPSFactUpdater.Update(carId);
             TripFactUpdater.Update(carId);
 
-            Console.WriteLine("worked out shit on " + this.carId + ". TERMINATED");
+            Console.WriteLine("Finished working on car " + this.carId + ". Terminating thread.");
         }
 
         public override string ToString() {

@@ -25,7 +25,7 @@ namespace CarDataProject {
         }
 
         public static double Jerk(MeasureInformation CurrentMi, MeasureInformation PrevMI, TemporalInformation CurrentTI, TemporalInformation PrevTI) {
-            //Jerk = Acceleration change / time
+            //Jerk = Acceleration change / Time
             double accelerationChange = CurrentMi.Acceleration - PrevMI.Acceleration;
             TimeSpan time = CurrentTI.Timestamp - PrevTI.Timestamp;
 
@@ -36,6 +36,7 @@ namespace CarDataProject {
             if (Speed >= MaxSpeed + 3) {
                 return true;
             }
+
             return false;
         }
 
@@ -43,6 +44,7 @@ namespace CarDataProject {
             if (MI.Acceleration >= 5) {
                 return true;
             }
+
             return false;
         }
 
@@ -50,6 +52,7 @@ namespace CarDataProject {
             if (Math.Abs(MI.Jerk) >= 5) {
                 return true;
             }
+
             return false;
         }
         
@@ -57,6 +60,7 @@ namespace CarDataProject {
             if (MI.Acceleration <= -5) {
                 return true;
             }
+
             return false;
         }
 

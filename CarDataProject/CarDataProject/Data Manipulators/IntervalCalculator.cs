@@ -4,12 +4,9 @@ using System.Linq;
 
 namespace CarDataProject {
     public static class IntervalCalculator {
-        public static List<double> RoadType(Trip trip, List<Fact> facts) {
-            SortedDictionary<Global.Enums.RoadType, double> metersDistribution = new SortedDictionary<Global.Enums.RoadType, double>();
-
-            DBController dbc = new DBController();
+        public static List<double> RoadType(Trip trip, List<Fact> facts, DBController dbc) {
+            SortedDictionary<Global.Enums.RoadType, double> metersDistribution = new SortedDictionary<Global.Enums.RoadType, double>();          
             List<Global.Enums.RoadType> roadTypes = dbc.GetRoadTypesByTripId(trip.TripId);
-            dbc.Close();
 
             //Populate dictionary with all policy-required roadtypes
             foreach (Global.Enums.RoadType roadType in DefaultPolicy.RoadTypes) {
@@ -68,7 +65,7 @@ namespace CarDataProject {
 
             //Calculate meters sped in every interval
             for (int i = 1; i < facts.Count; i++) {
-                if (facts[i].Flag.Speeding) {
+                if (facts[i].Flag.Speeding && facts[i].Segment.MaxSpeed != 0) {
                     double percentage = facts[i].Measure.Speed / facts[i].Segment.MaxSpeed * 100 - 100;
                     
                     foreach (Interval interval in DefaultPolicy.SpeedingIntervals) {
@@ -98,8 +95,8 @@ namespace CarDataProject {
 
             //Add an acceleration in the fitting interval per point measured
             for (int i = 1; i < facts.Count; i++) {
-                if (facts[i].Flag.Braking) {
-                    foreach (Interval interval in accelerationIntervals.Keys) {
+                if (facts[i].Flag.Accelerating) {
+                    foreach (Interval interval in DefaultPolicy.AccelerationIntervals) {
                         if (interval.Contains(facts[i].Measure.Acceleration)) {
                             accelerationIntervals[interval]++;
                         }
@@ -158,7 +155,7 @@ namespace CarDataProject {
 
             //Add a jerk in the fitting interval per point measured
             for (int i = 1; i < facts.Count; i++) {
-                if (facts[i].Flag.Braking) {
+                if (facts[i].Flag.Jerking) {
 
                     //Convert all jerks to positive numbers - makes life easier
                     if (facts[i].Measure.Jerk > 0) {

@@ -227,14 +227,27 @@ namespace CarDataProject {
         #endregion Creators
 
         #region Getters
-        public List<Fact> GetFactsByCarIdAndTripId(Int16 carId, Int64 tripId) {
+        public Trip GetTripByTripId(Int64 tripId) {
+            string sql = String.Format(@"SELECT *
+                                        FROM tripfact
+                                        WHERE tripid = '{0}'", tripId);
+            DataRowCollection result = Query(sql);
+
+            if (result.Count >= 1) {
+                return new Trip(result[0]);
+            }
+
+            return null;
+        }
+
+        public List<Fact> GetFactsByTripId(Int64 tripId) {
 
             string sql = String.Format(@"SELECT *, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
                                         FROM gpsfact
                                         INNER JOIN qualityinformation
                                         ON gpsfact.qualityid = qualityinformation.qualityid
-                                        WHERE carid = '{0}' AND tripId = '{1}'
-                                        ORDER BY gpsfact.dateid ASC, gpsfact.timeid ASC, gpsfact.entryid ASC", carId, tripId);
+                                        WHERE tripId = '{0}'
+                                        ORDER BY gpsfact.dateid ASC, gpsfact.timeid ASC, gpsfact.entryid ASC", tripId);
 
             DataRowCollection result = Query(sql);
 
@@ -386,9 +399,7 @@ namespace CarDataProject {
             return roadTypes;
         }
 
-                        
-
-public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
+        public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
             string sql = String.Format(@"SELECT entryid, dateid, timeid, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude, distancetolag
                                          FROM gpsfact
                                          WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
@@ -447,19 +458,6 @@ public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
             }
 
             return speedInformation;
-        }
-
-        public Trip GetTripByCarIdAndTripId(Int16 carId, Int64 tripId) {
-            string sql = String.Format(@"SELECT *
-                                        FROM TripFact
-                                        WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
-            DataRowCollection result = Query(sql);
-
-            if (result.Count >= 1) {
-                return new Trip(result[0]);
-            }
-
-            return null;
         }
 
         public Int64 GetTripCountByCarId(Int16 carId) {

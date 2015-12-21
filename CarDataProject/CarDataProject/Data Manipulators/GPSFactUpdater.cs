@@ -12,7 +12,7 @@ namespace CarDataProject {
             DBController dbc = new DBController();
             List<Int64> tripIds = dbc.GetTripIdsByCarId(CarId);
             foreach (Int64 tripId in tripIds) {
-                List<Fact> facts = dbc.GetFactsByCarIdAndTripId(CarId, tripId);
+                List<Fact> facts = dbc.GetFactsByTripId(tripId);
                 dbc.UpdateGPSFactWithMeasures(UpdatedFacts(facts));
             }
 

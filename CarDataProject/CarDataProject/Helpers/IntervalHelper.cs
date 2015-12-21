@@ -15,34 +15,32 @@ namespace CarDataProject {
             string encoding = "0000000000000000000";
             Int16 intervalTotal = 0;
 
-            if (intervals.Count != 8) {
-                throw new ArgumentException("Interval count should be 8");
+            if (intervals.Count > 8) {
+                throw new ArgumentException("Interval count should be 8 or less");
             } else {
                 int encodingIndex = 3;
 
                 foreach (double interval in intervals) {
                     Int16 value = (Int16) Math.Round(interval);
                     intervalTotal += value;
-                    if (value > 100 || value < 0) {
+                    if (value > 101 || value < 0) {
                         throw new ArgumentOutOfRangeException("Intervals must be between 0% and 100%");
-                    } else if (intervalTotal > 100) {
-                        throw new ArgumentOutOfRangeException("Combined intervals are greater than 100%");
-                    } else if (value == 100) {
-                        encoding.Remove(0, 1).Insert(0, "1");
+                    } else if (value >= 100) {
+                        encoding = encoding.Remove(0, 1).Insert(0, "1");
 
                         //Insert 99 into encoded string since 100 can not be represented
-                        encoding.Remove(encodingIndex, 2).Insert(encodingIndex, "99");
+                        encoding = encoding.Remove(encodingIndex, 2).Insert(encodingIndex, "99");
 
                         //With a value of 100% we are done - break the loop and return the result
                         break;
-
                     }
 
                     //Insert value into encoded string and ensure a leading zero if value is below 10
-                    encoding.Remove(encodingIndex, 2).Insert(encodingIndex, value.ToString("D2"));
+                    encoding = encoding.Remove(encodingIndex, 2).Insert(encodingIndex, value.ToString("D2"));
                     encodingIndex += 2;
                 }
             }
+
             return Int64.Parse(encoding);
         }
 
