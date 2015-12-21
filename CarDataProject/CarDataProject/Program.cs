@@ -6,26 +6,43 @@ using System.Threading;
 namespace CarDataProject {
     class Program {
         static void Main(string[] args) {
-            int breakpoint = 0;
 
-            
+            Console.WriteLine("Done!");
+            Console.ReadLine();
+        }
 
+        static void UpdateIntervalsInDB() {
+            List<Int64> tripIds;
+            Trip trip;
+            List<Fact> facts;
+
+            DBController dbc = new DBController();
+            List<Int16> carIds = dbc.GetCarIds();
+            foreach (Int16 carId in carIds) {
+                tripIds = dbc.GetTripIdsByCarId(carId);
+                for(int i = 0; i < tripIds.Count; i++) {
+                    Console.Clear();
+                    Console.WriteLine("Encoding intervals on trip {0}/{1}", i, tripIds.Count);
+                    trip = dbc.GetTripByCarIdAndTripId(carId, tripIds[i]);
+                    facts = dbc.GetFactsByCarIdAndTripId(carId, tripIds[i]);
+
+                    TripFactUpdater.UpdateTripWithIntervals(trip, facts);
+                }
+            }
+        }
+
+        static void LausThreadedDBStuff() {
             DBController dbc = new DBController();
 
             List<Worker> workerPool = new List<Worker>();
-            
             
             for(Int16 i = 1; i <= 11; i++) {
                 workerPool.Add(new Worker(1, i));
             }
             
-
-            
             for (Int16 i = 12; i <= 20; i++) {
                 workerPool.Add(new Worker(2, i));
             }
-            
-
 
             List<Thread> threads = new List<Thread>();
             foreach (Worker worker in workerPool) {
@@ -37,30 +54,8 @@ namespace CarDataProject {
             foreach (var thread in threads) {
                 thread.Join();
             }
+
             Console.WriteLine("All threads ended");
-
-
-
-            
-
-            Console.WriteLine("done");
-            Console.ReadLine();
         }
-
-
-        /*static void InsertCarLogIntoDB() {
-            List<Fact> facts = INFATI.ReadLog(1, 1);
-            DBController dbc = new DBController();
-
-            foreach (Fact fact in facts) {
-                dbc.AddCarLogEntry(fact);
-            }
-
-            OldCar car = new OldCar(1);
-            car.UpdateCarWithTripIdsOptimized(1);
-
-            dbc.UpdateEntryWithPointAndMpoint(1);
-            dbc.Close();
-        }*/
     }
 }

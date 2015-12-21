@@ -368,9 +368,10 @@ namespace CarDataProject {
         ///</summary>
         public List<Global.Enums.RoadType> GetRoadTypesByTripId(Int64 tripId) {
             string sql = String.Format(@"SELECT roadtype
-                                         FROM gpsfact JOIN segmentinformation
+                                         FROM gpsfact LEFT JOIN segmentinformation
+                                         ON (gpsfact.segmentid = segmentinformation.segmentid)
                                          WHERE tripid = '{0}'
-                                         ORDER BY dateid ASC, timeid ASC", tripId);
+                                         ORDER BY dateid, timeid ASC", tripId);
             DataRowCollection result = Query(sql);
 
             List<Global.Enums.RoadType> roadTypes = new List<Global.Enums.RoadType>();
@@ -385,7 +386,9 @@ namespace CarDataProject {
             return roadTypes;
         }
 
-        public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
+                        
+
+public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
             string sql = String.Format(@"SELECT entryid, dateid, timeid, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude, distancetolag
                                          FROM gpsfact
                                          WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
@@ -635,6 +638,34 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@brakinginterval", UpdatedTrip.IntervalInformation.BrakingInterval);
 
             command.Parameters.AddWithValue("@dataquality", UpdatedTrip.DataQuality);
+
+            try {
+                NonQuery(command, "tripfact");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
+
+        public int UpdateTripFactWithIntervals(Trip UpdatedTrip) {
+            string sql = String.Format(@"UPDATE tripfact
+                                         SET roadtypesinterval = @roadtypesinterval,
+                                             criticaltimeinterval =  @criticaltimeinterval,
+                                             speedinterval = @speedinterval,
+                                             accelerationinterval = @accelerationinterval,
+                                             jerkinterval = @jerkinterval,
+                                             brakinginterval = @brakinginterval,
+                                             dataquality = @dataquality
+                                         WHERE tripid = @tripid");
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@roadtypesinterval", UpdatedTrip.IntervalInformation.RoadTypesInterval);
+            command.Parameters.AddWithValue("@criticaltimeinterval", UpdatedTrip.IntervalInformation.CriticalTimeInterval);
+            command.Parameters.AddWithValue("@speedinterval", UpdatedTrip.IntervalInformation.SpeedInterval);
+            command.Parameters.AddWithValue("@accelerationinterval", UpdatedTrip.IntervalInformation.AccelerationInterval);
+            command.Parameters.AddWithValue("@jerkinterval", UpdatedTrip.IntervalInformation.JerkInterval);
+            command.Parameters.AddWithValue("@brakinginterval", UpdatedTrip.IntervalInformation.BrakingInterval);
 
             try {
                 NonQuery(command, "tripfact");

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace CarDataProject {
-    public class TimeInterval {
+    public class TimeInterval : IComparable<TimeInterval> {
         public List<DayOfWeek> ActiveDays;
         public TimeSpan StartTime;
         public TimeSpan EndTime;
@@ -11,6 +11,10 @@ namespace CarDataProject {
             this.ActiveDays = activeDays;
             this.StartTime = startTime;
             this.EndTime = endTime;
+        }
+
+        public int CompareTo(TimeInterval that) {
+            return this.StartTime.CompareTo(that.StartTime);
         }
     }
 }

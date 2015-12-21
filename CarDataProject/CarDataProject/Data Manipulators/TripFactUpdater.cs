@@ -111,5 +111,15 @@ namespace CarDataProject {
 
                 return trip;
         }
+
+        public static void UpdateTripWithIntervals(Trip trip, List<Fact> facts) {
+            //TODO: Konverter med encoderen, og smid i databasen
+            List<double> road = IntervalCalculator.RoadType(trip, facts);
+            List<double> time = IntervalCalculator.CriticalTime(trip, facts);
+            List<double> speed = IntervalCalculator.Speeding(trip, facts);
+            List<double> acc = IntervalCalculator.Acceleration(trip, facts);
+            List<double> brake = IntervalCalculator.Brake(trip, facts);
+            List<double> jerk = IntervalCalculator.Jerk(trip, facts);
+        }
     }
 }

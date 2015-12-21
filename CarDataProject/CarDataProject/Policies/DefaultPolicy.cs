@@ -27,5 +27,44 @@ namespace CarDataProject {
                                                                                   new TimeInterval(weekends, new TimeSpan(9, 0, 0), new TimeSpan(13, 0, 0)),
                                                                                   new TimeInterval(weekends, new TimeSpan(20, 0, 0), new TimeSpan(23, 30, 0)),
         };
+        public static List<Interval> SpeedingIntervals = new List<Interval> { new Interval(0.001, 10),
+                                                                              new Interval(10, 20),
+                                                                              new Interval(20, 30),
+                                                                              new Interval(30, 40),
+                                                                              new Interval(40, 50),
+                                                                              new Interval(50, 60),
+                                                                              new Interval(60, 70),
+                                                                              new Interval(70)
+        };
+
+        public static List<Interval> AccelerationIntervals = new List<Interval> { new Interval(0.001, 3),
+                                                                                  new Interval(3, 5),
+                                                                                  new Interval(5, 7),
+                                                                                  new Interval(7, 8),
+                                                                                  new Interval(8, 9),
+                                                                                  new Interval(9, 10),
+                                                                                  new Interval(10, 11),
+                                                                                  new Interval(11)
+        };
+
+        public static List<Interval> BrakeIntervals = new List<Interval> { new Interval(0.001, 3),
+                                                                           new Interval(3, 5),
+                                                                           new Interval(5, 7),
+                                                                           new Interval(7, 8),
+                                                                           new Interval(8, 9),
+                                                                           new Interval(9, 10),
+                                                                           new Interval(10, 11),
+                                                                           new Interval(11)
+        };
+
+        public static List<Interval> JerkIntervals = new List<Interval> { new Interval(0.001, 1),
+                                                                          new Interval(1, 2),
+                                                                          new Interval(2, 3),
+                                                                          new Interval(3, 4),
+                                                                          new Interval(4, 5),
+                                                                          new Interval(5, 6),
+                                                                          new Interval(6, 7),
+                                                                          new Interval(7)
+        };
     }
 }
