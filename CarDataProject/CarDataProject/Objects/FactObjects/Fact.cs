@@ -76,9 +76,11 @@ namespace CarDataProject {
 
             //Flag Information
             row["speeding"] = row["speeding"] is DBNull ? false : row["speeding"];
+            row["accelerating"] = row["accelerating"] is DBNull ? false : row["accelerating"];
+            row["jerking"] = row["jerking"] is DBNull ? false : row["jerking"];
             row["braking"] = row["braking"] is DBNull ? false : row["braking"];
             row["steadyspeed"] = row["steadyspeed"] is DBNull ? false : row["steadyspeed"];
-            this.Flag = new FlagInformation(row.Field<bool>("speeding"), row.Field<bool>("braking"), row.Field<bool>("steadyspeed"));
+            this.Flag = new FlagInformation(row.Field<bool>("speeding"), row.Field<bool>("accelerating"), row.Field<bool>("jerking"), row.Field<bool>("braking"), row.Field<bool>("steadyspeed"));
 
             //Segment Information
             row["segmentid"] = row["segmentid"] is DBNull ? -1 : row["segmentid"];

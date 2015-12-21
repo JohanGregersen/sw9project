@@ -39,8 +39,8 @@ namespace CarDataProject {
             return false;
         }
 
-        public static bool Braking(MeasureInformation MI) {
-            if(MI.Acceleration <= -5) {
+        public static bool Accelerating(MeasureInformation MI) {
+            if (MI.Acceleration >= 5) {
                 return true;
             }
             return false;
@@ -52,12 +52,13 @@ namespace CarDataProject {
             }
             return false;
         }
-
-        public static bool Accelerating(MeasureInformation MI) {
-            if (Math.Abs(MI.Acceleration) >= 5) {
+        
+        public static bool Braking(MeasureInformation MI) {
+            if (MI.Acceleration <= -5) {
                 return true;
             }
             return false;
         }
+
     }
 }

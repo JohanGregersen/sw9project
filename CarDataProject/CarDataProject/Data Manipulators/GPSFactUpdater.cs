@@ -23,7 +23,7 @@ namespace CarDataProject {
             //First-cases
             //Speeding
             bool firstSpeeding = MeasureCalculator.Speeding(facts.First().Measure.Speed, facts.First().Segment.MaxSpeed);
-            facts.First().Flag = new FlagInformation(facts.First().TripId, facts.First().EntryId, firstSpeeding, false);
+            facts.First().Flag = new FlagInformation(facts.First().TripId, facts.First().EntryId, firstSpeeding, false, false, false);
 
             //steady-speed
             speedLock = facts.First().Measure.Speed;
@@ -56,6 +56,11 @@ namespace CarDataProject {
                 //Speeding
                 bool speeding = MeasureCalculator.Speeding(facts[i].Measure.Speed, facts[i].Segment.MaxSpeed);
 
+                //Accelerating
+                bool accelerating = MeasureCalculator.Accelerating(facts[i].Measure);
+                //Jerking
+                bool jerking = MeasureCalculator.Jerking(facts[i].Measure);
+                
                 //Braking
                 bool braking = MeasureCalculator.Braking(facts[i].Measure);
 
@@ -74,7 +79,7 @@ namespace CarDataProject {
                     steadySpeed = true; 
                 }
 
-                facts[i].Flag = new FlagInformation(speeding, braking, steadySpeed);
+                facts[i].Flag = new FlagInformation(speeding, accelerating, jerking, braking, steadySpeed);
             }
 
             return facts;

@@ -546,6 +546,8 @@ public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
                                             distancetolag = @distancetolag,
                                             secondstolag = @secondstolag,
                                             speeding = @speeding,
+                                            accelerating = @accelerating,
+                                            jerking = @jerking,
                                             braking = @braking,
                                             steadyspeed = @steadyspeed
                                             WHERE entryid = @entryid");
@@ -562,6 +564,8 @@ public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
                 command.Parameters.AddWithValue("@distancetolag", UpdatedFacts[i].Spatial.DistanceToLag);
                 command.Parameters.AddWithValue("@secondstolag", UpdatedFacts[i].Temporal.SecondsToLag.Seconds);
                 command.Parameters.AddWithValue("@speeding", UpdatedFacts[i].Flag.Speeding);
+                command.Parameters.AddWithValue("@accelerating", UpdatedFacts[i].Flag.Accelerating);
+                command.Parameters.AddWithValue("@jerking", UpdatedFacts[i].Flag.Jerking);
                 command.Parameters.AddWithValue("@braking", UpdatedFacts[i].Flag.Braking);
                 command.Parameters.AddWithValue("@steadyspeed", UpdatedFacts[i].Flag.SteadySpeed);
 
