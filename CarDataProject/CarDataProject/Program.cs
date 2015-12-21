@@ -6,7 +6,6 @@ using System.Threading;
 namespace CarDataProject {
     class Program {
         static void Main(string[] args) {
-
             Console.WriteLine("Done!");
             Console.ReadLine();
         }
@@ -18,13 +17,13 @@ namespace CarDataProject {
 
             DBController dbc = new DBController();
             List<Int16> carIds = dbc.GetCarIds();
-            foreach (Int16 carId in carIds) {
-                tripIds = dbc.GetTripIdsByCarId(carId);
+            for (int j = 0; j < carIds.Count; j++) {
+                tripIds = dbc.GetTripIdsByCarId(carIds[j]);
                 for(int i = 0; i < tripIds.Count; i++) {
                     Console.Clear();
-                    Console.WriteLine("Encoding intervals on trip {0}/{1}", i, tripIds.Count);
-                    trip = dbc.GetTripByCarIdAndTripId(carId, tripIds[i]);
-                    facts = dbc.GetFactsByCarIdAndTripId(carId, tripIds[i]);
+                    Console.WriteLine("Encoding intervals on car {0}/{1}, trip {2}/{3}", j+1, carIds.Count+1, i+1, tripIds.Count+1);
+                    trip = dbc.GetTripByCarIdAndTripId(carIds[j], tripIds[i]);
+                    facts = dbc.GetFactsByCarIdAndTripId(carIds[j], tripIds[i]);
 
                     TripFactUpdater.UpdateTripWithIntervals(trip, facts);
                 }
