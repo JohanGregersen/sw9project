@@ -655,11 +655,13 @@ public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
                                              speedinterval = @speedinterval,
                                              accelerationinterval = @accelerationinterval,
                                              jerkinterval = @jerkinterval,
-                                             brakinginterval = @brakinginterval,
-                                             dataquality = @dataquality
+                                             brakinginterval = @brakinginterval
                                          WHERE tripid = @tripid");
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+
+            command.Parameters.AddWithValue("@tripid", UpdatedTrip.TripId);
+
             command.Parameters.AddWithValue("@roadtypesinterval", UpdatedTrip.IntervalInformation.RoadTypesInterval);
             command.Parameters.AddWithValue("@criticaltimeinterval", UpdatedTrip.IntervalInformation.CriticalTimeInterval);
             command.Parameters.AddWithValue("@speedinterval", UpdatedTrip.IntervalInformation.SpeedInterval);
