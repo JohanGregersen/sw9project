@@ -66,5 +66,21 @@ namespace CarDataProject {
                                                                           new Interval(6, 7),
                                                                           new Interval(7)
         };
+
+        public static List<double> RoadTypeWeights = new List<double> { 1, 1, 1, 1.05, 1.1, 1.1, 1.3, 1.3 };
+        public static List<double> CriticalTimeWeights = new List<double> { 1.2, 1.15, 1.05, 1.1 };
+        public static List<double> SpeedingWeights = new List<double> { 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2 };
+        public static List<double> AccelerationWeights = new List<double> { 1, 1, 1, 1.1, 1.2, 1.4, 1.6, 1.9 };
+        public static List<double> BrakeWeights = new List<double> { 1, 1, 1, 1.1, 1.2, 1.4, 1.6, 1.9 };
+        public static List<double> JerkWeights = new List<double> { 1, 1, 1, 1.1, 1.2, 1.4, 1.6, 1.9 };
+
+        public static double BrakePrice = 1.5;
+        public static double AccelerationPrice = 1;
+        public static double JerkPrice = 1.2;
+
+        public static double A = 1.02;
+        public static double B = 1.05;
+        public static double C = 0;
+        public static double Poly = 1.08;
     }
 }
