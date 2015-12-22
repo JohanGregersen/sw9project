@@ -6,8 +6,8 @@ namespace CarDataProject {
      * FinalScore calculates a total score for a trip
      * The score uses the trip distance as base, adding distance for each of the different weight functions
      */
-    public class FinalScore {
-        public double CalculateReal(Int64 tripId) {
+    public static class FinalScore {
+        public static double CalculateReal(Int64 tripId) {
             DBController dbc = new DBController();
             Trip trip = dbc.GetTripByTripId(tripId);
             dbc.Close();
@@ -19,42 +19,70 @@ namespace CarDataProject {
             List<double> brakingIntervals = IntervalHelper.Decode(trip.IntervalInformation.BrakingInterval);
             List<double> jerkIntervals = IntervalHelper.Decode(trip.IntervalInformation.JerkInterval);
 
-            return trip.MetersDriven + Subscore.RoadTypes(trip.MetersDriven, roadTypeIntervals, DefaultPolicy.RoadTypeWeights) +
-                                  Subscore.CriticalTimePeriod(trip.MetersDriven, criticalTimeIntervals, DefaultPolicy.CriticalTimeWeights) +
-                                  Subscore.Speeding(trip.MetersSped,
-                                                    speedingIntervals,
-                                                    DefaultPolicy.SpeedingWeights,
-                                                    DefaultPolicy.A,
-                                                    DefaultPolicy.B,
-                                                    DefaultPolicy.C,
-                                                    DefaultPolicy.Poly) +
-                                  Subscore.Accelerations(trip.AccelerationCount,
-                                                         accelerationIntervals,
-                                                         DefaultPolicy.AccelerationPrice,
-                                                         DefaultPolicy.AccelerationWeights,
-                                                         DefaultPolicy.A,
-                                                         DefaultPolicy.B,
-                                                         DefaultPolicy.C,
-                                                         DefaultPolicy.Poly) +
-                                  Subscore.Brakes(trip.BrakeCount,
-                                                  brakingIntervals,
-                                                  DefaultPolicy.BrakePrice,
-                                                  DefaultPolicy.BrakeWeights,
-                                                  DefaultPolicy.A,
-                                                  DefaultPolicy.B,
-                                                  DefaultPolicy.C,
-                                                  DefaultPolicy.Poly) +
-                                  Subscore.Jerks(trip.JerkCount,
-                                                 jerkIntervals,
-                                                 DefaultPolicy.JerkPrice,
-                                                 DefaultPolicy.JerkWeights,
+            Console.WriteLine("Score for trip {0}", trip.TripId);
+            Console.WriteLine();
+
+            double score;
+            double finalScore = trip.MetersDriven;
+            Console.WriteLine("Base: {0}", trip.MetersDriven);
+
+            score = Subscore.RoadTypes(trip.MetersDriven, roadTypeIntervals, DefaultPolicy.RoadTypeWeights);
+            finalScore += score;
+            Console.WriteLine("RoadType: {0}", score);
+
+            score = Subscore.CriticalTimePeriod(trip.MetersDriven, criticalTimeIntervals, DefaultPolicy.CriticalTimeWeights);
+            finalScore += score;
+            Console.WriteLine("CriticalTime: {0}", score);
+
+            score = Subscore.Speeding(trip.MetersSped,
+                                            speedingIntervals,
+                                            DefaultPolicy.SpeedingWeights,
+                                            DefaultPolicy.A,
+                                            DefaultPolicy.B,
+                                            DefaultPolicy.C,
+                                            DefaultPolicy.Poly);
+            finalScore += score;
+            Console.WriteLine("Speeding: {0}", score);
+
+            score = Subscore.Accelerations(trip.AccelerationCount,
+                                                 accelerationIntervals,
+                                                 DefaultPolicy.AccelerationPrice,
+                                                 DefaultPolicy.AccelerationWeights,
                                                  DefaultPolicy.A,
                                                  DefaultPolicy.B,
                                                  DefaultPolicy.C,
                                                  DefaultPolicy.Poly);
+            finalScore += score;
+            Console.WriteLine("Acceleration: {0}", score);
+
+            score = Subscore.Brakes(trip.BrakeCount,
+                                          brakingIntervals,
+                                          DefaultPolicy.BrakePrice,
+                                          DefaultPolicy.BrakeWeights,
+                                          DefaultPolicy.A,
+                                          DefaultPolicy.B,
+                                          DefaultPolicy.C,
+                                          DefaultPolicy.Poly);
+            finalScore += score;
+            Console.WriteLine("Brake: {0}", score);
+
+            score = Subscore.Jerks(trip.JerkCount,
+                                        jerkIntervals,
+                                        DefaultPolicy.JerkPrice,
+                                        DefaultPolicy.JerkWeights,
+                                        DefaultPolicy.A,
+                                        DefaultPolicy.B,
+                                        DefaultPolicy.C,
+                                        DefaultPolicy.Poly);
+            finalScore += score;
+            Console.WriteLine("Jerk: {0}", score);
+            Console.WriteLine();
+            Console.WriteLine("Total: {0}", finalScore);
+
+            return finalScore;
         }
 
-        public double CalculateOptimal(Int64 tripId, List<double> optimalSpeedingProfile,
+        public static double CalculateOptimal(Int64 tripId, List<double> optimalSpeedingProfile,
                                                      List<double> optimalAccelrationProfile,
                                                      List<double> optimalBrakesProfile,
                                                      List<double> optimalJerksProfile) {
@@ -89,39 +117,41 @@ namespace CarDataProject {
                 optimalJerksProfile[i] /= jerks * 100;
             }
 
-            return trip.MetersDriven + Subscore.RoadTypes(trip.MetersDriven, roadTypeIntervals, DefaultPolicy.RoadTypeWeights) +
-                                  Subscore.CriticalTimePeriod(trip.MetersDriven, criticalTimeIntervals, DefaultPolicy.CriticalTimeWeights) +
-                                  Subscore.Speeding(metersSped,
-                                                    optimalSpeedingProfile,
-                                                    DefaultPolicy.SpeedingWeights,
-                                                    DefaultPolicy.A,
-                                                    DefaultPolicy.B,
-                                                    DefaultPolicy.C,
-                                                    DefaultPolicy.Poly) +
-                                  Subscore.Accelerations(accelerations,
-                                                         optimalAccelrationProfile,
-                                                         DefaultPolicy.AccelerationPrice,
-                                                         DefaultPolicy.AccelerationWeights,
-                                                         DefaultPolicy.A,
-                                                         DefaultPolicy.B,
-                                                         DefaultPolicy.C,
-                                                         DefaultPolicy.Poly) +
-                                  Subscore.Brakes(brakes,
-                                                  optimalBrakesProfile,
-                                                  DefaultPolicy.BrakePrice,
-                                                  DefaultPolicy.BrakeWeights,
-                                                  DefaultPolicy.A,
-                                                  DefaultPolicy.B,
-                                                  DefaultPolicy.C,
-                                                  DefaultPolicy.Poly) +
-                                  Subscore.Jerks(jerks,
-                                                 optimalJerksProfile,
-                                                 DefaultPolicy.JerkPrice,
-                                                 DefaultPolicy.JerkWeights,
+            double finalScore = trip.MetersDriven;
+            finalScore += Subscore.RoadTypes(trip.MetersDriven, roadTypeIntervals, DefaultPolicy.RoadTypeWeights);
+            finalScore += Subscore.CriticalTimePeriod(trip.MetersDriven, criticalTimeIntervals, DefaultPolicy.CriticalTimeWeights);
+            finalScore += Subscore.Speeding(metersSped,
+                                            optimalSpeedingProfile,
+                                            DefaultPolicy.SpeedingWeights,
+                                            DefaultPolicy.A,
+                                            DefaultPolicy.B,
+                                            DefaultPolicy.C,
+                                            DefaultPolicy.Poly);
+            finalScore += Subscore.Accelerations(accelerations,
+                                                 optimalAccelrationProfile,
+                                                 DefaultPolicy.AccelerationPrice,
+                                                 DefaultPolicy.AccelerationWeights,
                                                  DefaultPolicy.A,
                                                  DefaultPolicy.B,
                                                  DefaultPolicy.C,
                                                  DefaultPolicy.Poly);
+            finalScore += Subscore.Brakes(brakes,
+                                          optimalBrakesProfile,
+                                          DefaultPolicy.BrakePrice,
+                                          DefaultPolicy.BrakeWeights,
+                                          DefaultPolicy.A,
+                                          DefaultPolicy.B,
+                                          DefaultPolicy.C,
+                                          DefaultPolicy.Poly);
+            finalScore += Subscore.Jerks(jerks,
+                                         optimalJerksProfile,
+                                         DefaultPolicy.JerkPrice,
+                                         DefaultPolicy.JerkWeights,
+                                         DefaultPolicy.A,
+                                         DefaultPolicy.B,
+                                         DefaultPolicy.C,
+                                         DefaultPolicy.Poly);
+            return finalScore;
         }
     }
 }

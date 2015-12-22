@@ -6,6 +6,15 @@ using System.Threading;
 namespace CarDataProject {
     class Program {
         static void Main(string[] args) {
+            DBController dbc = new DBController();
+            List<Int16> carIds = dbc.GetCarIds();
+            foreach (Int16 carId in carIds) {
+                List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
+                foreach (Int64 tripId in tripIds) {
+                    FinalScore.CalculateReal(tripId);
+                    Console.ReadLine();
+                }
+            }
 
             Console.WriteLine("Done!");
             Console.ReadLine();

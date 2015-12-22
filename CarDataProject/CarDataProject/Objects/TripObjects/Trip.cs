@@ -41,7 +41,6 @@ namespace CarDataProject {
         }
 
         public Trip(DataRow row) {
-
             this.TripId = row.Field<Int64>("tripid");
             this.CarId = row.Field<int>("carid");
 

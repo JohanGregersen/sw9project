@@ -17,7 +17,7 @@ namespace CarDataProject {
             this.TripId = TripId;
         }
 
-        public IntervalInformation(int CarId, Int64 TripId, Int64 RoadTypesInterval, Int64 CriticalTimeInterval, Int64 SpeedInterval, Int64 AccelerationInterval, Int64 JerkInvertal, Int64 BrakingInterval) {
+        public IntervalInformation(int CarId, Int64 TripId, Int64 RoadTypesInterval, Int64 CriticalTimeInterval, Int64 SpeedInterval, Int64 AccelerationInterval, Int64 JerkInterval, Int64 BrakingInterval) {
             this.CarId = CarId;
             this.TripId = TripId;
             this.RoadTypesInterval = RoadTypesInterval;

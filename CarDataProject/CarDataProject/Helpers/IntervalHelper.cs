@@ -48,16 +48,15 @@ namespace CarDataProject {
             string encoding = encodedIntervals.ToString("D19");
             Int16 indicator = Int16.Parse(encoding.Substring(0, 1));
             List<double> intervals = new List<double>();
-            Int16 intervalTotal = 0;
             int encodingIndex = 3;
 
             //If indicator is 1, find the non-zero entry, and parse it as 100%. Parse all others as 0
             if (indicator == 1) {
                 for (int i = 0; i < 8; i++) {
                     if (encoding.Substring(encodingIndex, 2).Equals("99")) {
-                        intervals[i] = 100;
+                        intervals.Add(100);
                     } else if (encoding.Substring(encodingIndex, 2).Equals("00")) {
-                        intervals[i] = 0;
+                        intervals.Add(0);
                     } else {
                         throw new ArgumentException("Encoded intervals are not correctly formatted");
                     }
@@ -72,14 +71,7 @@ namespace CarDataProject {
             //Parse all entries normally otherwise
             } else {
                 for (int i = 0; i < 8; i++) {
-                    Int16 value = Int16.Parse(encoding.Substring(encodingIndex, 2));
-                    intervalTotal += value;
-
-                    if (value > 108 || value <= 92) {
-                        throw new ArgumentException("Combined intervals are greater than 100%");
-                    }
-
-                    intervals[i] = value;
+                    intervals.Add(Int16.Parse(encoding.Substring(encodingIndex, 2)));
                     encodingIndex += 2;
                 }
             }
