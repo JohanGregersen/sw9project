@@ -171,7 +171,7 @@ namespace CarDataProject {
 
             //Fix missing rounding data as well as possible
             if (intervalTotal < 100) {
-                result += (100 % intervalTotal);
+                result += (100 - intervalTotal);
             } else if (intervalTotal > 100) {
                 result -= (intervalTotal - 100);
             }

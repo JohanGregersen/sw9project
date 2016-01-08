@@ -19,6 +19,13 @@ namespace CarDataProject {
         }
 
         public bool Contains(double value) {
+            //Special case - If two timestamps is logged on same second, value can be infinity
+            if(double.IsInfinity(value)) {
+                if (End.HasValue) {
+                    return false;
+                } else { return true; }
+            }
+
             if (Start <= value) {
                 if (End.HasValue) {
                     if (End > value) {

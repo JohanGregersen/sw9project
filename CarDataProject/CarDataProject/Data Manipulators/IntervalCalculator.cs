@@ -146,7 +146,6 @@ namespace CarDataProject {
 
         public static List<double> Jerk(Trip trip, List<Fact> facts) {
             SortedDictionary<Interval, double> jerkIntervals = new SortedDictionary<Interval, double>();
-            double jerkValue;
 
             //Populate dictionary with all policy-required jerk-intervals
             foreach (Interval interval in DefaultPolicy.JerkIntervals) {
@@ -156,16 +155,8 @@ namespace CarDataProject {
             //Add a jerk in the fitting interval per point measured
             for (int i = 1; i < facts.Count; i++) {
                 if (facts[i].Flag.Jerking) {
-
-                    //Convert all jerks to positive numbers - makes life easier
-                    if (facts[i].Measure.Jerk > 0) {
-                        jerkValue = facts[i].Measure.Jerk;
-                    } else {
-                        jerkValue = facts[i].Measure.Jerk * -1;
-                    }
-
                     foreach (Interval interval in DefaultPolicy.JerkIntervals) {
-                        if (interval.Contains(facts[i].Measure.Jerk)) {
+                        if (interval.Contains(Math.Abs(facts[i].Measure.Jerk))) {
                             jerkIntervals[interval]++;
                         }
                     }
