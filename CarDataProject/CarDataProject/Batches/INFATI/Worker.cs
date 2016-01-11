@@ -15,8 +15,8 @@ namespace CarDataProject {
         public void Start() {
             Console.WriteLine("Starting thread for car " + this.carId);
 
-            INFATILoader.LoadCarData(teamId, carId);
-            GPSFactUpdater.Update(carId);
+            //INFATILoader.LoadCarData(teamId, carId);
+            //GPSFactUpdater.Update(carId);
             TripFactUpdater.Update(carId);
 
             Console.WriteLine("Finished working on car " + this.carId + ". Terminating thread.");

@@ -19,7 +19,6 @@ namespace CarDataProject {
             Connection = new NpgsqlConnection(connectionSettings);
 
             try {
-
                 Connection.Open();
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
@@ -51,12 +50,12 @@ namespace CarDataProject {
 
         private int NonQueryWithReturnValue(NpgsqlCommand command, string table) {
             NpgsqlDataReader reader = command.ExecuteReader();
-
             int returnValue = -1;
 
             while (reader.Read()) {
                 returnValue = reader.GetInt32(0);
             }
+
             reader.Close();
 
             return returnValue;
@@ -194,8 +193,6 @@ namespace CarDataProject {
             string sql = @"INSERT INTO gpsfact(carid, qualityid, segmentid, timeid, dateid, point, mpoint, speed, maxspeed) 
                         VALUES (@carid, @qualityid, @segmentid, @timeid, @dateid, 
                         ST_Transform(ST_SetSrid(ST_MakePoint(@UTMx, @UTMy), 23032), 4326), ST_Transform(ST_SetSrid(ST_MakePoint(@UTMmx, @UTMmy), 23032), 4326), @speed, @maxspeed)";
-
-            // ST_Transform(ST_SetSrid(ST_MakePoint(xcoord, ycoord), 32632), 4326)
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@carid", entry.CarId);
@@ -519,23 +516,6 @@ namespace CarDataProject {
         #region Updaters
 
         public int UpdateGPSFactWithMeasures(List<Fact> UpdatedFacts) {
-            //PathLine
-
-            //Measures
-            //Acceleration
-            //Jerk
-
-            //Spatial
-            //DistanceToLag
-
-            //Temporal
-            //SecondsToLag
-
-            //FlagInformation
-            //Speeding
-            //Braking
-            //SteadySpeed
-            //SELECT ST_SetSRID(ST_MakePoint(-71.1043443253471, 42.3150676015829),4326);
             for (int i = 1; i < UpdatedFacts.Count; i++) {
                 string sql = String.Format(@"UPDATE gpsfact
                                             SET pathline = ST_MakeLine(ST_SetSRID(ST_MakePoint(@prevMPointLng, @prevMpointLat), 4326), ST_SetSRID(ST_MakePoint(@MPointLng, @MpointLat),4326)),
@@ -621,7 +601,7 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@metersdriven", UpdatedTrip.MetersDriven);
             //price?
             //optimal score?
-            //trip score=
+            //trip score?
             command.Parameters.AddWithValue("@jerkcount", UpdatedTrip.JerkCount);
             command.Parameters.AddWithValue("@brakecount", UpdatedTrip.BrakeCount);
             command.Parameters.AddWithValue("@accelerationcount", UpdatedTrip.AccelerationCount);

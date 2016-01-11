@@ -5,7 +5,7 @@ namespace CarDataProject {
     /*
     * Parses the database representation of intervals
     *
-    * Interval format is: xxi1122334455667788
+    * Interval format is: ixx1122334455667788
     * Where 11 - 88 are intervals representing 0 - 99%
     * and i is either 0 or 1, where 1 means the first interval with a non-zero value should be read as 100%
     * and xx is an insurance company policy ID
@@ -55,7 +55,7 @@ namespace CarDataProject {
                 for (int i = 0; i < 8; i++) {
                     if (encoding.Substring(encodingIndex, 2).Equals("99")) {
                         intervals.Add(100);
-                    } else if (encoding.Substring(encodingIndex, 2).Equals("00")) {
+                    } else if (encoding.Substring(encodingIndex, 2).Equals("00") || encoding.Substring(encodingIndex, 2).Equals("01")) {
                         intervals.Add(0);
                     } else {
                         throw new ArgumentException("Encoded intervals are not correctly formatted");

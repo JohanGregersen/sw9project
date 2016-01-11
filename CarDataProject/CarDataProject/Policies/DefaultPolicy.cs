@@ -76,8 +76,8 @@ namespace CarDataProject {
         public static List<double> BrakeWeights = new List<double> { 1, 1, 1.075, 1.1, 1.2, 1.4, 1.6, 1.9 };
         public static List<double> JerkWeights = new List<double> { 1, 1, 1.075, 1.1, 1.2, 1.4, 1.6, 1.9 };
 
-        public static double BrakePrice = 75;
         public static double AccelerationPrice = 50;
+        public static double BrakePrice = 75;
         public static double JerkPrice = 62.5;
 
         public static double A = 1.02;

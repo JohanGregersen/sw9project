@@ -2,7 +2,15 @@
 using System.IO;
 
 namespace CarDataProject {
+
+    /*
+    * Globally used constant variables
+    */
     public static class Global {
+
+        /*
+        * Database related information
+        */
         public static class Database {
             public const string Host = "localhost";
             public const string Name = "CarDB";
@@ -10,6 +18,9 @@ namespace CarDataProject {
             public const string Password = "1234";
         }
 
+        /*
+        * Filtype extensions
+        */
         public static class FileType {
             public const string txt = ".txt";
             public const string dat = ".dat";
@@ -17,6 +28,9 @@ namespace CarDataProject {
             public const string exe = ".exe";
         }
 
+        /*
+        * Enumerations
+        */
         public static class Enums {
             public enum Direction { forward = 0, FORWARD = 0, backward = 0, BACKWARD = 0, both = 1, BOTH = 1 }
             public enum RoadType {
@@ -26,6 +40,9 @@ namespace CarDataProject {
             };
         }
 
+        /*
+        * Directory paths relative from the project folder
+        */
         public static class Path {
             public static string Solution = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             public static string Data = Solution + @"\Data\";
@@ -35,6 +52,9 @@ namespace CarDataProject {
             //public static string GnuPlotExecutable = @"C:\Program Files (x86)\gnuplot\bin\gnuplot.exe";
         }
 
+        /*
+        * Folder and file names
+        */
         public static class CarStatistics {
             private const string CarFolderPrefix = "Car";
             private const string TripFolderPrefix = "Trip";
@@ -86,6 +106,7 @@ namespace CarDataProject {
             public static string AccelerationFile(Int16 carId) {
                 return CarPath(carId) + @"\Acceleration" + FileType.dat;
             }
+
             //.png-files
             public static string KilometersPerTripGraph(Int16 carId) {
                 return CarPath(carId) + @"\KilometersPerTrip" + FileType.png;
@@ -101,6 +122,9 @@ namespace CarDataProject {
             }
         }
 
+        /*
+        * INFATI specific variables
+        */
         public static class Batch {
             public static class INFATI {
                 public static string Path = Global.Path.Batch + @"INFATI\";
