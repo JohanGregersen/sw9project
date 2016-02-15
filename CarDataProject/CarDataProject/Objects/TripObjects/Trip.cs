@@ -1,27 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.Serialization;
+using System.Text;
 
 namespace CarDataProject {
+    [DataContract]
     public class Trip {
-        public Int64 TripId { get; }
+        [DataMember(Name = "tripid")]
+        public Int64 TripId { get; set; }
+        [DataMember(Name = "prevtripid")]
         public Int64 PreviousTripId { get; set; }
-        public int CarId { get; }
+        [DataMember(Name = "carid")]
+        public int CarId { get; set; }
+        [DataMember(Name = "starttemporal")]
         public TemporalInformation StartTemporal { get; set; }
+        [DataMember(Name = "endtemporal")]
         public TemporalInformation EndTemporal { get; set; }
+
         public TimeSpan SecondsDriven { get; set; }
+        [DataMember(Name = "secondsdriven")]
+        private double SecondsDrivenInt {
+            get {
+                return SecondsDriven.TotalSeconds;
+            }
+            set { }
+        }
+
+        [DataMember(Name = "metersdriven")]
         public double MetersDriven { get; set; }
         public double Price { get; set; }
         public double OptimalScore { get; set; }
+        [DataMember(Name = "tripscore")]
         public double TripScore { get; set; }
+        [DataMember(Name = "jerkcount")]
         public Int16 JerkCount { get; set; }
+        [DataMember(Name = "brakecount")]
         public Int16 BrakeCount { get; set; }
+        [DataMember(Name = "accelerationcount")]
         public Int16 AccelerationCount { get; set; }
+        [DataMember(Name = "meterssped")]
         public double MetersSped { get; set; }
+
+
         public TimeSpan TimeSped { get; set; }
+        [DataMember(Name = "timesped")]
+        private double TimeSpedInt {
+            get {
+                return TimeSped.TotalSeconds;
+            }
+            set { }
+        }
+
         public double SteadySpeedDistance { get; set; }
         public TimeSpan SteadySpeedTime { get; set; }
+
         public TimeSpan SecondsToLag { get; set; }
+        [DataMember(Name = "secondstolag")]
+        private double SecondsToLagInt {
+            get {
+                return SecondsToLag.TotalSeconds;
+            }
+            set { }
+        }
+
+
+        [DataMember(Name = "intervals")]
         public IntervalInformation IntervalInformation {get; set; }
         public double DataQuality { get; set; }
 
@@ -59,7 +103,7 @@ namespace CarDataProject {
             this.SecondsDriven = new TimeSpan(0, 0, row.Field<int>("secondsdriven"));
 
             row["secondstolag"] = row["secondstolag"] is DBNull ? -1 : row["secondstolag"];
-            this.SecondsDriven = new TimeSpan(0, 0, row.Field<int>("secondstolag"));
+            this.SecondsToLag= new TimeSpan(0, 0, row.Field<int>("secondstolag"));
 
             //Spatial
             row["metersdriven"] = row["metersdriven"] is DBNull ? -1 : row["metersdriven"];
@@ -118,5 +162,17 @@ namespace CarDataProject {
             this.TripScore = (double)row.Field<Single>("dataquality");
 
         }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(TripId);
+            sb.Append(" ");
+            sb.Append(CarId);
+
+            return sb.ToString();
+
+        }
+
+
     }
 }

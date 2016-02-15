@@ -237,6 +237,23 @@ namespace CarDataProject {
             return null;
         }
 
+        public List<Trip> GetTripsByCarId(Int16 carId) {
+            string sql = String.Format(@"SELECT *
+                                        FROM tripfact
+                                        WHERE carid = '{0}'", carId);
+            DataRowCollection result = Query(sql);
+
+
+            List<Trip> trips = new List<Trip>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    trips.Add(new Trip(row));
+                }
+            }
+
+            return trips;
+        }
+
         public List<Fact> GetFactsByTripId(Int64 tripId) {
 
             string sql = String.Format(@"SELECT *, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude

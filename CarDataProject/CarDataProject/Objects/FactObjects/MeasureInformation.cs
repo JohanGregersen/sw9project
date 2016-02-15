@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace CarDataProject {
+    [DataContract]
     public class MeasureInformation {
         public Int64 TripId { get; }
         public Int64 EntryId { get; }
-        public double Speed { get; }
+
+        [DataMember (Name = "speed")]
+        public double Speed { get; set; }
+        [DataMember(Name = "acceleration")]
         public double Acceleration { get; set; }
-        public double Jerk { get; }
+        [DataMember(Name = "jerk")]
+        public double Jerk { get; set; }
 
         public MeasureInformation (Int64 TripId, Int64 EntryId, double Speed, double Acceleration, double Jerk) {
             this.TripId = TripId;

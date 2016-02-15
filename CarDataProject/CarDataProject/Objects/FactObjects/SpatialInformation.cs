@@ -1,20 +1,41 @@
 ﻿using System;
 using System.Device.Location;
 using NpgsqlTypes;
+using System.Runtime.Serialization;
 
 namespace CarDataProject {
+    [DataContract]
     public class SpatialInformation {
         public Int64 TripId { get; }
         public Int64 EntryId { get; }
+
         public GeoCoordinate Point { get; }
+
+
         public GeoCoordinate MPoint { get; }
+
+        [DataMember (Name = "mpointlat")]
+        private double GetMPointLat {
+            get {
+                return MPoint.Latitude;
+            }
+            set { }
+        }
+
+        [DataMember(Name = "mpointlng")]
+        private double GetMPointLng {
+            get {
+                return MPoint.Longitude;
+            }
+            set { }
+        }
+
         public double DistanceToLag { get; }
         public PostgisLineString PathLine { get; }
 
         public SpatialInformation(Int64 TripId, Int64 EntryId, GeoCoordinate MPoint, double DistanceToLag, PostgisLineString PathLine) {
             this.TripId = TripId;
             this.EntryId = EntryId;
-            this.Point = Point;
             this.MPoint = MPoint;
             this.DistanceToLag = DistanceToLag;
             this.PathLine = PathLine;

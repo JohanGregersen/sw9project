@@ -1,15 +1,21 @@
 ﻿using System;
-
-
+using System.Runtime.Serialization;
 namespace CarDataProject {
+    [DataContract]
     public class IntervalInformation {
         public int CarId { get; }
         public Int64 TripId { get; }
+        [DataMember(Name = "roadtype")]
         public Int64 RoadTypesInterval { get; set; }
+        [DataMember(Name = "criticaltime")]
         public Int64 CriticalTimeInterval { get; set; }
+        [DataMember(Name = "speed")]
         public Int64 SpeedInterval { get; set; }
+        [DataMember(Name = "acceleration")]
         public Int64 AccelerationInterval { get; set; }
+        [DataMember(Name = "jerk")]
         public Int64 JerkInterval { get; set; }
+        [DataMember(Name = "braking")]
         public Int64 BrakingInterval { get; set; }
 
         public IntervalInformation(int CarId, Int64 TripId) {

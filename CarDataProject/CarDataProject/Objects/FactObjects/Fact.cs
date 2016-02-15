@@ -2,25 +2,74 @@
 using System.Data;
 using System.Device.Location;
 using NpgsqlTypes;
+using System.Runtime.Serialization;
+using System.Text;
 
 namespace CarDataProject {
+    [DataContract]
     public class Fact {
-        public Int64 EntryId { get; }
+        //There is a workaround for get-only properties, that allows them to be part of the automatic serialization. 
+        //It contains a private instance of the variable, and also is declared as _var-name, in the methods below
+
+        public Int64 EntryId {
+            get {
+                return _EntryId;
+            }
+        }
+        [DataMember(Name = "entryid")]
+        private Int64 _EntryId;
+
+        [DataMember(Name = "carid")]
         public int CarId { get; set; }
-        public Int64 TripId { get; }
-        public QualityInformation Quality { get; }
-        public SegmentInformation Segment { get; }
+
+        public Int64 TripId {
+            get {
+                return _TripId;
+            }
+        }
+        [DataMember(Name = "tripid")]
+        private Int64 _TripId;
+
+        public QualityInformation Quality {
+            get {
+                return _Quality;
+            }
+        }
+        //[DataMember(Name = "quality")]
+        private QualityInformation _Quality;
+
+        public SegmentInformation Segment {
+            get {
+                return _Segment;
+            }
+        }
+        //[DataMember (Name = "segment")]
+        private SegmentInformation _Segment;
+
+        [DataMember(Name = "temporal")]
         public TemporalInformation Temporal { get; set; }
+        [DataMember(Name = "spatial")]
         public SpatialInformation Spatial { get; set; }
+        [DataMember(Name = "measure")]
         public MeasureInformation Measure { get; set; }
+
+        [DataMember(Name = "secondstolag")]
+        private double SecondsToLag {
+            get {
+                return Temporal.SecondsToLag.TotalSeconds;
+            }
+            set { }
+        }
+
+        [DataMember(Name = "flag")]
         public FlagInformation Flag { get; set; }
 
         public Fact(Int64 EntryId, int CarId, Int64 TripId, QualityInformation Quality, SegmentInformation Segment, TemporalInformation Temporal, SpatialInformation Spatial, MeasureInformation Measure, FlagInformation Flag) {
-            this.EntryId = EntryId;
+            this._EntryId = EntryId;
             this.CarId = CarId;
-            this.TripId = TripId;
-            this.Quality = Quality;
-            this.Segment = Segment;
+            this._TripId = TripId;
+            this._Quality = Quality;
+            this._Segment = Segment;
             this.Temporal = Temporal;
             this.Spatial = Spatial;
             this.Measure = Measure;
@@ -28,37 +77,37 @@ namespace CarDataProject {
         }
 
         public Fact(QualityInformation Quality, SegmentInformation Segment, TemporalInformation Temporal, SpatialInformation Spatial, MeasureInformation Measure) {
-            this.Quality = Quality;
-            this.Segment = Segment;
+            this._Quality = Quality;
+            this._Segment = Segment;
             this.Temporal = Temporal;
             this.Spatial = Spatial;
             this.Measure = Measure;
         }
 
         public Fact(Int64 EntryId, SegmentInformation Segment, TemporalInformation Temporal, SpatialInformation Spatial, MeasureInformation Measure) {
-            this.Segment = Segment;
+            this._Segment = Segment;
             this.Temporal = Temporal;
             this.Spatial = Spatial;
             this.Measure = Measure;
         }
 
         public Fact(Int64 EntryId, SegmentInformation Segment, TemporalInformation Temporal, MeasureInformation Measure) {
-            this.EntryId = EntryId;
-            this.Segment = Segment;
+            this._EntryId = EntryId;
+            this._Segment = Segment;
             this.Temporal = Temporal;
             this.Measure = Measure;
         }
 
         public Fact(Int64 EntryId, TemporalInformation Temporal, SpatialInformation Spatial) {
-            this.EntryId = EntryId;
+            this._EntryId = EntryId;
             this.Temporal = Temporal;
             this.Spatial = Spatial;
         }
 
         public Fact(DataRow row) {
-            this.EntryId = row.Field<Int64>("entryid");
+            this._EntryId = row.Field<Int64>("entryid");
             this.CarId = row.Field<int>("carid");
-            this.TripId = row.Field<Int64>("tripid");
+            this._TripId = row.Field<Int64>("tripid");
 
             //Spatial Information
             row["distancetolag"] = row["distancetolag"] is DBNull ? -1.0 : row["distancetolag"];
@@ -84,13 +133,25 @@ namespace CarDataProject {
 
             //Segment Information
             row["segmentid"] = row["segmentid"] is DBNull ? -1 : row["segmentid"];
-            this.Segment = new SegmentInformation(row.Field<int>("segmentid"), row.Field<Int16>("maxspeed"));
+            this._Segment = new SegmentInformation(row.Field<int>("segmentid"), row.Field<Int16>("maxspeed"));
 
             //Quality Information
             row["qualityid"] = row["qualityid"] is DBNull ? -1 : row["qualityid"];
             row["satellites"] = row["satellites"] is DBNull ? -1 : row["satellites"];
             row["hdop"] = row["hdop"] is DBNull ? -1 : row["hdop"];
-            this.Quality = new QualityInformation(row.Field<Int16>("qualityid"), row.Field<Int16>("satellites"), (double)row.Field<Single>("hdop"));
+            this._Quality = new QualityInformation(row.Field<Int16>("qualityid"), row.Field<Int16>("satellites"), (double)row.Field<Single>("hdop"));
         }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(EntryId);
+            sb.Append(" ");
+            sb.Append(TripId);
+
+            return sb.ToString();
+
+        }
+
+
     }
 }
