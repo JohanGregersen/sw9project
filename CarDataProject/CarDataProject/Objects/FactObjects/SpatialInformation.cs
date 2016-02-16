@@ -29,8 +29,9 @@ namespace CarDataProject {
             }
             set { }
         }
-
-        public double DistanceToLag { get; }
+        [DataMember(Name = "distancetolag")]
+        public double DistanceToLag { get; set; }
+        
         public PostgisLineString PathLine { get; }
 
         public SpatialInformation(Int64 TripId, Int64 EntryId, GeoCoordinate MPoint, double DistanceToLag, PostgisLineString PathLine) {

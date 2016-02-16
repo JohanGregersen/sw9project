@@ -15,6 +15,7 @@ namespace CarDataProject {
         public bool Jerking { get; set; }
         [DataMember(Name = "braking")]
         public bool Braking { get; set; }
+        [DataMember(Name = "steadyspeed")]
         public bool SteadySpeed { get; set; }
 
         public FlagInformation(Int64 TripId, Int64 EntryId, bool Speeding, bool Accelerating, bool Jerking, bool Braking) {
