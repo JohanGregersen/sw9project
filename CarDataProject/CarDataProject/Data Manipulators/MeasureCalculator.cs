@@ -21,6 +21,10 @@ namespace CarDataProject {
             double velocityChange = CurrentMI.Speed - PrevMI.Speed;
             TimeSpan time = CurrentTI.Timestamp - PrevTI.Timestamp;
 
+            if(time.Seconds == 0) {
+                return 0;
+            }
+
             return velocityChange / time.Seconds;
         }
 
@@ -28,6 +32,10 @@ namespace CarDataProject {
             //Jerk = Acceleration change / Time
             double accelerationChange = CurrentMi.Acceleration - PrevMI.Acceleration;
             TimeSpan time = CurrentTI.Timestamp - PrevTI.Timestamp;
+
+            if (time.Seconds == 0) {
+                return 0;
+            }
 
             return accelerationChange / time.Seconds;
         }
