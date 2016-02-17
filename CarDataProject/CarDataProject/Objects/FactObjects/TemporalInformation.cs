@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace CarDataProject {
     [DataContract]
@@ -17,7 +18,7 @@ namespace CarDataProject {
         
         public TimeSpan SecondsToLag { get; }
 
-        /*
+        
         [DataMember(Name = "secondstolag")]
         private double SecondsToLagInt {
             get {
@@ -25,7 +26,7 @@ namespace CarDataProject {
             }
             set { }
         }
-        */
+        
 
         public TemporalInformation(Int64 TripId, Int64 EntryId, DateTime Timestamp, TimeSpan SecondsToLag) {
             this.TripId = TripId;
@@ -46,6 +47,14 @@ namespace CarDataProject {
 
         public TemporalInformation(DateTime Timestamp) {
             this._Timestamp = Timestamp;
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(" Timestamp: " + Timestamp.ToString());
+            sb.AppendLine();
+            sb.Append(" SecondsToLag: " + SecondsToLag.TotalSeconds);
+            return sb.ToString();
         }
     }
 }

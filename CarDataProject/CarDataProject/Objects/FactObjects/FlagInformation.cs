@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace CarDataProject {
     [DataContract]    
@@ -34,5 +35,20 @@ namespace CarDataProject {
             this.Braking = Braking;
             this.SteadySpeed = SteadySpeed;
         }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(" Speeding: " + Speeding);
+            sb.AppendLine();
+            sb.Append(" Accelerating: " + Accelerating);
+            sb.AppendLine();
+            sb.Append(" Jerking: " + Jerking);
+            sb.AppendLine();
+            sb.Append(" Braking: " + Braking);
+            sb.AppendLine();
+            sb.Append(" SteadySpeed: " + SteadySpeed);
+            return sb.ToString();
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace CarDataProject {
     [DataContract]
@@ -35,6 +36,16 @@ namespace CarDataProject {
             this.Speed = Speed;
             this.Acceleration = Acceleration;
             this.Jerk = Jerk;
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(" Speed: " + Speed);
+            sb.AppendLine();
+            sb.Append(" Acceleration: " + Acceleration);
+            sb.AppendLine();
+            sb.Append(" Jerk: " + Jerk);
+            return sb.ToString();
         }
     }
 }

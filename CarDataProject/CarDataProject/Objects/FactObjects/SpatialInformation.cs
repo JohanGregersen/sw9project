@@ -2,6 +2,7 @@
 using System.Device.Location;
 using NpgsqlTypes;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace CarDataProject {
     [DataContract]
@@ -81,6 +82,16 @@ namespace CarDataProject {
 
         public SpatialInformation(double DistanceToLag) {
             this.DistanceToLag = DistanceToLag;
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(" MPoint: " + "Lat: " + MPoint.Latitude + " Lng: " + MPoint.Longitude);
+            sb.AppendLine();
+            sb.Append(" DistanceToLag: " + DistanceToLag);
+            //sb.AppendLine();
+            //sb.Append("PathLine: " + PathLine.ToString());
+            return sb.ToString();
         }
     }
 }

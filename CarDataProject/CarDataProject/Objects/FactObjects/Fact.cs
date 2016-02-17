@@ -52,15 +52,6 @@ namespace CarDataProject {
         public SpatialInformation Spatial { get; set; }
         [DataMember(Name = "measure")]
         public MeasureInformation Measure { get; set; }
-
-        [DataMember(Name = "secondstolag")]
-        private double SecondsToLag {
-            get {
-                return Temporal.SecondsToLag.TotalSeconds;
-            }
-            set { }
-        }
-
         [DataMember(Name = "flag")]
         public FlagInformation Flag { get; set; }
 
@@ -142,11 +133,72 @@ namespace CarDataProject {
             this._Quality = new QualityInformation(row.Field<Int16>("qualityid"), row.Field<Int16>("satellites"), (double)row.Field<Single>("hdop"));
         }
 
+        public Fact(dynamic jsonObj) {
+            this._EntryId = jsonObj.entryid;
+            this.CarId = jsonObj.carid;
+            this._TripId = jsonObj.tripid;
+
+            //Spatial Information
+            dynamic spatialObj = jsonObj.spatial;
+            spatialObj.distancetolag = spatialObj.distancetolag == null ? -1.0 : spatialObj.distancetolag;
+            spatialObj.pathline = spatialObj.pathline == null ? -1.0 : spatialObj.pathline;
+
+            spatialObj.mpointlat = spatialObj.mpointlat == null ? 0 : spatialObj.mpointlat;
+            spatialObj.mpointlng = spatialObj.mpointlng == null ? 0 : spatialObj.mpointlng;
+            //spatialObj.pathline = spatialObj.pathline == null ? "" : spatialObj.pathline
+            //No Pathline yet.
+            this.Spatial = new SpatialInformation(new GeoCoordinate((double)spatialObj.mpointlat, (double)spatialObj.mpointlng), (double)spatialObj.distancetolag);
+
+            //Temporal Information
+            dynamic temporalObj = jsonObj.temporal;
+            temporalObj.timestamp = temporalObj.timestamp == null ? 0 : temporalObj.timestamp;
+            temporalObj.secondstolag = temporalObj.secondstolag == null ? 0 : temporalObj.secondstolag;
+
+            this.Temporal = new TemporalInformation(new DateTime((long)temporalObj.timestamp), new TimeSpan(0, 0, (Int16)temporalObj.secondstolag));
+
+            //Measure Information
+            dynamic measureObj = jsonObj.measure;
+            measureObj.speed = measureObj.speed == null ? 0 : measureObj.speed;
+            measureObj.acceleration = measureObj.acceleration == null ? 0 : measureObj.acceleration;
+            measureObj.jerk = measureObj.jerk == null ? 0 : measureObj.jerk;
+  
+            this.Measure = new MeasureInformation((double)measureObj.speed, (double)measureObj.acceleration, (double)measureObj.jerk);
+
+            //Flag Information
+            dynamic flagObj = jsonObj.flag;
+            flagObj.speeding = flagObj.speeding == null ? false : flagObj.speeding;
+            flagObj.accelerating = flagObj.accelerating == null ? false : flagObj.accelerating;
+            flagObj.jerking = flagObj.jerking == null ? false : flagObj.jerking;
+            flagObj.braking = flagObj.braking == null ? false : flagObj.braking;
+            flagObj.steadyspeed = flagObj.steadyspeed == null ? false : flagObj.steadyspeed;
+
+            this.Flag = new FlagInformation((bool)flagObj.speeding, (bool)flagObj.accelerating, (bool)flagObj.jerking, (bool)flagObj.braking, (bool)flagObj.steadyspeed);
+
+            //Segment Information
+            //Implement using DataRow row as example
+
+            //Quality Information
+            //Implement using DataRow row as example
+        }
+
+
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
-            sb.Append(EntryId);
-            sb.Append(" ");
-            sb.Append(TripId);
+            sb.Append("EntryId:" + EntryId);
+            sb.AppendLine();
+            sb.Append("TripId: " + TripId);
+            sb.AppendLine();
+            sb.Append("CarId: " + CarId);
+            sb.AppendLine();
+
+            sb.Append("FlagInformation: " + "\n" + Flag.ToString());
+            sb.AppendLine();
+            sb.Append("MeasureInformation: " + "\n" + Measure.ToString());
+            sb.AppendLine();
+            sb.Append("SpatialInformation: " + "\n" + Spatial.ToString());
+            sb.AppendLine();
+            sb.Append("TemporalInformation: " + "\n" + Temporal.ToString());
+            sb.AppendLine();
 
             return sb.ToString();
 
