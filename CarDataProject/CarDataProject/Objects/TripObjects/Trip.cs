@@ -88,9 +88,10 @@ namespace CarDataProject {
             this.TripId = row.Field<Int64>("tripid");
             this.CarId = row.Field<int>("carid");
 
-            row["previoustripid"] = row["previoustripid"] is DBNull ? 0 : row["previoustripid"];
-            this.PreviousTripId = row.Field<Int64>("previoustripid");
-
+            if (row.Table.Columns.Contains("previoustripid")) {
+                row["previoustripid"] = row["previoustripid"] is DBNull ? 0 : row["previoustripid"];
+                this.PreviousTripId = row.Field<Int64>("previoustripid");
+            }
             //Temporal Information
             row["startdateid"] = row["startdateid"] is DBNull ? "19700101" : row["startdateid"];
             row["starttimeid"] = row["starttimeid"] is DBNull ? "0" : row["starttimeid"];
@@ -99,68 +100,97 @@ namespace CarDataProject {
             row["endtimeid"] = row["endtimeid"] is DBNull ? "0" : row["endtimeid"];
             this.EndTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("enddateid"), row.Field<int>("endtimeid")));
 
-            row["secondsdriven"] = row["secondsdriven"] is DBNull ? -1 : row["secondsdriven"];
-            this.SecondsDriven = new TimeSpan(0, 0, row.Field<int>("secondsdriven"));
+            if (row.Table.Columns.Contains("secondsdriven")) {
+                row["secondsdriven"] = row["secondsdriven"] is DBNull ? -1 : row["secondsdriven"];
+                this.SecondsDriven = new TimeSpan(0, 0, row.Field<int>("secondsdriven"));
+            }
 
-            row["secondstolag"] = row["secondstolag"] is DBNull ? -1 : row["secondstolag"];
-            this.SecondsToLag= new TimeSpan(0, 0, row.Field<int>("secondstolag"));
+            if (row.Table.Columns.Contains("secondstolag")) {
+                row["secondstolag"] = row["secondstolag"] is DBNull ? -1 : row["secondstolag"];
+                this.SecondsToLag = new TimeSpan(0, 0, row.Field<int>("secondstolag"));
+            }
 
             //Spatial
-            row["metersdriven"] = row["metersdriven"] is DBNull ? -1 : row["metersdriven"];
-            this.MetersDriven = (double)row.Field<Single>("metersdriven");
+            if (row.Table.Columns.Contains("metersdriven")) {
+                row["metersdriven"] = row["metersdriven"] is DBNull ? -1 : row["metersdriven"];
+                this.MetersDriven = (double)row.Field<Single>("metersdriven");
+            }
 
             //Score Information
-            row["price"] = row["price"] is DBNull ? -1 : row["price"];
-            this.Price = (double)row.Field<Single>("price");
+            if (row.Table.Columns.Contains("price")) {
+                row["price"] = row["price"] is DBNull ? -1 : row["price"];
+                this.Price = (double)row.Field<Single>("price");
+            }
 
-            row["optimalscore"] = row["optimalscore"] is DBNull ? -1 : row["optimalscore"];
-            this.OptimalScore= (double)row.Field<Single>("optimalscore");
+            if (row.Table.Columns.Contains("optimalscore")) {
+                row["optimalscore"] = row["optimalscore"] is DBNull ? -1 : row["optimalscore"];
+                this.OptimalScore = (double)row.Field<Single>("optimalscore");
+            }
 
-            row["tripscore"] = row["tripscore"] is DBNull ? -1 : row["tripscore"];
-            this.TripScore = (double)row.Field<Single>("tripscore");
+            if (row.Table.Columns.Contains("tripscore")) {
+                row["tripscore"] = row["tripscore"] is DBNull ? -1 : row["tripscore"];
+                this.TripScore = (double)row.Field<Single>("tripscore");
+            }
 
             //Score Measures
-            row["jerkcount"] = row["jerkcount"] is DBNull ? -1 : row["jerkcount"];
-            this.JerkCount = row.Field<Int16>("jerkcount"); 
+            if (row.Table.Columns.Contains("jerkcount")) {
+                row["jerkcount"] = row["jerkcount"] is DBNull ? -1 : row["jerkcount"];
+                this.JerkCount = row.Field<Int16>("jerkcount");
+            }
 
-            row["brakecount"] = row["brakecount"] is DBNull ? -1 : row["brakecount"];
-            this.BrakeCount = row.Field<Int16>("brakecount");
+            if (row.Table.Columns.Contains("brakecount")) {
+                row["brakecount"] = row["brakecount"] is DBNull ? -1 : row["brakecount"];
+                this.BrakeCount = row.Field<Int16>("brakecount");
+            }
 
-            row["accelerationcount"] = row["accelerationcount"] is DBNull ? -1 : row["accelerationcount"];
-            this.AccelerationCount = row.Field<Int16>("accelerationcount");
+            if (row.Table.Columns.Contains("accelerationcount")) {
+                row["accelerationcount"] = row["accelerationcount"] is DBNull ? -1 : row["accelerationcount"];
+                this.AccelerationCount = row.Field<Int16>("accelerationcount");
+            }
 
-            row["meterssped"] = row["meterssped"] is DBNull ? -1 : row["meterssped"];
-            this.MetersSped = (double)row.Field<Single>("meterssped");
+            if (row.Table.Columns.Contains("meterssped")) {
+                row["meterssped"] = row["meterssped"] is DBNull ? -1 : row["meterssped"];
+                this.MetersSped = (double)row.Field<Single>("meterssped");
+            }
 
-            row["timesped"] = row["timesped"] is DBNull ? 0 : row["timesped"];
-            this.TimeSped = new TimeSpan(0, 0, (int)row.Field<Single>("timesped"));
+            if (row.Table.Columns.Contains("timesped")) {
+                row["timesped"] = row["timesped"] is DBNull ? 0 : row["timesped"];
+                this.TimeSped = new TimeSpan(0, 0, (int)row.Field<Single>("timesped"));
+            }
 
-            row["steadyspeeddistance"] = row["steadyspeeddistance"] is DBNull ? -1 : row["steadyspeeddistance"];
-            this.TripScore = (double)row.Field<Single>("steadyspeeddistance");
+            if (row.Table.Columns.Contains("steadyspeeddistance")) {
+                row["steadyspeeddistance"] = row["steadyspeeddistance"] is DBNull ? -1 : row["steadyspeeddistance"];
+                this.TripScore = (double)row.Field<Single>("steadyspeeddistance");
+            }
 
-            row["steadyspeedtime"] = row["steadyspeedtime"] is DBNull ? 0 : row["steadyspeedtime"];
-            this.TimeSped = new TimeSpan(0, 0, (int)row.Field<Single>("steadyspeedtime"));
+            if (row.Table.Columns.Contains("steadyspeedtime")) {
+                row["steadyspeedtime"] = row["steadyspeedtime"] is DBNull ? 0 : row["steadyspeedtime"];
+                this.TimeSped = new TimeSpan(0, 0, (int)row.Field<Single>("steadyspeedtime"));
+            }
 
             //IntervalInformation
-            row["roadtypesinterval"] = row["roadtypesinterval"] is DBNull ? 0 : row["roadtypesinterval"];
-            row["criticaltimeinterval"] = row["criticaltimeinterval"] is DBNull ? 0 : row["criticaltimeinterval"];
-            row["speedinterval"] = row["speedinterval"] is DBNull ? 0 : row["speedinterval"];
-            row["accelerationinterval"] = row["accelerationinterval"] is DBNull ? 0 : row["accelerationinterval"];
-            row["jerkinterval"] = row["jerkinterval"] is DBNull ? 0 : row["jerkinterval"];
-            row["brakinginterval"] = row["brakinginterval"] is DBNull ? 0 : row["brakinginterval"];
-            this.IntervalInformation = new IntervalInformation(CarId,
-                                                               TripId,
-                                                               row.Field<Int64>("roadtypesinterval"),
-                                                               row.Field<Int64>("criticaltimeinterval"),
-                                                               row.Field<Int64>("speedinterval"),
-                                                               row.Field<Int64>("accelerationinterval"),
-                                                               row.Field<Int64>("jerkinterval"),
-                                                               row.Field<Int64>("brakinginterval"));
+            if (row.Table.Columns.Contains("speedinterval")) {
+                row["roadtypesinterval"] = row["roadtypesinterval"] is DBNull ? 0 : row["roadtypesinterval"];
+                row["criticaltimeinterval"] = row["criticaltimeinterval"] is DBNull ? 0 : row["criticaltimeinterval"];
+                row["speedinterval"] = row["speedinterval"] is DBNull ? 0 : row["speedinterval"];
+                row["accelerationinterval"] = row["accelerationinterval"] is DBNull ? 0 : row["accelerationinterval"];
+                row["jerkinterval"] = row["jerkinterval"] is DBNull ? 0 : row["jerkinterval"];
+                row["brakinginterval"] = row["brakinginterval"] is DBNull ? 0 : row["brakinginterval"];
+                this.IntervalInformation = new IntervalInformation(CarId,
+                                                                   TripId,
+                                                                   row.Field<Int64>("roadtypesinterval"),
+                                                                   row.Field<Int64>("criticaltimeinterval"),
+                                                                   row.Field<Int64>("speedinterval"),
+                                                                   row.Field<Int64>("accelerationinterval"),
+                                                                   row.Field<Int64>("jerkinterval"),
+                                                                   row.Field<Int64>("brakinginterval"));
 
+            }
             //Data Quality
-            row["dataquality"] = row["dataquality"] is DBNull ? -1 : row["dataquality"];
-            this.TripScore = (double)row.Field<Single>("dataquality");
-
+            if (row.Table.Columns.Contains("dataquality")) {
+                row["dataquality"] = row["dataquality"] is DBNull ? -1 : row["dataquality"];
+                this.TripScore = (double)row.Field<Single>("dataquality");
+            }
         }
 
         public override string ToString() {

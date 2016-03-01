@@ -96,41 +96,63 @@ namespace CarDataProject {
         }
 
         public Fact(DataRow row) {
-            this._EntryId = row.Field<Int64>("entryid");
-            this.CarId = row.Field<int>("carid");
-            this._TripId = row.Field<Int64>("tripid");
+            if (row.Table.Columns.Contains("entryid")) {
+                this._EntryId = row.Field<Int64>("entryid");
+            }
+            if (row.Table.Columns.Contains("carid")) {
+                this.CarId = row.Field<int>("carid");
+            }
+            if (row.Table.Columns.Contains("tripid")) {
+                this._TripId = row.Field<Int64>("tripid");
+            }
 
             //Spatial Information
-            row["distancetolag"] = row["distancetolag"] is DBNull ? -1.0 : row["distancetolag"];
-            row["pathline"] = row["pathline"] is DBNull ? null : row["pathline"];
-            this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")), (double)row.Field<Single>("distancetolag"), row.Field<PostgisLineString>("pathline"));
+            if (row.Table.Columns.Contains("distancetolag") && row.Table.Columns.Contains("pathline")) {
+                row["distancetolag"] = row["distancetolag"] is DBNull ? -1.0 : row["distancetolag"];
+                row["pathline"] = row["pathline"] is DBNull ? null : row["pathline"];
+                this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")), (double)row.Field<Single>("distancetolag"), row.Field<PostgisLineString>("pathline"));
+            } else {
+                this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")));
+            }
 
             //Temporal Information
-            row["secondstolag"] = row["secondstolag"] is DBNull ? 0 : row["secondstolag"];
-            this.Temporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("dateid"), row.Field<int>("timeid")), new TimeSpan(0, 0, row.Field<Int16>("secondstolag")));
+            if (row.Table.Columns.Contains("secondstolag")) {
+                row["secondstolag"] = row["secondstolag"] is DBNull ? 0 : row["secondstolag"];
+                this.Temporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("dateid"), row.Field<int>("timeid")), new TimeSpan(0, 0, row.Field<Int16>("secondstolag")));
+            } else {
+                this.Temporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("dateid"), row.Field<int>("timeid")));
+            }
 
             //Measure Information
-            row["acceleration"] = row["acceleration"] is DBNull ? 0 : row["acceleration"];
-            row["jerk"] = row["jerk"] is DBNull ? 0 : row["jerk"];
-            this.Measure = new MeasureInformation((double)row.Field<Single>("speed"), (double)row.Field<Single>("acceleration"), (double)row.Field<Single>("jerk"));
+            if (row.Table.Columns.Contains("speed") && row.Table.Columns.Contains("acceleration") && row.Table.Columns.Contains("jerk")) {
+                row["acceleration"] = row["acceleration"] is DBNull ? 0 : row["acceleration"];
+                row["jerk"] = row["jerk"] is DBNull ? 0 : row["jerk"];
+                this.Measure = new MeasureInformation((double)row.Field<Single>("speed"), (double)row.Field<Single>("acceleration"), (double)row.Field<Single>("jerk"));
+            }
 
             //Flag Information
-            row["speeding"] = row["speeding"] is DBNull ? false : row["speeding"];
-            row["accelerating"] = row["accelerating"] is DBNull ? false : row["accelerating"];
-            row["jerking"] = row["jerking"] is DBNull ? false : row["jerking"];
-            row["braking"] = row["braking"] is DBNull ? false : row["braking"];
-            row["steadyspeed"] = row["steadyspeed"] is DBNull ? false : row["steadyspeed"];
-            this.Flag = new FlagInformation(row.Field<bool>("speeding"), row.Field<bool>("accelerating"), row.Field<bool>("jerking"), row.Field<bool>("braking"), row.Field<bool>("steadyspeed"));
+            if (row.Table.Columns.Contains("speeding")) {
+                row["speeding"] = row["speeding"] is DBNull ? false : row["speeding"];
+                row["accelerating"] = row["accelerating"] is DBNull ? false : row["accelerating"];
+                row["jerking"] = row["jerking"] is DBNull ? false : row["jerking"];
+                row["braking"] = row["braking"] is DBNull ? false : row["braking"];
+                row["steadyspeed"] = row["steadyspeed"] is DBNull ? false : row["steadyspeed"];
+                this.Flag = new FlagInformation(row.Field<bool>("speeding"), row.Field<bool>("accelerating"), row.Field<bool>("jerking"), row.Field<bool>("braking"), row.Field<bool>("steadyspeed"));
+            }
 
             //Segment Information
-            row["segmentid"] = row["segmentid"] is DBNull ? -1 : row["segmentid"];
-            this._Segment = new SegmentInformation(row.Field<int>("segmentid"), row.Field<Int16>("maxspeed"));
+            if (row.Table.Columns.Contains("segmentid") && row.Table.Columns.Contains("maxspeed")) {
+                row["segmentid"] = row["segmentid"] is DBNull ? -1 : row["segmentid"];
+                this._Segment = new SegmentInformation(row.Field<int>("segmentid"), row.Field<Int16>("maxspeed"));
+            }
 
             //Quality Information
-            row["qualityid"] = row["qualityid"] is DBNull ? -1 : row["qualityid"];
-            row["satellites"] = row["satellites"] is DBNull ? -1 : row["satellites"];
-            row["hdop"] = row["hdop"] is DBNull ? -1 : row["hdop"];
-            this._Quality = new QualityInformation(row.Field<Int16>("qualityid"), row.Field<Int16>("satellites"), (double)row.Field<Single>("hdop"));
+            if (row.Table.Columns.Contains("qualityid") && row.Table.Columns.Contains("satellites") && row.Table.Columns.Contains("hdop")) {
+                row["qualityid"] = row["qualityid"] is DBNull ? -1 : row["qualityid"];
+                row["satellites"] = row["satellites"] is DBNull ? -1 : row["satellites"];
+                row["hdop"] = row["hdop"] is DBNull ? -1 : row["hdop"];
+                this._Quality = new QualityInformation(row.Field<Int16>("qualityid"), row.Field<Int16>("satellites"), (double)row.Field<Single>("hdop"));
+            }
         }
 
         public Fact(dynamic jsonObj) {
@@ -161,7 +183,7 @@ namespace CarDataProject {
             measureObj.speed = measureObj.speed == null ? 0 : measureObj.speed;
             measureObj.acceleration = measureObj.acceleration == null ? 0 : measureObj.acceleration;
             measureObj.jerk = measureObj.jerk == null ? 0 : measureObj.jerk;
-  
+
             this.Measure = new MeasureInformation((double)measureObj.speed, (double)measureObj.acceleration, (double)measureObj.jerk);
 
             //Flag Information
