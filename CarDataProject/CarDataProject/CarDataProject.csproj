@@ -39,6 +39,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -56,6 +57,7 @@
     <Compile Include="Data Manipulators\GPSFactUpdater.cs" />
     <Compile Include="Data Manipulators\IntervalCalculator.cs" />
     <Compile Include="Data Manipulators\MeasureCalculator.cs" />
+    <Compile Include="Data Manipulators\OutlierDetection.cs" />
     <Compile Include="Data Manipulators\TripFactUpdater.cs" />
     <Compile Include="Data Validation\TripGaps.cs" />
     <Compile Include="Global.cs" />

@@ -5,10 +5,10 @@ namespace CarDataProject {
         private Int16 teamId { get; set; }
         private Int16 carId { get; set; }
 
+
         public Worker(Int16 TeamId, Int16 CarId) {
             this.teamId = TeamId;
             this.carId = CarId;
-
             Console.WriteLine(this.teamId + ", " + this.carId);
         }
 
@@ -16,8 +16,9 @@ namespace CarDataProject {
             Console.WriteLine("Starting thread for car " + this.carId);
 
             //INFATILoader.LoadCarData(teamId, carId);
+            OutlierDetection.OutlierHandling(carId);    
             //GPSFactUpdater.Update(carId);
-            TripFactUpdater.Update(carId);
+            //TripFactUpdater.Update(carId);
 
             Console.WriteLine("Finished working on car " + this.carId + ". Terminating thread.");
         }

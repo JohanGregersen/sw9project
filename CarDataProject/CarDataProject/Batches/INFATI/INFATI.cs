@@ -79,6 +79,11 @@ namespace CarDataProject {
             //Save header entries in single string with seperators
             string header = columns[0];
 
+            //If already adjusted.
+            if (header.Contains("#")) {
+                return;
+            }
+
             for (int i = 1; i < columns.Count; i++) {
                 header += Global.Batch.INFATI.RowSeperator + columns[i];
             }

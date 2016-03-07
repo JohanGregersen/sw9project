@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Runtime.Caching;
+using System.IO;
+using NpgsqlTypes;
 
 namespace CarDataProject {
     class Program {
         static void Main(string[] args) {
+
+            UpdateDatabaseThreaded();
+
+            Console.WriteLine("Aaaaand its done");
+            Console.ReadLine();
         }
 
         /*
@@ -33,15 +41,15 @@ namespace CarDataProject {
         */
         static void UpdateDatabaseThreaded() {
             List<Worker> workerPool = new List<Worker>();
-            
-            for(Int16 i = 1; i <= 11; i++) {
+
+            for (Int16 i = 1; i <= 11; i++) {
                 workerPool.Add(new Worker(1, i));
             }
-            
+            /*
             for (Int16 i = 12; i <= 20; i++) {
                 workerPool.Add(new Worker(2, i));
             }
-
+            */
             List<Thread> threads = new List<Thread>();
             foreach (Worker worker in workerPool) {
                 Thread thread = new Thread(new ThreadStart(worker.Start));

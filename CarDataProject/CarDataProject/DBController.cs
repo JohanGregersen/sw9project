@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Npgsql;
+using NpgsqlTypes;
 using System.Data;
 using System.Text;
 using System.Device.Location;
@@ -345,12 +346,7 @@ namespace CarDataProject {
 
             return facts;
         }
-        /*
-        SELECT ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude, dateid, timeid
-FROM gpsfact
-where tripid = 1
-ORDER BY dateid ASC, timeid ASC, Entryid ASC
-    */
+        
         public List<TemporalInformation> GetTimesByCarIdAndDate(Int16 carId, int date) {
             string sql = String.Format(@"SELECT entryid, timeid
                                          FROM gpsfact
@@ -830,6 +826,74 @@ ORDER BY dateid ASC, timeid ASC, Entryid ASC
             }
         }
 
+        public void UpdateEntriesWithNoTrip(List<Int64> entries) {
+            if (entries.Count() > 2000) {
+                List<List<Int64>> subEntries = new List<List<Int64>>();
+                List<Int64> subEntry;
+                int index = 0;
+
+                while (true) {
+                    if (index + 2000 > entries.Count) {
+                        subEntry = new List<Int64>();
+                        subEntry = entries.GetRange(index, entries.Count - index);
+                        subEntries.Add(subEntry);
+                        break;
+                    } else {
+                        subEntry = new List<Int64>();
+                        subEntry = entries.GetRange(index, 2000);
+                        subEntries.Add(subEntry);
+                    }
+
+                    index = index + 2000;
+                }
+
+                foreach (List<Int64> subEnt in subEntries) {
+                    UpdateFactNoTrip(subEnt);
+                }
+            } else {
+                UpdateFactNoTrip(entries);
+            }
+
+        }
+
+        public int UpdateFactNoTrip(List<Int64> entries) {
+            string sql = String.Format("UPDATE gpsfact SET tripid = null WHERE entryid = {0}", entries[0]);
+            StringBuilder sb = new StringBuilder(sql);
+
+            for (int i = 1; i < entries.Count; i++) {
+                sb.Append(String.Format(" OR entryid = {0}", entries[i]));
+            }
+
+            NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), Connection);
+            try {
+                return NonQuery(command, "gpsfact");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
+
+
         #endregion Updaters
+
+        #region Cache
+        public List<QualityInformation> GetQualityInformationTable() {
+            string sql = String.Format(@"SELECT qualityid, satellites, hdop
+                                        FROM qualityinformation");
+
+
+            DataRowCollection result = Query(sql);
+
+            List<QualityInformation> QIs = new List<QualityInformation>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    QIs.Add(new QualityInformation(row.Field<int>("qualityid"), row.Field<Int16>("satellites"), (double)row.Field<Single>("hdop")));
+                }
+            }
+
+            return QIs;
+        }
+        #endregion
     }
 }

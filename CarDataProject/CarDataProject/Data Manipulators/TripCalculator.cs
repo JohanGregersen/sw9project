@@ -20,14 +20,12 @@ namespace CarDataProject {
             //Used to handle the first case of the algorithm because it needs to be there to ensure the first comparison goes well
             bool firstCaseFlag = true;
 
-            //Starting to iterate over all timestamps
-            for(int i = 0; i < datapoints.Count(); i++) {
-                if (firstCaseFlag) {
-                    allTrips.Last().Timestamps.Add(new TemporalInformation(datapoints.ElementAt(0).EntryId, datapoints.ElementAt(0).Timestamp));
-                    i++;
-                    firstCaseFlag = false;
-                }
+            //First case
+            allTrips.Last().Timestamps.Add(new TemporalInformation(datapoints.ElementAt(0).EntryId, datapoints.ElementAt(0).Timestamp));
 
+
+            //Starting to iterate over all timestamps
+            for (int i = 1; i < datapoints.Count(); i++) {
                 //Compare the last seen timestamp to the current, if more than 300 seconds has past, create a new trip and store the current timestamp in it
                 if (Math.Abs(ToUnixTime(allTrips.Last().Timestamps.Last().Timestamp) - ToUnixTime(datapoints.ElementAt(i).Timestamp)) <= 180) {
                     allTrips.Last().Timestamps.Add(new TemporalInformation(datapoints.ElementAt(i).EntryId, datapoints.ElementAt(i).Timestamp));
