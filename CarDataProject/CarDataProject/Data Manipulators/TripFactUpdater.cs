@@ -28,6 +28,8 @@ namespace CarDataProject {
 
                 Console.WriteLine("Updating car {0}, trip {1} ({2} facts)", carId, trip.TripId, facts.Count);
                 trip = UpdateTrip(trip, facts, dbc);
+                trip.OptimalScore = FinalScore.CalculateOptimalScore(trip);
+                trip.TripScore = FinalScore.CalculateTripScore(trip);
                 dbc.UpdateTripFactWithMeasures(trip);
             }
 
@@ -101,10 +103,6 @@ namespace CarDataProject {
             ////////////////////////////////
             //Data Quality
             trip.DataQuality = trip.DataQuality / facts.Count;
-
-                //Price?
-                //Optimal Score?
-                //Trip Score?
 
             return trip;
         }

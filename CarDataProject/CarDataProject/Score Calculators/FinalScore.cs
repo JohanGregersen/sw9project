@@ -7,11 +7,7 @@ namespace CarDataProject {
      * The score uses the trip distance as base, adding distance for each of the different weight functions
      */
     public static class FinalScore {
-        public static double CalculateReal(Int64 tripId) {
-            DBController dbc = new DBController();
-            Trip trip = dbc.GetTripByTripId(tripId);
-            dbc.Close();
-
+        public static double CalculateTripScore(Trip trip) {
             List<double> roadTypeIntervals = IntervalHelper.Decode(trip.IntervalInformation.RoadTypesInterval);
             List<double> criticalTimeIntervals = IntervalHelper.Decode(trip.IntervalInformation.CriticalTimeInterval);
             List<double> speedingIntervals = IntervalHelper.Decode(trip.IntervalInformation.SpeedInterval);
@@ -80,6 +76,17 @@ namespace CarDataProject {
             Console.WriteLine("Total: {0}", finalScore);
 
             return finalScore;
+        }
+
+        public static double CalculateOptimalScore(Trip trip) {
+            List<double> roadTypeIntervals = IntervalHelper.Decode(trip.IntervalInformation.RoadTypesInterval);
+            List<double> criticalTimeIntervals = IntervalHelper.Decode(trip.IntervalInformation.CriticalTimeInterval);
+
+            double optimalScore = trip.MetersDriven;
+            optimalScore += Subscore.RoadTypes(trip.MetersDriven, roadTypeIntervals, DefaultPolicy.RoadTypeWeights);
+            optimalScore += Subscore.CriticalTimePeriod(trip.MetersDriven, criticalTimeIntervals, DefaultPolicy.CriticalTimeWeights);
+
+            return optimalScore;
         }
 
         public static double CalculateOptimal(Int64 tripId, List<double> optimalSpeedingProfile,

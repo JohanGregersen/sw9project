@@ -465,6 +465,32 @@ namespace CarDataProject {
         ///<para>Gets list of roadtypes sorted by date and time</para>
         ///<para>Null entries will be assigned as "noinfo"</para>
         ///</summary>
+        /// 
+
+        public List<Global.Enums.RoadType> GetRoadTypesByTripId(Int64 tripId) {
+            string sql = String.Format(@"select roadtype
+                                         from 
+                                             (select segmentid, dateid, timeid
+                                             from gpsfact
+                                             where tripid = '{0}' ) AS segments
+                                         LEFT JOIN segmentinformation
+                                         ON segments.segmentid = segmentinformation.segmentid
+                                         ORDER BY segments.dateid ASC, segments.timeid ASC", tripId);
+            DataRowCollection result = Query(sql);
+
+            List<Global.Enums.RoadType> roadTypes = new List<Global.Enums.RoadType>();
+            foreach (DataRow row in result) {
+                if (DBNull.Value.Equals(row["roadtype"])) {
+                    roadTypes.Add(Global.Enums.RoadType.noinfo);
+                } else {
+                    roadTypes.Add((Global.Enums.RoadType)(row.Field<Int16>("roadtype")));
+                }
+            }
+
+            return roadTypes;
+        }
+
+        /*
         public List<Global.Enums.RoadType> GetRoadTypesByTripId(Int64 tripId) {
             string sql = String.Format(@"SELECT roadtype
                                          FROM gpsfact LEFT JOIN segmentinformation
@@ -484,6 +510,7 @@ namespace CarDataProject {
 
             return roadTypes;
         }
+        */
 
         public List<Fact> GetSpatioTemporalByCarIdAndTripId(Int16 carId, Int64 tripId) {
             string sql = String.Format(@"SELECT entryid, dateid, timeid, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude, distancetolag
@@ -655,6 +682,8 @@ namespace CarDataProject {
                                           endtimeid = @endtimeid,
                                           secondsdriven = @secondsdriven,
                                           metersdriven = @metersdriven,
+                                          tripscore = @tripscore,
+                                          optimalscore = @optimalscore,
                                           jerkcount = @jerkcount,
                                           brakecount = @brakecount,
                                           accelerationcount = @accelerationcount,
@@ -689,8 +718,8 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@secondsdriven", UpdatedTrip.SecondsDriven.TotalSeconds);
             command.Parameters.AddWithValue("@metersdriven", UpdatedTrip.MetersDriven);
             //price?
-            //optimal score?
-            //trip score?
+            command.Parameters.AddWithValue("@tripscore", UpdatedTrip.TripScore);
+            command.Parameters.AddWithValue("@optimalscore", UpdatedTrip.OptimalScore);
             command.Parameters.AddWithValue("@jerkcount", UpdatedTrip.JerkCount);
             command.Parameters.AddWithValue("@brakecount", UpdatedTrip.BrakeCount);
             command.Parameters.AddWithValue("@accelerationcount", UpdatedTrip.AccelerationCount);

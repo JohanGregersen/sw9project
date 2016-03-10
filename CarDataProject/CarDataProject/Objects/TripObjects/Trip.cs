@@ -29,7 +29,9 @@ namespace CarDataProject {
 
         [DataMember(Name = "metersdriven")]
         public double MetersDriven { get; set; }
+        [DataMember(Name = "price")]
         public double Price { get; set; }
+        [DataMember(Name = "optimalscore")]
         public double OptimalScore { get; set; }
         [DataMember(Name = "tripscore")]
         public double TripScore { get; set; }
