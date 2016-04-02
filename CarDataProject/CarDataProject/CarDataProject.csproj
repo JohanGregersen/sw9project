@@ -86,7 +86,6 @@
     <Compile Include="Objects\TripObjects\Trip.cs" />
     <Compile Include="Policies\DefaultPolicy.cs" />
     <Compile Include="Policies\Policy.cs" />
-    <Compile Include="RemoteDB.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
     <Compile Include="Score Calculators\Subscore.cs" />
     <Compile Include="UserStatistics\CarStatistics.cs" />
