@@ -14,8 +14,8 @@ namespace CarDataProject {
         DataTable DataTable = new DataTable();
 
         public DBController() {
-            string connectionSettings = String.Format("Server={0};User Id={1};Password={2};Database={3};Pooling=false;",
-                Global.Database.Host, Global.Database.User, Global.Database.Password, Global.Database.Name);
+            string connectionSettings = String.Format("Server={0};User Id={1};Password={2};Database={3};Pooling=false;Port={4};",
+                Global.Database.Host, Global.Database.User, Global.Database.Password, Global.Database.Name, Global.Database.Port);
 
             Connection = new NpgsqlConnection(connectionSettings);
 
@@ -222,6 +222,79 @@ namespace CarDataProject {
 
             return 0;
         }
+
+        public int AddFact(Fact fact) {
+            string sql = @"INSERT INTO gpsfact(carid, tripid, localtripid, segmentid, qualityid, timeid, dateid, secondstolag, point, mpoint, distancetolag, 
+                                                speed, maxspeed, acceleration, jerk, speeding, accelerating, braking, jerking) 
+                                               VALUES (@carid, @tripid, @localtripid, @segmentid, @qualityid, @timeid, @dateid, @secondstolag,
+                                                ST_SetSrid(ST_MakePoint(@pointlat, @pointlng), 4326), ST_SetSrid(ST_MakePoint(@mpointlat, @mpointlng), 4326), 
+                                                @distancetolag, @speed, @maxspeed, @acceleration, @jerk, @speeding, @accelerating, @braking, @jerking)";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@carid", fact.CarId);
+            command.Parameters.AddWithValue("@tripid", fact.TripId);
+            command.Parameters.AddWithValue("@localtripid", fact.LocalTripId);
+
+            //SegmentInformation
+            if (fact.Segment != null) {
+                command.Parameters.AddWithValue("@segmentid", fact.Segment.SegmentId);
+            } else {
+                command.Parameters.AddWithValue("@segmentid", DBNull.Value);
+            }
+
+            //QualityInformation
+            if (fact.Quality != null) {
+                command.Parameters.AddWithValue("@qualityid", fact.Quality.QualityId);
+            } else {
+
+                command.Parameters.AddWithValue("@qualityid", DBNull.Value);
+            }
+
+            //TemporalInformation
+
+            command.Parameters.AddWithValue("@timeid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@dateid", 20000101);
+
+            //command.Parameters.AddWithValue("@timeid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("HHmmss")));
+            //command.Parameters.AddWithValue("@dateid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("yyyyMMdd")));
+            command.Parameters.AddWithValue("@secondstolag", fact.Temporal.SecondsToLag.TotalSeconds);
+
+            //SpatialInformation
+            //point
+            //command.Parameters.AddWithValue("@pointlat", fact.Spatial.Point.Latitude);
+            //command.Parameters.AddWithValue("@pointlng", fact.Spatial.Point.Longitude);
+            command.Parameters.AddWithValue("@pointlat", 0);
+            command.Parameters.AddWithValue("@pointlng", 0);
+
+            //mpoint
+            command.Parameters.AddWithValue("@mpointlat", fact.Spatial.MPoint.Latitude);
+            command.Parameters.AddWithValue("@mpointlng", fact.Spatial.MPoint.Longitude);
+            command.Parameters.AddWithValue("@distancetolag", fact.Spatial.DistanceToLag);
+
+            //MeasureInformation
+            command.Parameters.AddWithValue("@speed", fact.Measure.Speed);
+            // ATTENTION
+            //////// NO MAXSPEED ///////////
+            // ATTENTION
+            command.Parameters.AddWithValue("@maxspeed", 0);
+            command.Parameters.AddWithValue("@acceleration", fact.Measure.Acceleration);
+            command.Parameters.AddWithValue("@jerk", fact.Measure.Jerk);
+
+            //FlagInformation
+            command.Parameters.AddWithValue("@speeding", fact.Flag.Speeding);
+            command.Parameters.AddWithValue("@accelerating", fact.Flag.Accelerating);
+            command.Parameters.AddWithValue("@braking", fact.Flag.Braking);
+            command.Parameters.AddWithValue("@jerking", fact.Flag.Jerking);
+
+            try {
+                return NonQuery(command, "gpsfact");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
+
         #endregion Creators
 
         #region Getters
@@ -251,10 +324,40 @@ namespace CarDataProject {
             return null;
         }
 
+        public DataRow GetTripViewByCarIdAndTripId(Int16 carId, Int64 tripId) {
+            string sql = String.Format(@"SELECT *
+                                        FROM tripfact
+                                        WHERE carid = {0} AND tripid = '{1}'", carId, tripId);
+            DataRowCollection result = Query(sql);
+
+            if (result.Count >= 1) {
+                return result[0];
+            }
+
+            return null;
+        }
+
         public List<Trip> GetTripsByCarId(Int16 carId) {
             string sql = String.Format(@"SELECT *
                                         FROM tripfact
                                         WHERE carid = '{0}'", carId);
+            DataRowCollection result = Query(sql);
+
+
+            List<Trip> trips = new List<Trip>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    trips.Add(new Trip(row));
+                }
+            }
+
+            return trips;
+        }
+
+        public List<Trip> GetAllTrips() {
+            string sql = String.Format(@"SELECT *
+                                        FROM tripfact
+                                        ORDER BY startdateid ASC, starttimeid ASC");
             DataRowCollection result = Query(sql);
 
 
@@ -293,6 +396,25 @@ namespace CarDataProject {
                                         FROM gpsfact
                                         INNER JOIN qualityinformation
                                         ON gpsfact.qualityid = qualityinformation.qualityid
+                                        WHERE tripId = '{0}'
+                                        ORDER BY gpsfact.dateid ASC, gpsfact.timeid ASC, gpsfact.entryid ASC", tripId);
+
+            DataRowCollection result = Query(sql);
+
+            List<Fact> facts = new List<Fact>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    facts.Add(new Fact(row));
+                }
+            }
+
+            return facts;
+        }
+
+        public List<Fact> GetFactsByTripIdNoQuality(Int64 tripId) {
+
+            string sql = String.Format(@"SELECT *, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
+                                        FROM gpsfact
                                         WHERE tripId = '{0}'
                                         ORDER BY gpsfact.dateid ASC, gpsfact.timeid ASC, gpsfact.entryid ASC", tripId);
 

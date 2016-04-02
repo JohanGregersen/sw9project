@@ -26,7 +26,6 @@ namespace CarDataProject {
             }
             set { }
         }
-        
 
         public TemporalInformation(Int64 TripId, Int64 EntryId, DateTime Timestamp, TimeSpan SecondsToLag) {
             this.TripId = TripId;

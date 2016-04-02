@@ -11,29 +11,13 @@ namespace CarDataProject {
     class Program {
         static void Main(string[] args) {
 
-            UpdateDatabaseThreaded();
+            //FleetStatistics FS = new FleetStatistics();
+
+            DBInitializer.DBInitialization();
+            //UpdateDatabaseThreaded();
 
             Console.WriteLine("Aaaaand its done");
             Console.ReadLine();
-        }
-
-        /*
-         * Prints all trip scores by all cars one by one
-         */
-        static void ReadAllTripScores() {
-            DBController dbc = new DBController();
-            List<Int16> carIds = dbc.GetCarIds();
-
-            foreach (Int16 carId in carIds) {
-                List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
-
-                foreach (Int64 tripId in tripIds) {
-                    FinalScore.CalculateReal(tripId);
-                    Console.ReadLine();
-                }
-            }
-
-            dbc.Close();
         }
 
         /*
@@ -41,10 +25,11 @@ namespace CarDataProject {
         */
         static void UpdateDatabaseThreaded() {
             List<Worker> workerPool = new List<Worker>();
-
-            for (Int16 i = 1; i <= 11; i++) {
+            
+            for (Int16 i = 1; i <= 1; i++) {
                 workerPool.Add(new Worker(1, i));
             }
+            
             /*
             for (Int16 i = 12; i <= 20; i++) {
                 workerPool.Add(new Worker(2, i));

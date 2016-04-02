@@ -66,8 +66,6 @@ namespace CarDataProject {
             set { }
         }
 
-
-        [DataMember(Name = "intervals")]
         public IntervalInformation IntervalInformation {get; set; }
         public double DataQuality { get; set; }
 
@@ -162,12 +160,12 @@ namespace CarDataProject {
 
             if (row.Table.Columns.Contains("steadyspeeddistance")) {
                 row["steadyspeeddistance"] = row["steadyspeeddistance"] is DBNull ? -1 : row["steadyspeeddistance"];
-                this.TripScore = (double)row.Field<Single>("steadyspeeddistance");
+                this.SteadySpeedDistance = (double)row.Field<Single>("steadyspeeddistance");
             }
 
             if (row.Table.Columns.Contains("steadyspeedtime")) {
                 row["steadyspeedtime"] = row["steadyspeedtime"] is DBNull ? 0 : row["steadyspeedtime"];
-                this.TimeSped = new TimeSpan(0, 0, (int)row.Field<Single>("steadyspeedtime"));
+                this.SteadySpeedTime = new TimeSpan(0, 0, (int)row.Field<Single>("steadyspeedtime"));
             }
 
             //IntervalInformation
@@ -191,7 +189,7 @@ namespace CarDataProject {
             //Data Quality
             if (row.Table.Columns.Contains("dataquality")) {
                 row["dataquality"] = row["dataquality"] is DBNull ? -1 : row["dataquality"];
-                this.TripScore = (double)row.Field<Single>("dataquality");
+                this.DataQuality = (double)row.Field<Single>("dataquality");
             }
         }
 

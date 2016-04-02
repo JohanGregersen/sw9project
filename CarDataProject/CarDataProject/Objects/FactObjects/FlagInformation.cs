@@ -28,6 +28,13 @@ namespace CarDataProject {
             this.Braking = Braking;
         }
 
+        public FlagInformation(bool Speeding, bool Accelerating, bool Jerking, bool Braking) {
+            this.Speeding = Speeding;
+            this.Accelerating = Accelerating;
+            this.Jerking = Jerking;
+            this.Braking = Braking;
+        }
+
         public FlagInformation(bool Speeding, bool Accelerating, bool Jerking, bool Braking, bool SteadySpeed) {
             this.Speeding = Speeding;
             this.Accelerating = Accelerating;

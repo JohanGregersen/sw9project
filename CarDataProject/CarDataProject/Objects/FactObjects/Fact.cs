@@ -30,6 +30,14 @@ namespace CarDataProject {
         [DataMember(Name = "tripid")]
         private Int64 _TripId;
 
+        public Int64 LocalTripId {
+            get {
+                return _LocalTripId;
+            }
+        }
+        [DataMember(Name = "localtripid")]
+        private Int64 _LocalTripId;
+        
         public QualityInformation Quality {
             get {
                 return _Quality;
@@ -106,6 +114,10 @@ namespace CarDataProject {
                 this._TripId = row.Field<Int64>("tripid");
             }
 
+            if (row.Table.Columns.Contains("localtripid")) {
+                this._LocalTripId = row.Field<Int64>("localtripid");
+            }
+
             //Spatial Information
             if (row.Table.Columns.Contains("distancetolag") && row.Table.Columns.Contains("pathline")) {
                 row["distancetolag"] = row["distancetolag"] is DBNull ? -1.0 : row["distancetolag"];
@@ -152,13 +164,15 @@ namespace CarDataProject {
                 row["satellites"] = row["satellites"] is DBNull ? -1 : row["satellites"];
                 row["hdop"] = row["hdop"] is DBNull ? -1 : row["hdop"];
                 this._Quality = new QualityInformation(row.Field<Int16>("qualityid"), row.Field<Int16>("satellites"), (double)row.Field<Single>("hdop"));
+            } else if (row.Table.Columns.Contains("qualityid")) {
+                this._Quality = new QualityInformation(-1, -1, -1);
             }
         }
 
         public Fact(dynamic jsonObj) {
-            this._EntryId = jsonObj.entryid;
             this.CarId = jsonObj.carid;
             this._TripId = jsonObj.tripid;
+            this._LocalTripId = jsonObj.localtripid;
 
             //Spatial Information
             dynamic spatialObj = jsonObj.spatial;
@@ -175,7 +189,7 @@ namespace CarDataProject {
             dynamic temporalObj = jsonObj.temporal;
             temporalObj.timestamp = temporalObj.timestamp == null ? 0 : temporalObj.timestamp;
             temporalObj.secondstolag = temporalObj.secondstolag == null ? 0 : temporalObj.secondstolag;
-
+            
             this.Temporal = new TemporalInformation(new DateTime((long)temporalObj.timestamp), new TimeSpan(0, 0, (Int16)temporalObj.secondstolag));
 
             //Measure Information
@@ -192,9 +206,10 @@ namespace CarDataProject {
             flagObj.accelerating = flagObj.accelerating == null ? false : flagObj.accelerating;
             flagObj.jerking = flagObj.jerking == null ? false : flagObj.jerking;
             flagObj.braking = flagObj.braking == null ? false : flagObj.braking;
-            flagObj.steadyspeed = flagObj.steadyspeed == null ? false : flagObj.steadyspeed;
+            //flagObj.steadyspeed = flagObj.steadyspeed == null ? false : flagObj.steadyspeed;
+            //this.Flag = new FlagInformation((bool)flagObj.speeding, (bool)flagObj.accelerating, (bool)flagObj.jerking, (bool)flagObj.braking, (bool)flagObj.steadyspeed);
 
-            this.Flag = new FlagInformation((bool)flagObj.speeding, (bool)flagObj.accelerating, (bool)flagObj.jerking, (bool)flagObj.braking, (bool)flagObj.steadyspeed);
+            this.Flag = new FlagInformation((bool)flagObj.speeding, (bool)flagObj.accelerating, (bool)flagObj.jerking, (bool)flagObj.braking);
 
             //Segment Information
             //Implement using DataRow row as example
@@ -209,6 +224,8 @@ namespace CarDataProject {
             sb.Append("EntryId:" + EntryId);
             sb.AppendLine();
             sb.Append("TripId: " + TripId);
+            sb.AppendLine();
+            sb.Append("LocalTripId: " + LocalTripId);
             sb.AppendLine();
             sb.Append("CarId: " + CarId);
             sb.AppendLine();

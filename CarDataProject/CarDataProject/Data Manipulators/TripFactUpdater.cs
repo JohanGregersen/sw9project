@@ -4,6 +4,33 @@ using System.Linq;
 
 namespace CarDataProject {
     public static class TripFactUpdater {
+
+        public static void UpdateTrip(Int16 carId, Int64 tripId) {
+            DBController dbc = new DBController();
+
+            Trip trip = new Trip(tripId, carId);
+            List<Fact> facts = dbc.GetFactsByTripIdNoQuality(tripId);
+
+            //Getting the previous tripid and seconds to previous trip
+            List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
+            Int64 latestTrip = tripIds[tripIds.Count()-2];
+            Trip previousTrip = dbc.GetTripByCarIdAndTripId(carId, latestTrip);
+            trip.PreviousTripId = previousTrip.TripId;
+            trip.SecondsToLag = MeasureCalculator.SecondsToLag(facts[0].Temporal.Timestamp, previousTrip.EndTemporal.Timestamp);
+
+            //Calc the trip updates
+            trip = UpdateTrip(trip, facts, dbc);
+
+            //Compute the scores
+            trip.OptimalScore = FinalScore.CalculateOptimalScore(trip);
+            trip.TripScore = FinalScore.CalculateTripScore(trip);
+
+            //Update the trip in the database
+            dbc.UpdateTripFactWithMeasures(trip);
+
+            dbc.Close();
+        }
+
         public static void Update(Int16 carId) {
             DBController dbc = new DBController();
             List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
@@ -109,6 +136,8 @@ namespace CarDataProject {
 
         private static Trip UpdateTripWithIntervals(Trip trip, List<Fact> facts, DBController dbc) {
             List<double> intervals;
+
+            trip.IntervalInformation = new IntervalInformation(trip.CarId, trip.TripId);
 
             intervals = IntervalCalculator.RoadType(trip, facts, dbc);
             trip.IntervalInformation.RoadTypesInterval = IntervalHelper.Encode(intervals);
