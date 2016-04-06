@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace CarDataProject {
     class Pearson {
-        public static Double Correlation(Double[] Xs, Double[] Ys) {
+        public static Double Correlation(Double[] FirstArray, Double[] SecondArray) {
             Double sumX = 0;
             Double sumX2 = 0;
             Double sumY = 0;
             Double sumY2 = 0;
             Double sumXY = 0;
 
-            int n = Xs.Length < Ys.Length ? Xs.Length : Ys.Length;
+            int n = FirstArray.Length < SecondArray.Length ? FirstArray.Length : SecondArray.Length;
 
             for (int i = 0; i < n; ++i) {
-                Double x = Xs[i];
-                Double y = Ys[i];
+                Double x = FirstArray[i];
+                Double y = SecondArray[i];
 
                 sumX += x;
                 sumX2 += x * x;
