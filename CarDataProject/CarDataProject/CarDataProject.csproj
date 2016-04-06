@@ -84,6 +84,7 @@
     <Compile Include="Objects\TripObjects\IntervalInformation.cs" />
     <Compile Include="Objects\TripObjects\TimeInterval.cs" />
     <Compile Include="Objects\TripObjects\Trip.cs" />
+    <Compile Include="PearsonCorrelation\Pearson.cs" />
     <Compile Include="Policies\DefaultPolicy.cs" />
     <Compile Include="Policies\Policy.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
