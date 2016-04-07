@@ -39,6 +39,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
@@ -67,6 +68,7 @@
     <Compile Include="Data Validation\ValidationPlots.cs" />
     <Compile Include="Helpers\IntervalHelper.cs" />
     <Compile Include="Helpers\SortingHelper.cs" />
+    <Compile Include="Map-Matching\Mapmatch.cs" />
     <Compile Include="MetaStatistics\FleetStatistics.cs" />
     <Compile Include="MetaStatistics\MetaCarStatistics.cs" />
     <Compile Include="MetaStatistics\MetaSpeedingStatistics.cs" />

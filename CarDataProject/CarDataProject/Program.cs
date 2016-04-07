@@ -13,9 +13,21 @@ namespace CarDataProject {
 
             //FleetStatistics FS = new FleetStatistics();
 
-            DBInitializer.DBInitialization();
+            //DBInitializer.DBInitialization();
             //UpdateDatabaseThreaded();
 
+            Mapmatch m = new Mapmatch();
+
+            /*
+            DBController dbc = new DBController();
+            List<Fact> facts = dbc.GetFactsForMapByCarIdAndTripId(1, 22);
+            dbc.Close();
+
+            foreach (Fact f in facts) {
+                Console.WriteLine();
+                Console.WriteLine(f.EntryId + ", " + f.Spatial.MPoint.Latitude + ", " + f.Spatial.MPoint.Longitude + ",\"" + f.Temporal.Timestamp.ToString("yyyy-MM-dd") + "T" + f.Temporal.Timestamp.TimeOfDay + "\"");
+            }
+            */
             Console.WriteLine("Aaaaand its done");
             Console.ReadLine();
         }

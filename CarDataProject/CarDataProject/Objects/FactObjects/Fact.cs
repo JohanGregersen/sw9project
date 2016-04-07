@@ -190,7 +190,7 @@ namespace CarDataProject {
             temporalObj.timestamp = temporalObj.timestamp == null ? 0 : temporalObj.timestamp;
             temporalObj.secondstolag = temporalObj.secondstolag == null ? 0 : temporalObj.secondstolag;
             
-            this.Temporal = new TemporalInformation(new DateTime((long)temporalObj.timestamp), new TimeSpan(0, 0, (Int16)temporalObj.secondstolag));
+            this.Temporal = new TemporalInformation(FromUnixTime((long)temporalObj.timestamp), new TimeSpan(0, 0, (Int16)temporalObj.secondstolag));
 
             //Measure Information
             dynamic measureObj = jsonObj.measure;
@@ -243,6 +243,9 @@ namespace CarDataProject {
 
         }
 
-
+        public DateTime FromUnixTime(long unixTime) {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddMilliseconds(unixTime);
+        }
     }
 }

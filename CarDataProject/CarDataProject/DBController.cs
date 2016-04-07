@@ -227,7 +227,7 @@ namespace CarDataProject {
             string sql = @"INSERT INTO gpsfact(carid, tripid, localtripid, segmentid, qualityid, timeid, dateid, secondstolag, point, mpoint, distancetolag, 
                                                 speed, maxspeed, acceleration, jerk, speeding, accelerating, braking, jerking) 
                                                VALUES (@carid, @tripid, @localtripid, @segmentid, @qualityid, @timeid, @dateid, @secondstolag,
-                                                ST_SetSrid(ST_MakePoint(@pointlat, @pointlng), 4326), ST_SetSrid(ST_MakePoint(@mpointlat, @mpointlng), 4326), 
+                                                ST_SetSrid(ST_MakePoint(@pointlng, @pointlat), 4326), ST_SetSrid(ST_MakePoint(@mpointlng, @mpointlat), 4326), 
                                                 @distancetolag, @speed, @maxspeed, @acceleration, @jerk, @speeding, @accelerating, @braking, @jerking)";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
@@ -375,7 +375,7 @@ namespace CarDataProject {
             string sql = String.Format(@"SELECT tripid, carid, startdateid, enddateid, starttimeid, endtimeid, metersdriven, price, optimalscore, tripscore
                                         FROM tripfact
                                         WHERE carid = '{0}'
-                                        ORDER BY startdateid DESC, starttimeid DESC
+                                        ORDER BY tripid DESC, starttimeid DESC
                                         offset '{1}' ROWS FETCH NEXT 10 ROWS ONLY", carId, offset);
             DataRowCollection result = Query(sql);
 
@@ -452,7 +452,7 @@ namespace CarDataProject {
         }
 
         public List<Fact> GetFactsForMapByCarIdAndTripId(Int16 carId, Int64 tripId) {
-            string sql = String.Format(@"SELECT ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude, dateid, timeid
+            string sql = String.Format(@"SELECT entryid, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude, dateid, timeid
                                         FROM gpsfact
                                         where carid = '{0}' AND tripid = '{1}' 
                                         ORDER BY dateid ASC, timeid ASC, Entryid ASC", carId, tripId);
@@ -468,7 +468,25 @@ namespace CarDataProject {
 
             return facts;
         }
-        
+
+        public List<Fact> GetFactsForMapMatching(Int16 carId, Int64 tripId) {
+            string sql = String.Format(@"SELECT entryid, mpoint, dateid, timeid
+                                        FROM gpsfact
+                                        where carid = '{0}' AND tripid = '{1}' 
+                                        ORDER BY dateid ASC, timeid ASC, Entryid ASC", carId, tripId);
+
+            DataRowCollection result = Query(sql);
+
+            List<Fact> facts = new List<Fact>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    facts.Add(new Fact(row));
+                }
+            }
+
+            return facts;
+        }
+
         public List<TemporalInformation> GetTimesByCarIdAndDate(Int16 carId, int date) {
             string sql = String.Format(@"SELECT entryid, timeid
                                          FROM gpsfact
