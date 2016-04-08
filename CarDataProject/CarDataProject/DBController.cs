@@ -771,9 +771,35 @@ namespace CarDataProject {
 
         #region Updaters
 
+        public int UpdateGPSFactsWithMapMatching(Dictionary<int, List<SpatialInformation>> mapmatchedEntries) {
+            string sql = String.Format(@"UPDATE gpsfact
+                                            SET segmentid = @segmentid ,
+                                            mpoint = ST_SetSrid(ST_MakePoint(@mpointlng, @mpointlat), 4326)
+                                            WHERE entryid = @entryid");
+
+            foreach (KeyValuePair<int, List<SpatialInformation>> segments in mapmatchedEntries) {
+                foreach (SpatialInformation entry in segments.Value) {
+
+                    NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+
+                    command.Parameters.AddWithValue("@entryid", entry.EntryId);
+                    command.Parameters.AddWithValue("@segmentid", segments.Key);
+                    command.Parameters.AddWithValue("@mpointlat", entry.MPoint.Latitude);
+                    command.Parameters.AddWithValue("@mpointlng", entry.MPoint.Longitude);
+
+                    try {
+                        NonQuery(command, "gpsfact");
+                    } catch (Exception e) {
+                        Console.WriteLine(e.ToString());
+                    }
+                }
+            }
+
+            return 0;
+        }
+
         public int UpdateGPSFactWithMeasures(List<Fact> UpdatedFacts) {
-            for (int i = 1; i < UpdatedFacts.Count; i++) {
-                string sql = String.Format(@"UPDATE gpsfact
+            string sql = String.Format(@"UPDATE gpsfact
                                             SET pathline = ST_MakeLine(ST_SetSRID(ST_MakePoint(@prevMPointLng, @prevMpointLat), 4326), ST_SetSRID(ST_MakePoint(@MPointLng, @MpointLat),4326)),
                                             acceleration = @acceleration,
                                             jerk = @jerk,
@@ -786,6 +812,7 @@ namespace CarDataProject {
                                             steadyspeed = @steadyspeed
                                             WHERE entryid = @entryid");
 
+            for (int i = 1; i < UpdatedFacts.Count; i++) {
                 NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
 
                 command.Parameters.AddWithValue("@entryid", UpdatedFacts[i].EntryId);
@@ -1042,7 +1069,6 @@ namespace CarDataProject {
 
             return 0;
         }
-
 
         #endregion Updaters
 

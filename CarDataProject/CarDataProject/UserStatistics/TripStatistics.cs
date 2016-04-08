@@ -9,6 +9,21 @@ namespace CarDataProject {
             FileWriter.DefaultTripStatistics(carId, tripId);
         }
 
+        public static double tripPercentage(Int64 tripId) {
+
+            double result = 0;
+
+            DBController dbc = new DBController();
+            Trip trip = dbc.GetTripByTripId(tripId);
+            dbc.Close();
+
+            if(trip.TripScore != 0 && trip.MetersDriven != 0) {
+                result = trip.TripScore / trip.MetersDriven * 100;
+            }
+
+            return result;
+        }
+
         public static TimeSpan Duration(Int16 carId, Int64 tripId) {
             DBController dbc = new DBController();
             List<TemporalInformation> timestamps = dbc.GetTimestampsByCarIdAndTripId(carId, tripId);

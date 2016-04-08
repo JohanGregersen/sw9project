@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CarDataProject {
-    class Pearson {
-        public static Double Correlation(Double[] FirstArray, Double[] SecondArray) {
+    class MetricCorrelation {
+        public static Double Correlation(double[] FirstArray, double[] SecondArray) {
             Double sumX = 0;
             Double sumX2 = 0;
             Double sumY = 0;

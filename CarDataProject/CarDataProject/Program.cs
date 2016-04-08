@@ -10,13 +10,12 @@ using NpgsqlTypes;
 namespace CarDataProject {
     class Program {
         static void Main(string[] args) {
-
             //FleetStatistics FS = new FleetStatistics();
 
             //DBInitializer.DBInitialization();
             //UpdateDatabaseThreaded();
 
-            Mapmatch m = new Mapmatch();
+            Mapmatch.MatchTrip(4, 1);
 
             /*
             DBController dbc = new DBController();

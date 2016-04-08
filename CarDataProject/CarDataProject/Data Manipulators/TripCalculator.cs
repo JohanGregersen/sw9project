@@ -17,12 +17,8 @@ namespace CarDataProject {
             INFATITrip trip = new INFATITrip(carId);
             allTrips.Add(trip);
 
-            //Used to handle the first case of the algorithm because it needs to be there to ensure the first comparison goes well
-            bool firstCaseFlag = true;
-
             //First case
             allTrips.Last().Timestamps.Add(new TemporalInformation(datapoints.ElementAt(0).EntryId, datapoints.ElementAt(0).Timestamp));
-
 
             //Starting to iterate over all timestamps
             for (int i = 1; i < datapoints.Count(); i++) {
