@@ -54,6 +54,7 @@
     <Compile Include="Batches\INFATI\INFATILoader.cs" />
     <Compile Include="Batches\INFATI\INFATIObjects\INFATITime.cs" />
     <Compile Include="Batches\INFATI\INFATIObjects\INFATITrip.cs" />
+    <Compile Include="Comparison Testing\UserProfile.cs" />
     <Compile Include="Data Manipulators\GPSFactUpdater.cs" />
     <Compile Include="Data Manipulators\IntervalCalculator.cs" />
     <Compile Include="Data Manipulators\MeasureCalculator.cs" />
@@ -85,7 +86,7 @@
     <Compile Include="Objects\TripObjects\IntervalInformation.cs" />
     <Compile Include="Objects\TripObjects\TimeInterval.cs" />
     <Compile Include="Objects\TripObjects\Trip.cs" />
-    <Compile Include="MetricCorrelation\Pearson.cs" />
+    <Compile Include="Comparison Testing\MetricCorrelation.cs" />
     <Compile Include="Policies\DefaultPolicy.cs" />
     <Compile Include="Policies\Policy.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
