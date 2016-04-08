@@ -32,9 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Npgsql, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Npgsql.3.1.0-alpha6\lib\net45\Npgsql.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Npgsql">
+      <HintPath>..\packages\Npgsql.3.1.0-alpha3\lib\net45\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -86,7 +85,7 @@
     <Compile Include="Objects\TripObjects\IntervalInformation.cs" />
     <Compile Include="Objects\TripObjects\TimeInterval.cs" />
     <Compile Include="Objects\TripObjects\Trip.cs" />
-    <Compile Include="PearsonCorrelation\Pearson.cs" />
+    <Compile Include="MetricCorrelation\Pearson.cs" />
     <Compile Include="Policies\DefaultPolicy.cs" />
     <Compile Include="Policies\Policy.cs" />
     <Compile Include="Score Calculators\FinalScore.cs" />
