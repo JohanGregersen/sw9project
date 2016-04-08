@@ -252,11 +252,11 @@ namespace CarDataProject {
 
             //TemporalInformation
 
-            command.Parameters.AddWithValue("@timeid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("HHmmss")));
-            command.Parameters.AddWithValue("@dateid", 20000101);
-
             //command.Parameters.AddWithValue("@timeid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("HHmmss")));
-            //command.Parameters.AddWithValue("@dateid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("yyyyMMdd")));
+            //command.Parameters.AddWithValue("@dateid", 20000101);
+
+            command.Parameters.AddWithValue("@timeid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@dateid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("yyyyMMdd")));
             command.Parameters.AddWithValue("@secondstolag", fact.Temporal.SecondsToLag.TotalSeconds);
 
             //SpatialInformation
