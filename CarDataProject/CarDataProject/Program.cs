@@ -16,7 +16,7 @@ namespace CarDataProject {
             //DBInitializer.DBInitialization();
             //UpdateDatabaseThreaded();
 
-            Mapmatch m = new Mapmatch();
+            //Mapmatch m = new Mapmatch();
 
             /*
             DBController dbc = new DBController();
