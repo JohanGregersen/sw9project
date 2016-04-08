@@ -12,17 +12,18 @@ namespace CarDataProject {
         * Database related information
         */
         public static class Database {
-            /*
             public const string Host = "localhost";
             public const string Name = "CarDB";
-            public const string User = "casper";
+            public const string User = "postgres";
             public const string Password = "1234";
-            */
+            
 
+                /*
             public const string Host = "localhost";
             public const string Name = "LiveCarDB";
             public const string User = "postgres";
             public const string Password = "1234";
+            */
 
             public const int Port = 5432;
         }
