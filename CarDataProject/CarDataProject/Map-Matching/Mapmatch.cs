@@ -1,37 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Device.Location;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.IO;
 
+using Newtonsoft.Json.Linq;
+
 namespace CarDataProject {
-    class Mapmatch {
+    public static class Mapmatch {
         private const string APPID = "496d0607";
         private const string APPKEY = "c8a39964a19641b526ff3eef7d39d272";
 
-        public Mapmatch() {
+        public static void MatchTrip(short carId, int tripId) {
             DBController dbc = new DBController();
-            List<Fact> facts = dbc.GetFactsForMapByCarIdAndTripId(1, 44);
+            List<Fact> facts = dbc.GetFactsForMapByCarIdAndTripId(carId, tripId);
             dbc.Close();
             string postData = "";
             
-
             //CSV FORMAT
             foreach (Fact f in facts) {
                 postData += f.EntryId + "," + f.Spatial.MPoint.Longitude.ToString().Replace(",",".") + "," + f.Spatial.MPoint.Latitude.ToString().Replace(",", ".") + ",\"" + f.Temporal.Timestamp.ToString("yyyy-MM-dd") + "T" + f.Temporal.Timestamp.TimeOfDay + "\"" + System.Environment.NewLine;
             }
-            
 
             //postData = ConvertToXML(facts);
 
-
             // Create a request using a URL that can receive a post. 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://test.roadmatching.com/rest/mapmatch/?app_id=" + APPID + "&app_key=" + APPKEY + "&output.groupByWays=false&output.linkGeometries=false&output.osmProjection=false&output.linkMatchingError=false&output.waypoints=true&output.waypointsIds=true");
+            
             // Set the Method property of the request to POST.
             request.Method = "POST";
-
             request.ContentType = "text/csv";
             //request.ContentType = "application/gpx+xml";
 
@@ -64,10 +62,36 @@ namespace CarDataProject {
             dataStream.Close();
             response.Close();
 
+            SaveMapMatchingToDB(responseFromServer);
         }
 
+        private static void SaveMapMatchingToDB(string json) {
+            dynamic response = JObject.Parse(json) as JObject;
+            Dictionary<int, List<SpatialInformation>> linksWithWaypoints = new Dictionary<int, List<SpatialInformation>>();
+            foreach (dynamic entries in response.diary.entries) {
+                foreach (dynamic link in entries.route.links) {
+                    List<SpatialInformation> waypoints = new List<SpatialInformation>();
+                    if (link.wpts != null) {
+                        int linkId = (int)link.id;
 
+                        if (!linksWithWaypoints.ContainsKey(linkId)) {
+                            linksWithWaypoints.Add(linkId, waypoints);
+                        }
 
+                        foreach (dynamic waypoint in link.wpts) {
+                            int waypointId = (int)waypoint.id;
+                            double x = (double)waypoint.x;
+                            double y = (double)waypoint.y;
+                            waypoints.Add(new SpatialInformation(new GeoCoordinate(x, y), waypointId));
+                        }
+                    }
+                }
+            }
+
+            DBController dbc = new DBController();
+            dbc.UpdateGPSFactsWithMapMatching(linksWithWaypoints);
+            dbc.Close();
+        }
         private static string ConvertToXML(List<Fact> facts) {
 
             StringBuilder sb = new StringBuilder();
