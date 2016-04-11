@@ -82,7 +82,7 @@ namespace CarDataProject {
                             int waypointId = (int)waypoint.id;
                             double x = (double)waypoint.x;
                             double y = (double)waypoint.y;
-                            waypoints.Add(new SpatialInformation(new GeoCoordinate(x, y), waypointId));
+                            waypoints.Add(new SpatialInformation(waypointId, new GeoCoordinate(x, y)));
                         }
                     }
                 }
