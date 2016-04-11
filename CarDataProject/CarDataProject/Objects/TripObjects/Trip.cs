@@ -35,6 +35,14 @@ namespace CarDataProject {
         public double OptimalScore { get; set; }
         [DataMember(Name = "tripscore")]
         public double TripScore { get; set; }
+
+        [DataMember(Name = "scorepercentage")]
+        public int ScorePercentage {
+            get {
+                return Convert.ToInt32(TripScore / OptimalScore * 100);
+            }
+        }
+
         [DataMember(Name = "jerkcount")]
         public Int16 JerkCount { get; set; }
         [DataMember(Name = "brakecount")]
