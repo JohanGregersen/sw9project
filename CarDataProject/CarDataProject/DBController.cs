@@ -371,7 +371,7 @@ namespace CarDataProject {
             return trips;
         }
 
-        public List<Trip> GetTripsForOverviewByCarId(Int16 carId, int offset) {
+        public List<Trip> GetTripsForListByCarId(Int16 carId, int offset) {
             string sql = String.Format(@"SELECT tripid, carid, startdateid, enddateid, starttimeid, endtimeid, metersdriven, price, optimalscore, tripscore
                                         FROM tripfact
                                         WHERE carid = '{0}'
