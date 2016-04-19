@@ -791,8 +791,13 @@ namespace CarDataProject {
 
         public int UpdateGPSFactsWithMapMatching(Dictionary<int, List<SpatialInformation>> mapmatchedEntries) {
             string sql = String.Format(@"UPDATE gpsfact
-                                            SET segmentid = @segmentid ,
-                                            mpoint = ST_SetSrid(ST_MakePoint(@mpointlng, @mpointlat), 4326)
+                                            SET segmentid = (SELECT id
+                                                             FROM segmentinformation seginfo
+                                                             WHERE seginfo.osm_id = @osm_id),
+                                            mpoint = ST_SetSrid(ST_MakePoint(@mpointlng, @mpointlat), 4326),
+                                            maxspeed = (SELECT maxspeed
+                                                        FROM segmentinformation seginfo
+                                                        WHERE seginfo.osm_id = @osm_id)                                                               
                                             WHERE entryid = @entryid");
 
             foreach (KeyValuePair<int, List<SpatialInformation>> segments in mapmatchedEntries) {
@@ -801,7 +806,7 @@ namespace CarDataProject {
                     NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
 
                     command.Parameters.AddWithValue("@entryid", entry.EntryId);
-                    command.Parameters.AddWithValue("@segmentid", segments.Key);
+                    command.Parameters.AddWithValue("@osm_id", segments.Key);
                     command.Parameters.AddWithValue("@mpointlat", entry.MPoint.Latitude);
                     command.Parameters.AddWithValue("@mpointlng", entry.MPoint.Longitude);
 
