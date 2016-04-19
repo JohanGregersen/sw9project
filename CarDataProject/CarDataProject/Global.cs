@@ -55,7 +55,9 @@ namespace CarDataProject {
             public enum RoadType {
                 motorway = 1, trunk, primary, secondary, tertiary, motorway_link, primary_link, unclassified, road,
                 residential, service, track, pedestrian, unpaved, living_street, trunk_link, secondary_link, ferry,
-                tertiary_link, motorway_link_entry = 6, motorway_link_exit = 6, noinfo = 99
+                tertiary_link, motorway_link_entry, motorway_link_exit, bus_guideway, raceway, footway, bridleway,
+                steps, path, cycleway, construction, proposed, rest_area, elevator, abandoned, passing_aisle, byway,
+                platform, mini_roundabout, passing_place, corridor, IIs, noinfo = 99
             };
         }
 
