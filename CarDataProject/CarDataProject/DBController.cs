@@ -680,10 +680,7 @@ namespace CarDataProject {
         }
 
         public List<Fact> GetSpeedInformationByCarIdAndTripId(Int16 carId, Int64 tripId) {
-            string sql = String.Format(@"SELECT entryid, timeid, dateid, speed, distancetolag, secondstolag, acceleration,  CASE 
-                                            WHEN direction = TRUE THEN speedforward
-                                            ELSE speedbackward
-                                            END AS maxspeed
+            string sql = String.Format(@"SELECT entryid, timeid, dateid, speed, distancetolag, secondstolag, acceleration, maxspeed
                                          FROM gpsfact LEFT JOIN segmentinformation
                                          ON(gpsfact.segmentid = segmentinformation.segmentid)
                                          WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
