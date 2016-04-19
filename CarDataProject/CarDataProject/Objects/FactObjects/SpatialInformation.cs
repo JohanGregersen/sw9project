@@ -65,11 +65,16 @@ namespace CarDataProject {
             this.MPoint = MPoint;
         }
 
-        public SpatialInformation(Int64 TripId, GeoCoordinate Point) {
-            this.TripId = TripId;
+        public SpatialInformation(GeoCoordinate Point, Int64 TripId) {
             this.Point = Point;
+            this.TripId = TripId;
         }
-
+        
+        public SpatialInformation(Int64 EntryId, GeoCoordinate MPoint) {
+            this.EntryId = EntryId;
+            this.MPoint = MPoint;
+        }
+        
         public SpatialInformation(Int64 TripId, Int64 EntryId, GeoCoordinate MPoint) {
             this.TripId = TripId;
             this.EntryId = EntryId;

@@ -17,6 +17,18 @@ namespace CarDataProject {
             return Timestamp - LagTimestamp;
         }
 
+        public static double Speed(SpatialInformation CurrentSI, SpatialInformation PrevSI, TemporalInformation CurrentTI, TemporalInformation PrevTI) {
+            //Speed = Distance / Time
+            double distance = CurrentSI.MPoint.GetDistanceTo(PrevSI.MPoint);
+
+            TimeSpan time = CurrentTI.Timestamp - PrevTI.Timestamp;
+
+            if (time.Seconds == 0) {
+                return 0;
+            }
+            return (distance / time.Seconds) * 3.6;
+        }
+
         public static double Acceleration(MeasureInformation CurrentMI, MeasureInformation PrevMI, TemporalInformation CurrentTI, TemporalInformation PrevTI) {
             //Acceleration = Velocity change / Time
             double velocityChange = CurrentMI.Speed - PrevMI.Speed;

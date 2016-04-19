@@ -127,6 +127,10 @@ namespace CarDataProject {
                 row["distancetolag"] = row["distancetolag"] is DBNull ? -1.0 : row["distancetolag"];
                 row["pathline"] = row["pathline"] is DBNull ? null : row["pathline"];
                 this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")), (double)row.Field<Single>("distancetolag"), row.Field<PostgisLineString>("pathline"));
+            } 
+            else if(row.Table.Columns.Contains("pointlatitude")) {
+                this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("pointlatitude"), row.Field<double>("pointlongitude")), this._TripId);
+
             } else {
                 this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")));
             }
@@ -141,6 +145,7 @@ namespace CarDataProject {
 
             //Measure Information
             if (row.Table.Columns.Contains("speed") && row.Table.Columns.Contains("acceleration") && row.Table.Columns.Contains("jerk")) {
+                row["speed"] = row["speed"] is DBNull ? 0 : row["speed"];
                 row["acceleration"] = row["acceleration"] is DBNull ? 0 : row["acceleration"];
                 row["jerk"] = row["jerk"] is DBNull ? 0 : row["jerk"];
                 this.Measure = new MeasureInformation((double)row.Field<Single>("speed"), (double)row.Field<Single>("acceleration"), (double)row.Field<Single>("jerk"));
@@ -159,6 +164,7 @@ namespace CarDataProject {
             //Segment Information
             if (row.Table.Columns.Contains("segmentid") && row.Table.Columns.Contains("maxspeed")) {
                 row["segmentid"] = row["segmentid"] is DBNull ? -1 : row["segmentid"];
+                row["maxspeed"] = row["maxspeed"] is DBNull ? -1 : row["maxspeed"];
                 this._Segment = new SegmentInformation(row.Field<int>("segmentid"), row.Field<Int16>("maxspeed"));
             }
 
@@ -230,7 +236,7 @@ namespace CarDataProject {
             dynamic spatialObj = jsonObj.spatial;
             spatialObj.pointlat = spatialObj.pointlat == null ? 0 : spatialObj.pointlat;
             spatialObj.pointlng = spatialObj.pointlng == null ? 0 : spatialObj.pointlng;
-            this.Spatial = new SpatialInformation((Int64)jsonObj.tripid, new GeoCoordinate((double)spatialObj.pointlat, (double)spatialObj.pointlng));
+            this.Spatial = new SpatialInformation(new GeoCoordinate((double)spatialObj.pointlat, (double)spatialObj.pointlng), (Int64)jsonObj.tripid);
 
             //Temporal Information
             dynamic temporalObj = jsonObj.temporal;

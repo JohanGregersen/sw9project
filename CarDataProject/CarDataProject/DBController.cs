@@ -497,6 +497,24 @@ namespace CarDataProject {
             return facts;
         }
 
+        public List<Fact> GetFactsForMapMatchingByCarIdAndTripId(Int16 carId, Int64 tripId) {
+            string sql = String.Format(@"SELECT entryid, ST_Y(point) AS pointlatitude, ST_X(point) AS pointlongitude, dateid, timeid
+                                        FROM gpsfact
+                                        where carid = '{0}' AND tripid = '{1}' 
+                                        ORDER BY dateid ASC, timeid ASC, Entryid ASC", carId, tripId);
+
+            DataRowCollection result = Query(sql);
+
+            List<Fact> facts = new List<Fact>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    facts.Add(new Fact(row));
+                }
+            }
+
+            return facts;
+        }
+
         public List<Fact> GetFactsForMapByCarIdAndTripId(Int16 carId, Int64 tripId) {
             string sql = String.Format(@"SELECT entryid, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude, dateid, timeid
                                         FROM gpsfact
@@ -660,7 +678,7 @@ namespace CarDataProject {
                                              from gpsfact
                                              where tripid = '{0}' ) AS segments
                                          LEFT JOIN segmentinformation
-                                         ON segments.segmentid = segmentinformation.segmentid
+                                         ON segments.segmentid = segmentinformation.id
                                          ORDER BY segments.dateid ASC, segments.timeid ASC", tripId);
             DataRowCollection result = Query(sql);
 
@@ -728,7 +746,7 @@ namespace CarDataProject {
         public List<Fact> GetSpeedInformationByCarIdAndTripId(Int16 carId, Int64 tripId) {
             string sql = String.Format(@"SELECT entryid, timeid, dateid, speed, distancetolag, secondstolag, acceleration, maxspeed
                                          FROM gpsfact LEFT JOIN segmentinformation
-                                         ON(gpsfact.segmentid = segmentinformation.segmentid)
+                                         ON(gpsfact.segmentid = segmentinformation.id)
                                          WHERE carid = '{0}' AND tripid = '{1}'", carId, tripId);
             DataRowCollection res = Query(sql);
 
@@ -849,6 +867,7 @@ namespace CarDataProject {
         public int UpdateGPSFactWithMeasures(List<Fact> UpdatedFacts) {
             string sql = String.Format(@"UPDATE gpsfact
                                             SET pathline = ST_MakeLine(ST_SetSRID(ST_MakePoint(@prevMPointLng, @prevMpointLat), 4326), ST_SetSRID(ST_MakePoint(@MPointLng, @MpointLat),4326)),
+                                            speed = @speed,
                                             acceleration = @acceleration,
                                             jerk = @jerk,
                                             distancetolag = @distancetolag,
@@ -856,8 +875,7 @@ namespace CarDataProject {
                                             speeding = @speeding,
                                             accelerating = @accelerating,
                                             jerking = @jerking,
-                                            braking = @braking,
-                                            steadyspeed = @steadyspeed
+                                            braking = @braking
                                             WHERE entryid = @entryid");
 
             for (int i = 1; i < UpdatedFacts.Count; i++) {
@@ -868,6 +886,7 @@ namespace CarDataProject {
                 command.Parameters.AddWithValue("@prevMpointLat", UpdatedFacts[i - 1].Spatial.MPoint.Latitude);
                 command.Parameters.AddWithValue("@MPointLng", UpdatedFacts[i].Spatial.MPoint.Longitude);
                 command.Parameters.AddWithValue("@MpointLat", UpdatedFacts[i].Spatial.MPoint.Latitude);
+                command.Parameters.AddWithValue("@speed", UpdatedFacts[i].Measure.Speed);
                 command.Parameters.AddWithValue("@acceleration", UpdatedFacts[i].Measure.Acceleration);
                 command.Parameters.AddWithValue("@jerk", UpdatedFacts[i].Measure.Jerk);
                 command.Parameters.AddWithValue("@distancetolag", UpdatedFacts[i].Spatial.DistanceToLag);
@@ -876,7 +895,6 @@ namespace CarDataProject {
                 command.Parameters.AddWithValue("@accelerating", UpdatedFacts[i].Flag.Accelerating);
                 command.Parameters.AddWithValue("@jerking", UpdatedFacts[i].Flag.Jerking);
                 command.Parameters.AddWithValue("@braking", UpdatedFacts[i].Flag.Braking);
-                command.Parameters.AddWithValue("@steadyspeed", UpdatedFacts[i].Flag.SteadySpeed);
 
                 try {
                     NonQuery(command, "gpsfact");

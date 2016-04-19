@@ -15,13 +15,13 @@ namespace CarDataProject {
 
         public static void MatchTrip(Int16 carId, Int64 tripId) {
             DBController dbc = new DBController();
-            List<Fact> facts = dbc.GetFactsForMapByCarIdAndTripId(carId, tripId);
+            List<Fact> facts = dbc.GetFactsForMapMatchingByCarIdAndTripId(carId, tripId);
             dbc.Close();
             string postData = "";
             
             //CSV FORMAT
             foreach (Fact f in facts) {
-                postData += f.EntryId + "," + f.Spatial.MPoint.Longitude.ToString().Replace(",",".") + "," + f.Spatial.MPoint.Latitude.ToString().Replace(",", ".") + ",\"" + f.Temporal.Timestamp.ToString("yyyy-MM-dd") + "T" + f.Temporal.Timestamp.TimeOfDay + "\"" + System.Environment.NewLine;
+                postData += f.EntryId + "," + f.Spatial.Point.Longitude.ToString().Replace(",",".") + "," + f.Spatial.Point.Latitude.ToString().Replace(",", ".") + ",\"" + f.Temporal.Timestamp.ToString("yyyy-MM-dd") + "T" + f.Temporal.Timestamp.TimeOfDay + "\"" + System.Environment.NewLine;
             }
 
             //postData = ConvertToXML(facts);

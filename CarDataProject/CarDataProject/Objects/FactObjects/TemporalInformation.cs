@@ -16,7 +16,7 @@ namespace CarDataProject {
         [DataMember(Name = "timestamp")]
         private DateTime _Timestamp;
         
-        public TimeSpan SecondsToLag { get; }
+        public TimeSpan SecondsToLag { get; set; }
 
         
         [DataMember(Name = "secondstolag")]
