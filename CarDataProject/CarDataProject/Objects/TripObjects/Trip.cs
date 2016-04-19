@@ -41,7 +41,10 @@ namespace CarDataProject {
             get {
                 return TripScore / OptimalScore * 100;
             }
+            set { }
         }
+
+
 
         [DataMember(Name = "jerkcount")]
         public Int16 JerkCount { get; set; }

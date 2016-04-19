@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Device.Location;
+//using System.Device.Location;
+using GeoCoordinatePortable;
 using System.Text;
 using System.Net;
 using System.IO;

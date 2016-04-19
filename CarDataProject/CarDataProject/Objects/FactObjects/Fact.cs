@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
-using System.Device.Location;
+//using System.Device.Location;
+using GeoCoordinatePortable;
 using NpgsqlTypes;
 using System.Runtime.Serialization;
 using System.Text;
@@ -29,20 +30,23 @@ namespace CarDataProject {
         }
         [DataMember(Name = "tripid")]
         private Int64 _TripId;
-
+        /*
         public Int64 LocalTripId {
             get {
                 return _LocalTripId;
             }
         }
+        
         [DataMember(Name = "localtripid")]
         private Int64 _LocalTripId;
-        
+        */
         public QualityInformation Quality {
             get {
                 return _Quality;
             }
         }
+        
+
         //[DataMember(Name = "quality")]
         private QualityInformation _Quality;
 
@@ -113,11 +117,11 @@ namespace CarDataProject {
             if (row.Table.Columns.Contains("tripid")) {
                 this._TripId = row.Field<Int64>("tripid");
             }
-
+            /*
             if (row.Table.Columns.Contains("localtripid")) {
                 this._LocalTripId = row.Field<Int64>("localtripid");
             }
-
+            */
             //Spatial Information
             if (row.Table.Columns.Contains("distancetolag") && row.Table.Columns.Contains("pathline")) {
                 row["distancetolag"] = row["distancetolag"] is DBNull ? -1.0 : row["distancetolag"];
@@ -172,7 +176,7 @@ namespace CarDataProject {
         public Fact(dynamic jsonObj) {
             this.CarId = jsonObj.carid;
             this._TripId = jsonObj.tripid;
-            this._LocalTripId = jsonObj.localtripid;
+            //this._LocalTripId = jsonObj.localtripid;
 
             //Spatial Information
             dynamic spatialObj = jsonObj.spatial;
@@ -217,7 +221,8 @@ namespace CarDataProject {
             //Quality Information
             //Implement using DataRow row as example
         }
-
+        
+        
 
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
@@ -225,8 +230,8 @@ namespace CarDataProject {
             sb.AppendLine();
             sb.Append("TripId: " + TripId);
             sb.AppendLine();
-            sb.Append("LocalTripId: " + LocalTripId);
-            sb.AppendLine();
+            //sb.Append("LocalTripId: " + LocalTripId);
+            //sb.AppendLine();
             sb.Append("CarId: " + CarId);
             sb.AppendLine();
 

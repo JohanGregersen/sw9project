@@ -4,7 +4,9 @@ using Npgsql;
 using NpgsqlTypes;
 using System.Data;
 using System.Text;
-using System.Device.Location;
+//using System.Device.Location;
+using GeoCoordinatePortable;
+
 using System.Linq;
 
 namespace CarDataProject {
@@ -224,16 +226,16 @@ namespace CarDataProject {
         }
 
         public int AddFact(Fact fact) {
-            string sql = @"INSERT INTO gpsfact(carid, tripid, localtripid, segmentid, qualityid, timeid, dateid, secondstolag, point, mpoint, distancetolag, 
+            string sql = @"INSERT INTO gpsfact(carid, tripid, segmentid, qualityid, timeid, dateid, secondstolag, point, mpoint, distancetolag, 
                                                 speed, maxspeed, acceleration, jerk, speeding, accelerating, braking, jerking) 
-                                               VALUES (@carid, @tripid, @localtripid, @segmentid, @qualityid, @timeid, @dateid, @secondstolag,
+                                               VALUES (@carid, @tripid, @segmentid, @qualityid, @timeid, @dateid, @secondstolag,
                                                 ST_SetSrid(ST_MakePoint(@pointlng, @pointlat), 4326), ST_SetSrid(ST_MakePoint(@mpointlng, @mpointlat), 4326), 
                                                 @distancetolag, @speed, @maxspeed, @acceleration, @jerk, @speeding, @accelerating, @braking, @jerking)";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@carid", fact.CarId);
             command.Parameters.AddWithValue("@tripid", fact.TripId);
-            command.Parameters.AddWithValue("@localtripid", fact.LocalTripId);
+            //command.Parameters.AddWithValue("@localtripid", fact.LocalTripId);
 
             //SegmentInformation
             if (fact.Segment != null) {
@@ -436,6 +438,25 @@ namespace CarDataProject {
                                         FROM gpsfact
                                         INNER JOIN qualityinformation
                                         ON gpsfact.qualityid = qualityinformation.qualityid
+                                        WHERE carId = {0} AND tripId = '{1}'
+                                        ORDER BY gpsfact.dateid ASC, gpsfact.timeid ASC, gpsfact.entryid ASC", carId, tripId);
+
+            DataRowCollection result = Query(sql);
+
+            List<Fact> facts = new List<Fact>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    facts.Add(new Fact(row));
+                }
+            }
+
+            return facts;
+        }
+
+        public List<Fact> GetFactsByCarIdAndTripIdNoQuality(Int16 carId, Int64 tripId) {
+
+            string sql = String.Format(@"SELECT *, ST_Y(mpoint) AS latitude, ST_X(mpoint) AS longitude
+                                        FROM gpsfact
                                         WHERE carId = {0} AND tripId = '{1}'
                                         ORDER BY gpsfact.dateid ASC, gpsfact.timeid ASC, gpsfact.entryid ASC", carId, tripId);
 

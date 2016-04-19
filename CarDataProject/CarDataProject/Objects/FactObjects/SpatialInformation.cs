@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Device.Location;
+//using System.Device.Location;
+using GeoCoordinatePortable;
 using NpgsqlTypes;
 using System.Runtime.Serialization;
 using System.Text;
