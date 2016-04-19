@@ -13,7 +13,7 @@ namespace CarDataProject {
         private const string APPID = "496d0607";
         private const string APPKEY = "c8a39964a19641b526ff3eef7d39d272";
 
-        public static void MatchTrip(short carId, int tripId) {
+        public static void MatchTrip(Int16 carId, Int64 tripId) {
             DBController dbc = new DBController();
             List<Fact> facts = dbc.GetFactsForMapByCarIdAndTripId(carId, tripId);
             dbc.Close();
