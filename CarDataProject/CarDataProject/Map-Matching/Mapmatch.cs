@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Device.Location;
 using GeoCoordinatePortable;
 using System.Text;
 using System.Net;
@@ -96,7 +95,6 @@ namespace CarDataProject {
         private static string ConvertToXML(List<Fact> facts) {
 
             StringBuilder sb = new StringBuilder();
-
 
             sb.Append("<? xml version = \" 1.0 \" encoding = \"UTF-8\" ?>");
             sb.Append("< gpx xmlns = \"http://www.topografix.com/GPX/1/1 \" version = \"1.1\" creator = \"StudApp\" xmlns: xsi = \"http://www.w3.org/2001/XMLSchema-instance \" xsi: schemaLocation = \"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd \" >");
