@@ -263,14 +263,12 @@ namespace CarDataProject {
 
             //SpatialInformation
             //point
-            //command.Parameters.AddWithValue("@pointlat", fact.Spatial.Point.Latitude);
-            //command.Parameters.AddWithValue("@pointlng", fact.Spatial.Point.Longitude);
-            command.Parameters.AddWithValue("@pointlat", 0);
-            command.Parameters.AddWithValue("@pointlng", 0);
+            command.Parameters.AddWithValue("@pointlat", fact.Spatial.Point.Latitude);
+            command.Parameters.AddWithValue("@pointlng", fact.Spatial.Point.Longitude);
 
             //mpoint
-            command.Parameters.AddWithValue("@mpointlat", fact.Spatial.MPoint.Latitude);
-            command.Parameters.AddWithValue("@mpointlng", fact.Spatial.MPoint.Longitude);
+            command.Parameters.AddWithValue("@mpointlat", 0);
+            command.Parameters.AddWithValue("@mpointlng", 0);
             command.Parameters.AddWithValue("@distancetolag", fact.Spatial.DistanceToLag);
 
             //MeasureInformation
@@ -287,6 +285,33 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@accelerating", fact.Flag.Accelerating);
             command.Parameters.AddWithValue("@braking", fact.Flag.Braking);
             command.Parameters.AddWithValue("@jerking", fact.Flag.Jerking);
+
+            try {
+                return NonQuery(command, "gpsfact");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
+
+        public int AddRawFact(Fact fact) {
+            string sql = @"INSERT INTO gpsfact(carid, tripid, timeid, dateid, point) 
+                                               VALUES (@carid, @tripid, @timeid, @dateid,
+                                                ST_SetSrid(ST_MakePoint(@pointlng, @pointlat), 4326))";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@carid", fact.CarId);
+            command.Parameters.AddWithValue("@tripid", fact.TripId);
+
+            //TemporalInformation
+            command.Parameters.AddWithValue("@timeid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("HHmmss")));
+            command.Parameters.AddWithValue("@dateid", Convert.ToInt32(fact.Temporal.Timestamp.ToString("yyyyMMdd")));
+
+            //SpatialInformation
+            //point
+            command.Parameters.AddWithValue("@pointlat", fact.Spatial.Point.Latitude);
+            command.Parameters.AddWithValue("@pointlng", fact.Spatial.Point.Longitude);
 
             try {
                 return NonQuery(command, "gpsfact");

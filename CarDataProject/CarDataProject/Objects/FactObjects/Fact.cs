@@ -173,7 +173,7 @@ namespace CarDataProject {
             }
         }
 
-        public Fact(dynamic jsonObj) {
+        public Fact(dynamic jsonObj, bool discarded) {
             this.CarId = jsonObj.carid;
             this._TripId = jsonObj.tripid;
             //this._LocalTripId = jsonObj.localtripid;
@@ -183,11 +183,11 @@ namespace CarDataProject {
             spatialObj.distancetolag = spatialObj.distancetolag == null ? -1.0 : spatialObj.distancetolag;
             spatialObj.pathline = spatialObj.pathline == null ? -1.0 : spatialObj.pathline;
 
-            spatialObj.mpointlat = spatialObj.mpointlat == null ? 0 : spatialObj.mpointlat;
-            spatialObj.mpointlng = spatialObj.mpointlng == null ? 0 : spatialObj.mpointlng;
+            spatialObj.pointlat = spatialObj.pointlat == null ? 0 : spatialObj.pointlat;
+            spatialObj.pointlng = spatialObj.pointlng == null ? 0 : spatialObj.pointlng;
             //spatialObj.pathline = spatialObj.pathline == null ? "" : spatialObj.pathline
             //No Pathline yet.
-            this.Spatial = new SpatialInformation(new GeoCoordinate((double)spatialObj.mpointlat, (double)spatialObj.mpointlng), (double)spatialObj.distancetolag);
+            this.Spatial = new SpatialInformation(new GeoCoordinate((double)spatialObj.pointlat, (double)spatialObj.pointlng), (double)spatialObj.distancetolag);
 
             //Temporal Information
             dynamic temporalObj = jsonObj.temporal;
@@ -221,8 +221,24 @@ namespace CarDataProject {
             //Quality Information
             //Implement using DataRow row as example
         }
-        
-        
+
+        public Fact(dynamic jsonObj) {
+            this.CarId = jsonObj.carid;
+            this._TripId = jsonObj.tripid;
+
+            //Spatial Information
+            dynamic spatialObj = jsonObj.spatial;
+            spatialObj.pointlat = spatialObj.pointlat == null ? 0 : spatialObj.pointlat;
+            spatialObj.pointlng = spatialObj.pointlng == null ? 0 : spatialObj.pointlng;
+            this.Spatial = new SpatialInformation((Int64)jsonObj.tripid, new GeoCoordinate((double)spatialObj.pointlat, (double)spatialObj.pointlng));
+
+            //Temporal Information
+            dynamic temporalObj = jsonObj.temporal;
+            temporalObj.timestamp = temporalObj.timestamp == null ? 0 : temporalObj.timestamp;
+
+            this.Temporal = new TemporalInformation(FromUnixTime((long)temporalObj.timestamp));
+        }
+
 
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
