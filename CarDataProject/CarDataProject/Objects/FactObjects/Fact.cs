@@ -45,7 +45,7 @@ namespace CarDataProject {
                 return _Quality;
             }
         }
-        
+
 
         //[DataMember(Name = "quality")]
         private QualityInformation _Quality;
@@ -126,14 +126,22 @@ namespace CarDataProject {
             if (row.Table.Columns.Contains("distancetolag") && row.Table.Columns.Contains("pathline")) {
                 row["distancetolag"] = row["distancetolag"] is DBNull ? -1.0 : row["distancetolag"];
                 row["pathline"] = row["pathline"] is DBNull ? null : row["pathline"];
+                row["pathline"] = null;
+                Console.WriteLine(row.Field<Int64>("entryid"));
+                Console.WriteLine(row.Field<double>("latitude"));
+                Console.WriteLine(row.Field<double>("longitude"));
+                Console.WriteLine(row["distancetolag"]);
+                Console.WriteLine(row["pathline"]);
+
                 this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")), (double)row.Field<Single>("distancetolag"), row.Field<PostgisLineString>("pathline"));
-            } 
-            else if(row.Table.Columns.Contains("pointlatitude")) {
+
+            } else if (row.Table.Columns.Contains("pointlatitude")) {
                 this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("pointlatitude"), row.Field<double>("pointlongitude")), this._TripId);
 
             } else {
                 this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")));
             }
+
 
             //Temporal Information
             if (row.Table.Columns.Contains("secondstolag")) {
@@ -199,7 +207,7 @@ namespace CarDataProject {
             dynamic temporalObj = jsonObj.temporal;
             temporalObj.timestamp = temporalObj.timestamp == null ? 0 : temporalObj.timestamp;
             temporalObj.secondstolag = temporalObj.secondstolag == null ? 0 : temporalObj.secondstolag;
-            
+
             this.Temporal = new TemporalInformation(FromUnixTime((long)temporalObj.timestamp), new TimeSpan(0, 0, (Int16)temporalObj.secondstolag));
 
             //Measure Information
