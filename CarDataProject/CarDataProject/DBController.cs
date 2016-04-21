@@ -852,13 +852,13 @@ namespace CarDataProject {
                 Console.WriteLine(e.ToString());
             }
         }
-
+        
         public int UpdateGPSFactsWithMapMatching(Dictionary<int, List<SpatialInformation>> mapmatchedEntries) {
             string sql = String.Format(@"UPDATE gpsfact
                                             SET segmentid = (SELECT id
                                                              FROM segmentinformation seginfo
                                                              WHERE seginfo.osm_id = @osm_id),
-                                            mpoint = ST_SetSrid(ST_MakePoint(@mpointlng, @mpointlat), 4326),
+                                            mpoint = ST_SetSrid(ST_MakePoint(@mpointlat, @mpointlng), 4326),
                                             maxspeed = (SELECT maxspeed
                                                         FROM segmentinformation seginfo
                                                         WHERE seginfo.osm_id = @osm_id)                                                               

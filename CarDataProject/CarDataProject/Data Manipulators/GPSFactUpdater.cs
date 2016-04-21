@@ -107,9 +107,9 @@ namespace CarDataProject {
                 facts[i].Temporal.SecondsToLag = MeasureCalculator.SecondsToLag(facts[i].Temporal.Timestamp, facts[i - 1].Temporal.Timestamp);
 
                 //MeasureInformation
-                double speed = MeasureCalculator.Speed(facts[1].Spatial, facts[0].Spatial, facts[1].Temporal, facts[0].Temporal);
+                double speed = MeasureCalculator.Speed(facts[i].Spatial, facts[i - 1].Spatial, facts[i].Temporal, facts[i - 1].Temporal);
                 facts[i].Measure = new MeasureInformation(speed, 0, 0);
-                facts[i].Measure.Acceleration = MeasureCalculator.Acceleration(facts[i].Measure, facts[i - 1].Measure, facts[i].Temporal, facts[i -1].Temporal);
+                facts[i].Measure.Acceleration = MeasureCalculator.Acceleration(facts[i].Measure, facts[i - 1].Measure, facts[i].Temporal, facts[i - 1].Temporal);
                 facts[i].Measure.Jerk = MeasureCalculator.Jerk(facts[i].Measure, facts[i - 1].Measure, facts[i].Temporal, facts[i - 1].Temporal);
 
                 //FlagInformation

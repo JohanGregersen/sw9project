@@ -126,12 +126,6 @@ namespace CarDataProject {
             if (row.Table.Columns.Contains("distancetolag") && row.Table.Columns.Contains("pathline")) {
                 row["distancetolag"] = row["distancetolag"] is DBNull ? -1.0 : row["distancetolag"];
                 row["pathline"] = row["pathline"] is DBNull ? null : row["pathline"];
-                row["pathline"] = null;
-                Console.WriteLine(row.Field<Int64>("entryid"));
-                Console.WriteLine(row.Field<double>("latitude"));
-                Console.WriteLine(row.Field<double>("longitude"));
-                Console.WriteLine(row["distancetolag"]);
-                Console.WriteLine(row["pathline"]);
 
                 this.Spatial = new SpatialInformation(new GeoCoordinate(row.Field<double>("latitude"), row.Field<double>("longitude")), (double)row.Field<Single>("distancetolag"), row.Field<PostgisLineString>("pathline"));
 
