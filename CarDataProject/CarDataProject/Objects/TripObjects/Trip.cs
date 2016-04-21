@@ -36,7 +36,7 @@ namespace CarDataProject {
         [DataMember(Name = "scorepercentage")]
         public double ScorePercentage {
             get {
-                return (TripScore / OptimalScore * 100) - 100;
+                return (TripScore / MetersDriven * 100) - 100;
             }
             set { }
         }
