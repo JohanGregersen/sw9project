@@ -62,7 +62,10 @@ namespace CarDataProject {
             dataStream.Close();
             response.Close();
 
+            var dbc2 = new DBController();
             SaveMapMatchingToDB(responseFromServer);
+            dbc2.UpdateMpointsWithPoint(carId, tripId);
+            dbc2.Close();
         }
 
         private static void SaveMapMatchingToDB(string json) {

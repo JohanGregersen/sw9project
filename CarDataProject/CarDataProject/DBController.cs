@@ -832,6 +832,27 @@ namespace CarDataProject {
 
         #region Updaters
 
+        public void UpdateMpointsWithPoint(short carId, long tripId)
+        {
+            const string sql = @"UPDATE gpsfact
+                        SET mpoint = point
+                        WHERE carid = @carid
+                            AND tripid = @tripid
+                            AND mpoint IS null";
+
+            var command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@carId", carId);
+            command.Parameters.AddWithValue("@tripid", tripId);
+
+            try
+            {
+                NonQuery(command, "gpsfact");
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
         public int UpdateGPSFactsWithMapMatching(Dictionary<int, List<SpatialInformation>> mapmatchedEntries) {
             string sql = String.Format(@"UPDATE gpsfact
                                             SET segmentid = (SELECT id
