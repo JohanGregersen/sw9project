@@ -23,11 +23,18 @@ namespace CarDataProject {
 
             //Compute the scores
             trip.OptimalScore = FinalScore.CalculateOptimalScore(trip);
-            trip.TripScore = FinalScore.CalculateTripScore(trip);
+            List<double> fullscores = FinalScore.CalculateTripScores(trip);
+
+            trip.RoadTypeScore = fullscores[0];
+            trip.CriticalTimeScore = fullscores[1];
+            trip.SpeedingScore = fullscores[2];
+            trip.AccelerationScore = fullscores[3];
+            trip.BrakeScore = fullscores[4];
+            trip.JerkScore = fullscores[5];
+            trip.TripScore = fullscores[6];
 
             //Update the trip in the database
             dbc.UpdateTripFactWithMeasures(trip);
-
             dbc.Close();
         }
 
@@ -56,7 +63,15 @@ namespace CarDataProject {
                 Console.WriteLine("Updating car {0}, trip {1} ({2} facts)", carId, trip.TripId, facts.Count);
                 trip = UpdateTrip(trip, facts, dbc);
                 trip.OptimalScore = FinalScore.CalculateOptimalScore(trip);
-                trip.TripScore = FinalScore.CalculateTripScore(trip);
+                List<double> fullscores = FinalScore.CalculateTripScores(trip);
+
+                trip.RoadTypeScore = fullscores[0];
+                trip.CriticalTimeScore = fullscores[1];
+                trip.SpeedingScore = fullscores[2];
+                trip.AccelerationScore = fullscores[3];
+                trip.BrakeScore = fullscores[4];
+                trip.JerkScore = fullscores[5];
+                trip.TripScore = fullscores[6];
                 dbc.UpdateTripFactWithMeasures(trip);
             }
 

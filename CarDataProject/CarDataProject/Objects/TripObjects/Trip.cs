@@ -17,7 +17,6 @@ namespace CarDataProject {
         public TemporalInformation StartTemporal { get; set; }
         [DataMember(Name = "endtemporal")]
         public TemporalInformation EndTemporal { get; set; }
-
         public TimeSpan SecondsDriven { get; set; }
         [DataMember(Name = "secondsdriven")]
         private double SecondsDrivenInt {
@@ -26,7 +25,6 @@ namespace CarDataProject {
             }
             set { }
         }
-
         [DataMember(Name = "metersdriven")]
         public double MetersDriven { get; set; }
         [DataMember(Name = "price")]
@@ -35,7 +33,6 @@ namespace CarDataProject {
         public double OptimalScore { get; set; }
         [DataMember(Name = "tripscore")]
         public double TripScore { get; set; }
-
         [DataMember(Name = "scorepercentage")]
         public double ScorePercentage {
             get {
@@ -43,9 +40,6 @@ namespace CarDataProject {
             }
             set { }
         }
-
-
-
         [DataMember(Name = "jerkcount")]
         public Int16 JerkCount { get; set; }
         [DataMember(Name = "brakecount")]
@@ -54,8 +48,6 @@ namespace CarDataProject {
         public Int16 AccelerationCount { get; set; }
         [DataMember(Name = "meterssped")]
         public double MetersSped { get; set; }
-
-
         public TimeSpan TimeSped { get; set; }
         [DataMember(Name = "timesped")]
         private double TimeSpedInt {
@@ -64,6 +56,18 @@ namespace CarDataProject {
             }
             set { }
         }
+        [DataMember(Name = "roadtypescore")]
+        public double RoadTypeScore { get; set; }
+        [DataMember(Name = "criticaltimescore")]
+        public double CriticalTimeScore { get; set; }
+        [DataMember(Name = "speedingscore")]
+        public double SpeedingScore { get; set; }
+        [DataMember(Name = "accelerationscore")]
+        public double AccelerationScore { get; set; }
+        [DataMember(Name = "brakescore")]
+        public double BrakeScore { get; set; }
+        [DataMember(Name = "jerkscore")]
+        public double JerkScore { get; set; }
 
         public double SteadySpeedDistance { get; set; }
         public TimeSpan SteadySpeedTime { get; set; }

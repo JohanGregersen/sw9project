@@ -952,7 +952,13 @@ namespace CarDataProject {
                                           accelerationinterval = @accelerationinterval,
                                           jerkinterval = @jerkinterval,
                                           brakinginterval = @brakinginterval,
-                                          dataquality = @dataquality
+                                          dataquality = @dataquality,
+                                          roadtypescore = @roadtypescore,
+                                          criticaltimescore = @criticaltimescore,
+                                          speedingscore = @speedingscore,
+                                          accelerationscore = @accelerationscore,
+                                          brakescore = @brakescore,
+                                          jerkscore = @jerkscore
                                          WHERE tripid = @tripid");
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
@@ -992,6 +998,13 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@brakinginterval", UpdatedTrip.IntervalInformation.BrakingInterval);
 
             command.Parameters.AddWithValue("@dataquality", UpdatedTrip.DataQuality);
+
+            command.Parameters.AddWithValue("@roadtypescore", UpdatedTrip.RoadTypeScore);
+            command.Parameters.AddWithValue("@criticaltimescore", UpdatedTrip.CriticalTimeScore);
+            command.Parameters.AddWithValue("@speedingscore", UpdatedTrip.SpeedingScore);
+            command.Parameters.AddWithValue("@accelerationscore", UpdatedTrip.AccelerationScore);
+            command.Parameters.AddWithValue("@brakescore", UpdatedTrip.BrakeScore);
+            command.Parameters.AddWithValue("@jerkscore", UpdatedTrip.JerkScore);
 
             try {
                 NonQuery(command, "tripfact");
