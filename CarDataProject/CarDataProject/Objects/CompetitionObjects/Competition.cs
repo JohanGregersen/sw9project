@@ -4,32 +4,44 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.Runtime.Serialization;
+using System.Text;
 
 namespace CarDataProject {
+    [DataContract]
     public class Competition {
+
+        [DataMember(Name = "competitionid")]
         public Int16 CompetitionId { get; set; }
-        public int StartDateId { get; set; }
-        public int StartTimeId { get; set; }
-        public int StopDateId { get; set; }
-        public int StopTimeId { get; set; }
+        [DataMember(Name = "starttemporal")]
+        public TemporalInformation StartTemporal { get; set; }
+        [DataMember(Name = "stoptemporal")]
+        public TemporalInformation StopTemporal { get; set; }
+        [DataMember(Name = "competitiondescription")]
         public string CompetitionDescription { get; set; }
 
-        public Competition(Int16 CompetitionId, int StartDateId, int StartTimeId, int StopDateId, int StopTimeId, string CompetitionDescription) {
+        public Competition(Int16 CompetitionId, TemporalInformation StartTemporal, TemporalInformation StopTemporal, string CompetitionDescription) {
             this.CompetitionId = CompetitionId;
-            this.StartDateId = StartDateId;
-            this.StartTimeId = StartTimeId;
-            this.StopDateId = StopDateId;
-            this.StopTimeId = StopTimeId;
+            this.StartTemporal = StartTemporal;
+            this.StopTemporal = StopTemporal;
             this.CompetitionDescription = CompetitionDescription;
         }
 
         public Competition(DataRow row) {
             this.CompetitionId = row.Field<Int16>("competitionid");
-            this.StartDateId = row.Field<int>("startdateid");
-            this.StartTimeId = row.Field<int>("starttimeid");
-            this.StopDateId = row.Field<int>("stopdateid");
-            this.StopTimeId = row.Field<int>("stoptimeid");
-            this.CompetitionDescription = row.Field<string>("competitiondescription");
+
+            //Temporal Information
+            row["startdateid"] = row["startdateid"] is DBNull ? "19700101" : row["startdateid"];
+            row["starttimeid"] = row["starttimeid"] is DBNull ? "0" : row["starttimeid"];
+            this.StartTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("startdateid"), row.Field<int>("starttimeid")));
+            row["stopdateid"] = row["stopdateid"] is DBNull ? "19700101" : row["stopdateid"];
+            row["stoptimeid"] = row["stoptimeid"] is DBNull ? "0" : row["stoptimeid"];
+            this.StopTemporal = new TemporalInformation(DateTimeHelper.ConvertToDateTime(row.Field<int>("stopdateid"), row.Field<int>("stoptimeid")));
+
+            if(row.Table.Columns.Contains("competitiondescription")) {
+                row["competitiondescription"] = row["competitiondescription"] is DBNull ? "No Information" : row["competitiondescription"];
+                this.CompetitionDescription = row.Field<string>("competitiondescription");
+            }
         }
     }
 }
