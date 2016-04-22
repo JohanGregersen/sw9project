@@ -84,6 +84,7 @@
     <Compile Include="MetaStatistics\MetaTripStatistics.cs" />
     <Compile Include="MetaStatistics\MetaWeekdayStatistics.cs" />
     <Compile Include="Objects\CarObjects\Car.cs" />
+    <Compile Include="Objects\CompetitionObjects\Competition.cs" />
     <Compile Include="Objects\FactObjects\DimDate.cs" />
     <Compile Include="Objects\FactObjects\DimTime.cs" />
     <Compile Include="Objects\FactObjects\Fact.cs" />
