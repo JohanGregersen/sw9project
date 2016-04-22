@@ -73,7 +73,23 @@ namespace CarDataProject {
             command.Parameters.AddWithValue("@carid", CarId);
 
             try {
-                return NonQuery(command, "carinformation");
+                return NonQueryWithReturnValue(command, "carinformation");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
+
+        public int AddNewCar(Int64 imi) {
+            string sql = @"INSERT INTO carinformation(imi) 
+                           VALUES (@imi)";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@imi", imi);
+
+            try {
+                return NonQueryWithReturnValue(command, "carinformation");
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
@@ -816,6 +832,35 @@ namespace CarDataProject {
             }
 
             return carIds;
+        }
+        //SHITSHIT
+
+        public Car GetCarByIMI(long imi) {
+
+            string sql = String.Format(@"SELECT carid, imi, username
+                                         FROM carinformation
+                                         WHERE imi = '{0}'", imi);
+            DataRowCollection result = Query(sql);
+
+            if (result.Count >= 1) {
+                return new Car(result[0]);
+            }
+
+            return null;
+        }
+
+        public Car GetCarByCarId(Int16 carId) {
+
+            string sql = String.Format(@"SELECT carid, imi, username
+                                         FROM carinformation
+                                         WHERE carId = '{0}'", carId);
+            DataRowCollection result = Query(sql);
+
+            if (result.Count >= 1) {
+                return new Car(result[0]);
+            }
+
+            return null;
         }
 
         //INFATI Loading
