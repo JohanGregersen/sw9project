@@ -56,6 +56,7 @@ namespace CarDataProject {
             }
             set { }
         }
+
         [DataMember(Name = "roadtypescore")]
         public double RoadTypeScore { get; set; }
         [DataMember(Name = "criticaltimescore")]
@@ -201,6 +202,23 @@ namespace CarDataProject {
                                                                    row.Field<Int64>("brakinginterval"));
 
             }
+
+            //Trip Score Information
+            if (row.Table.Columns.Contains("roadtypescore")) {
+                row["roadtypescore"] = row["roadtypescore"] is DBNull ? 0 : row["roadtypescore"];
+                row["criticaltimescore"] = row["criticaltimescore"] is DBNull ? 0 : row["criticaltimescore"];
+                row["speedingscore"] = row["speedingscore"] is DBNull ? 0 : row["speedingscore"];
+                row["accelerationscore"] = row["accelerationscore"] is DBNull ? 0 : row["accelerationscore"];
+                row["brakescore"] = row["brakescore"] is DBNull ? 0 : row["brakescore"];
+                row["jerkscore"] = row["jerkscore"] is DBNull ? 0 : row["jerkscore"];
+                this.RoadTypeScore = (double)row.Field<Single>("roadtypescore");
+                this.CriticalTimeScore = (double)row.Field<Single>("criticaltimescore");
+                this.SpeedingScore = (double)row.Field<Single>("speedingscore");
+                this.AccelerationScore = (double)row.Field<Single>("accelerationscore");
+                this.BrakeScore = (double)row.Field<Single>("brakescore");
+                this.JerkScore = (double)row.Field<Single>("jerkscore");
+            }
+
             //Data Quality
             if (row.Table.Columns.Contains("dataquality")) {
                 row["dataquality"] = row["dataquality"] is DBNull ? -1 : row["dataquality"];
