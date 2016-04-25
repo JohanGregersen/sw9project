@@ -11,15 +11,15 @@ namespace CarDataProject {
         public double EnergyConsumption { get; }
         public double Weight { get; }
         public Int16 Capacity { get; }
-        public Int64 IMI { get; set; }
+        public Int64 IMEI { get; set; }
         public string Username { get; set; }
 
-        public Car(Int16 CarId, Int64 IMI) {
+        public Car(Int16 CarId, Int64 IMEI) {
             this.CarId = CarId;
-            this.IMI = IMI;
+            this.IMEI = IMEI;
         }
 
-        public Car(Int16 CarId, string CarType, string Brand, string Model, double FuelConsumption, double EnergyConsumption, double Weight, Int16 Capacity, Int64 IMI, string Username) {
+        public Car(Int16 CarId, string CarType, string Brand, string Model, double FuelConsumption, double EnergyConsumption, double Weight, Int16 Capacity, Int64 IMEI, string Username) {
             this.CarId = CarId;
             this.CarType = CarType;
             this.Brand = Brand;
@@ -28,7 +28,7 @@ namespace CarDataProject {
             this.EnergyConsumption = EnergyConsumption;
             this.Weight = Weight;
             this.Capacity = Capacity;
-            this.IMI = IMI;
+            this.IMEI = IMEI;
             this.Username = Username;
         }
 
@@ -43,7 +43,7 @@ namespace CarDataProject {
                 this.Weight = row.Field<double>("weight");
                 this.Capacity = row.Field<Int16>("capacity");
             }
-            this.IMI = row.Field<Int64>("imi");
+            this.IMEI = row.Field<Int64>("imei");
             this.Username = row.Field<string>("username");
         }
     }
