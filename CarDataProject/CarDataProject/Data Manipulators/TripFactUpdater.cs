@@ -13,11 +13,15 @@ namespace CarDataProject {
 
             //Getting the previous tripid and seconds to previous trip
             List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
-            Int64 latestTrip = tripIds[tripIds.Count()-2];
-            Trip previousTrip = dbc.GetTripByCarIdAndTripId(carId, latestTrip);
-            trip.PreviousTripId = previousTrip.TripId;
-            trip.SecondsToLag = MeasureCalculator.SecondsToLag(facts[0].Temporal.Timestamp, previousTrip.EndTemporal.Timestamp);
-
+            //In case this is the first trip - ignore computing measures for previous trip
+            if (tripIds.Count > 1) {
+                Int64 latestTrip = tripIds[tripIds.Count() - 2];
+                Trip previousTrip = dbc.GetTripByCarIdAndTripId(carId, latestTrip);
+                trip.PreviousTripId = previousTrip.TripId;
+                trip.SecondsToLag = MeasureCalculator.SecondsToLag(facts[0].Temporal.Timestamp, previousTrip.EndTemporal.Timestamp);
+            } else {
+                trip.SecondsToLag = new TimeSpan(0, 0, -1);
+            }
             //Calc the trip updates
             trip = UpdateTrip(trip, facts, dbc);
 
@@ -133,7 +137,7 @@ namespace CarDataProject {
                 if (facts[i].Flag.SteadySpeed) {
                     trip.SteadySpeedTime += facts[i].Temporal.SecondsToLag;
                 }
-                
+
                 trip.DataQuality += facts[i].Quality.Hdop;
             }
 
