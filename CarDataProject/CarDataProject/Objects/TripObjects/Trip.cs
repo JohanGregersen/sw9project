@@ -11,6 +11,8 @@ namespace CarDataProject {
         public Int64 TripId { get; set; }
         [DataMember(Name = "prevtripid")]
         public Int64 PreviousTripId { get; set; }
+        [DataMember(Name = "localtripid")]
+        public Int64 LocalTripId { get; set; }
         [DataMember(Name = "carid")]
         public int CarId { get; set; }
         [DataMember(Name = "starttemporal")]
@@ -110,6 +112,10 @@ namespace CarDataProject {
                 row["previoustripid"] = row["previoustripid"] is DBNull ? 0 : row["previoustripid"];
                 this.PreviousTripId = row.Field<Int64>("previoustripid");
             }
+
+            row["localtripid"] = row["localtripid"] is DBNull ? 1 : row["localtripid"];
+            this.LocalTripId = row.Field<Int64>("localtripid");
+
             //Temporal Information
             row["startdateid"] = row["startdateid"] is DBNull ? "19700101" : row["startdateid"];
             row["starttimeid"] = row["starttimeid"] is DBNull ? "0" : row["starttimeid"];
