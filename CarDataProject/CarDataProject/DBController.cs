@@ -415,7 +415,7 @@ namespace CarDataProject {
         }
 
         public List<Trip> GetTripsForListByCarId(Int16 carId, int offset) {
-            string sql = String.Format(@"SELECT tripid, carid, startdateid, enddateid, starttimeid, endtimeid, metersdriven, price, optimalscore, tripscore
+            string sql = String.Format(@"SELECT tripid, carid, localtripid, startdateid, enddateid, starttimeid, endtimeid, metersdriven, price, optimalscore, tripscore
                                         FROM tripfact
                                         WHERE carid = '{0}'
                                         ORDER BY tripid DESC, starttimeid DESC
@@ -975,6 +975,7 @@ namespace CarDataProject {
         public int UpdateTripFactWithMeasures(Trip UpdatedTrip) {
             string sql = String.Format(@"UPDATE tripfact
                                          SET previoustripid = @previoustripid,
+                                          localtripid = @localtripid,
                                           startdateid = @startdateid,
                                           starttimeid = @starttimeid,
                                           enddateid = @enddateid,
@@ -1015,6 +1016,8 @@ namespace CarDataProject {
             } else {
                 command.Parameters.AddWithValue("@previoustripid", DBNull.Value);
             }
+
+            command.Parameters.AddWithValue("@localtripid", UpdatedTrip.LocalTripId);
 
             command.Parameters.AddWithValue("@startdateid", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("yyyyMMdd")));
             command.Parameters.AddWithValue("@starttimeid", Convert.ToInt32(UpdatedTrip.StartTemporal.Timestamp.ToString("HHmmss")));
@@ -1251,6 +1254,56 @@ namespace CarDataProject {
         #endregion
 
         #region Competition
+        public Competition GetCompetitionByCompetitionId(Int16 CompetitionId) {
+            string sql = String.Format(@"SELECT *
+                                        FROM competitioninformation
+                                        WHERE competitionid = '{0}'", CompetitionId);
+            DataRowCollection result = Query(sql);
+
+            if (result.Count >= 1) {
+                return new Competition(result[0]);
+            }
+
+            return null;
+        }
+
+        public List<Competition> GetCompetitionByCarId(Int16 CarId) {
+            string sql = String.Format(@"SELECT *
+                                        FROM competitioninformation
+                                        INNER JOIN (
+                                            SELECT competitionid
+                                            FROM competingin
+                                            WHERE competingin.carid = '{0}'
+                                        ) AS CarComp
+                                        ON CarComp.competitionid =competitioninformation.competitionid", CarId);
+            DataRowCollection result = Query(sql);
+
+            List<Competition> competitions = new List<Competition>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    competitions.Add(new Competition(row));
+                }
+            }
+
+            return competitions;
+        }
+
+        public List<Competition> GetAllCompetitions() {
+            string sql = String.Format(@"SELECT *
+                                        FROM competitioninformation
+                                        ORDER BY startdateid ASC, starttimeid ASC");
+            DataRowCollection result = Query(sql);
+
+            List<Competition> competitions = new List<Competition>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    competitions.Add(new Competition(row));
+                }
+            }
+
+            return competitions;
+        }
+
         public int CompetitionSignUp(Int16 CarId, Int16 CompetitionId) {
             string sql = @"INSERT INTO competingin(carid, competitionid) 
                            VALUES (@carid, @competitionid)";
@@ -1283,6 +1336,8 @@ namespace CarDataProject {
 
             return 0;
         }
+
+
 
         #endregion
     }
