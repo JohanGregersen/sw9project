@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Data;
+using System.Runtime.Serialization;
 
 namespace CarDataProject {
+    [DataContract]
     public class Car {
+        [DataMember(Name = "carid")]
         public Int16 CarId { get; }
         public string CarType { get; }
         public string Brand { get; }
@@ -11,7 +14,9 @@ namespace CarDataProject {
         public double EnergyConsumption { get; }
         public double Weight { get; }
         public Int16 Capacity { get; }
+        [DataMember(Name = "imei")]
         public Int64 IMEI { get; set; }
+        [DataMember(Name = "username")]
         public string Username { get; set; }
 
         public Car(Int16 CarId, Int64 IMEI) {

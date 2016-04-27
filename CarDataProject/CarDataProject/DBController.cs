@@ -81,12 +81,12 @@ namespace CarDataProject {
             return 0;
         }
 
-        public int AddNewCar(Int64 imi) {
-            string sql = @"INSERT INTO carinformation(imi) 
-                           VALUES (@imi)";
+        public int AddNewCar(Int64 imei) {
+            string sql = @"INSERT INTO carinformation(imei) 
+                           VALUES (@imei)";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
-            command.Parameters.AddWithValue("@imi", imi);
+            command.Parameters.AddWithValue("@imei", imei);
 
             try {
                 return NonQueryWithReturnValue(command, "carinformation");
@@ -835,11 +835,11 @@ namespace CarDataProject {
         }
         //SHITSHIT
 
-        public Car GetCarByIMI(long imi) {
+        public Car GetCarByIMEI(long imi) {
 
-            string sql = String.Format(@"SELECT carid, imi, username
+            string sql = String.Format(@"SELECT carid, imei, username
                                          FROM carinformation
-                                         WHERE imi = '{0}'", imi);
+                                         WHERE imei = '{0}'", imi);
             DataRowCollection result = Query(sql);
 
             if (result.Count >= 1) {
@@ -1215,6 +1215,20 @@ namespace CarDataProject {
             return 0;
         }
 
+        public int UpdateCarWithUsername(Int64 imei, string Username) {
+            string sql = String.Format("UPDATE carinformation SET username = '{0}' WHERE imei = '{1}'", Username, imei);
+            StringBuilder sb = new StringBuilder(sql);
+
+            NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), Connection);
+            try {
+                return NonQuery(command, "carinformation");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
+
         #endregion Updaters
 
         #region Cache
@@ -1234,6 +1248,42 @@ namespace CarDataProject {
 
             return QIs;
         }
+        #endregion
+
+        #region Competition
+        public int CompetitionSignUp(Int16 CarId, Int16 CompetitionId) {
+            string sql = @"INSERT INTO competingin(carid, competitionid) 
+                           VALUES (@carid, @competitionid)";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@carid", CarId);
+            command.Parameters.AddWithValue("@competitionid", CompetitionId);
+
+            try {
+                return NonQuery(command, "competingin");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
+
+        public int CompetitionSignDown(Int16 CarId, Int16 CompetitionId) {
+            string sql = @"DELETE FROM competingin WHERE carid = '{0}' AND competitionid = '{1}'";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@carid", CarId);
+            command.Parameters.AddWithValue("@competitionid", CompetitionId);
+
+            try {
+                return NonQuery(command, "competingin");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
+
         #endregion
     }
 }
