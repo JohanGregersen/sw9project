@@ -48,7 +48,9 @@ namespace CarDataProject {
                 this.Weight = row.Field<double>("weight");
                 this.Capacity = row.Field<Int16>("capacity");
             }
+            row["imei"] = row["imei"] is DBNull ? 0 : row["imei"];
             this.IMEI = row.Field<Int64>("imei");
+            row["username"] = row["username"] is DBNull ? "" : row["username"];
             this.Username = row.Field<string>("username");
         }
     }

@@ -833,7 +833,6 @@ namespace CarDataProject {
 
             return carIds;
         }
-        //SHITSHIT
 
         public Car GetCarByIMEI(long imi) {
 
@@ -851,9 +850,9 @@ namespace CarDataProject {
 
         public Car GetCarByCarId(Int16 carId) {
 
-            string sql = String.Format(@"SELECT carid, imi, username
+            string sql = String.Format(@"SELECT carid, imei, username
                                          FROM carinformation
-                                         WHERE carId = '{0}'", carId);
+                                         WHERE carid = '{0}'", carId);
             DataRowCollection result = Query(sql);
 
             if (result.Count >= 1) {
@@ -1218,8 +1217,8 @@ namespace CarDataProject {
             return 0;
         }
 
-        public int UpdateCarWithUsername(Int64 imei, string Username) {
-            string sql = String.Format("UPDATE carinformation SET username = '{0}' WHERE imei = '{1}'", Username, imei);
+        public int UpdateCarWithUsername(Int16 carId, string Username) {
+            string sql = String.Format("UPDATE carinformation SET username = '{0}' WHERE carid = '{1}'", Username, carId);
             StringBuilder sb = new StringBuilder(sql);
 
             NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), Connection);
@@ -1303,6 +1302,23 @@ namespace CarDataProject {
 
             return competitions;
         }
+        //SHITSHIT
+        public List<Competition> GetAllCompetitionsWithOffset(int offset) {
+            string sql = String.Format(@"SELECT *
+                                        FROM competitioninformation
+                                        ORDER BY startdateid ASC, starttimeid ASC
+                                        offset '{0}' ROWS FETCH NEXT 10 ROWS ONLY", offset);
+            DataRowCollection result = Query(sql);
+
+            List<Competition> competitions = new List<Competition>();
+            if (result.Count >= 1) {
+                foreach (DataRow row in result) {
+                    competitions.Add(new Competition(row));
+                }
+            }
+
+            return competitions;
+        }
 
         public int CompetitionSignUp(Int16 CarId, Int16 CompetitionId) {
             string sql = @"INSERT INTO competingin(carid, competitionid) 
@@ -1337,7 +1353,20 @@ namespace CarDataProject {
             return 0;
         }
 
+        public List<Int16> GetCompetitionIdByCarId(Int16 CarId) {
+            string sql = String.Format(@"SELECT competitionid
+                                         FROM competingin
+                                         WHERE carid = '{0}'
+                                         ORDER BY competitionid ASC", CarId);
+            DataRowCollection result = Query(sql);
 
+            List<Int16> competitionIds = new List<Int16>();
+            foreach (DataRow row in result) {
+                competitionIds.Add(row.Field<Int16>("competitionid"));
+            }
+
+            return competitionIds;
+        }
 
         #endregion
     }

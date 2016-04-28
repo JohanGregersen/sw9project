@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Runtime.Serialization;
 using System.Text;
+using CarDataProject;
 
 namespace CarDataProject {
     [DataContract]
@@ -13,6 +14,8 @@ namespace CarDataProject {
 
         [DataMember(Name = "competitionid")]
         public Int16 CompetitionId { get; set; }
+        [DataMember(Name = "competitionname")]
+        public string CompetitionName { get; set; }
         [DataMember(Name = "starttemporal")]
         public TemporalInformation StartTemporal { get; set; }
         [DataMember(Name = "stoptemporal")]
@@ -20,8 +23,9 @@ namespace CarDataProject {
         [DataMember(Name = "competitiondescription")]
         public string CompetitionDescription { get; set; }
 
-        public Competition(Int16 CompetitionId, TemporalInformation StartTemporal, TemporalInformation StopTemporal, string CompetitionDescription) {
+        public Competition(Int16 CompetitionId, string CompetitionName, TemporalInformation StartTemporal, TemporalInformation StopTemporal, string CompetitionDescription) {
             this.CompetitionId = CompetitionId;
+            this.CompetitionName = CompetitionName;
             this.StartTemporal = StartTemporal;
             this.StopTemporal = StopTemporal;
             this.CompetitionDescription = CompetitionDescription;
@@ -29,6 +33,7 @@ namespace CarDataProject {
 
         public Competition(DataRow row) {
             this.CompetitionId = row.Field<Int16>("competitionid");
+            this.CompetitionName = row.Field<string>("competitionname");
 
             //Temporal Information
             row["startdateid"] = row["startdateid"] is DBNull ? "19700101" : row["startdateid"];
