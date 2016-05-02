@@ -128,6 +128,9 @@ namespace CarDataProject {
             for (int i = 1; i < facts.Count; i++) {
                 //Meters driven
                 trip.MetersDriven += MeasureCalculator.DistanceToLag(facts[i].Spatial.MPoint, facts[i - 1].Spatial.MPoint);
+                if(trip.MetersDriven == 0) {
+                    trip.MetersDriven = 1;
+                }
 
                 //Meters sped
                 if (facts[i].Flag.Speeding && facts[i].Segment.MaxSpeed != 0) {

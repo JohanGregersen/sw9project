@@ -125,7 +125,7 @@ namespace CarDataProject {
                 Int64 TripId = NonQueryWithReturnValue(command, "tripfact");
 
                 string sql2 = @"UPDATE tripfact 
-                               SET previoustripid = CASE WHEN prevtrip.previoustripid IS NOT NULL THEN prevtrip.tripid
+                               SET previoustripid = CASE WHEN prevtrip.tripid IS NOT NULL THEN prevtrip.tripid
 		                                            END,
                                       localtripid = CASE WHEN prevtrip.localtripid IS NOT NULL THEN (prevtrip.localtripid + 1) 
 		                                            ELSE 1
@@ -139,10 +139,10 @@ namespace CarDataProject {
 	                            OFFSET 1 FETCH NEXT 1 ROWS ONLY  
                                ) prevtrip
                                WHERE tripfact.tripid = @tripid";
-                command = new NpgsqlCommand(sql2, Connection);
-                command.Parameters.AddWithValue("@carid", CarId);
-                command.Parameters.AddWithValue("@tripid", TripId);
-                NonQuery(command, "tripfact");
+                NpgsqlCommand command1 = new NpgsqlCommand(sql2, Connection);
+                command1.Parameters.AddWithValue("@carid", CarId);
+                command1.Parameters.AddWithValue("@tripid", TripId);
+                NonQuery(command1, "tripfact");
 
                 return TripId;
 
@@ -1075,9 +1075,7 @@ namespace CarDataProject {
 
         public int UpdateTripFactWithMeasures(Trip UpdatedTrip) {
             string sql = String.Format(@"UPDATE tripfact
-                                         SET previoustripid = @previoustripid,
-                                          localtripid = @localtripid,
-                                          startdateid = @startdateid,
+                                         SET startdateid = @startdateid,
                                           starttimeid = @starttimeid,
                                           enddateid = @enddateid,
                                           endtimeid = @endtimeid,
