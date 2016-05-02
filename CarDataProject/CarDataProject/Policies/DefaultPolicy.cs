@@ -71,7 +71,7 @@ namespace CarDataProject {
         };
 
         public static List<double> RoadTypeWeights = new List<double> { 0.8, 0.9, 0.95, 1.05, 1.1, 1.1, 1.2, 1.2 };
-        public static List<double> CriticalTimeWeights = new List<double> { 1.2, 1.15, 1.025, 1.15, 1.4 };
+        public static List<double> CriticalTimeWeights = new List<double> { 1.16, 1.12, 1.02, 1.12, 1.325 };
         public static List<double> SpeedingWeights = new List<double> { 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2 };
         public static List<double> AccelerationWeights = new List<double> { 1.05, 1.1, 1.175, 1.275, 1.4, 1.55, 1.725, 2 };
         public static List<double> BrakeWeights = new List<double> { 1.05, 1.1, 1.175, 1.275, 1.4, 1.55, 1.725, 2 };
@@ -81,9 +81,16 @@ namespace CarDataProject {
         public static double BrakePrice = 65;
         public static double JerkPrice = 15;
 
+        public static double A = 1;
+        public static double B = 1;
+        public static double C = 0;
+        public static double Poly = 1;
+
+        /*     
         public static double A = 1.02;
         public static double B = 1.05;
         public static double C = 0;
         public static double Poly = 1.08;
+        */
     }
 }
