@@ -63,8 +63,16 @@ namespace CarDataProject {
             response.Close();
 
             var dbc2 = new DBController();
-            SaveMapMatchingToDB(responseFromServer);
-            dbc2.UpdateMpointsWithPoint(carId, tripId);
+            try {
+                Console.WriteLine(" Saving mapmatches in DB");
+                SaveMapMatchingToDB(responseFromServer);
+                Console.WriteLine(" Saving complete.");
+                Console.WriteLine(" Updating unmatched MPoints with Point.");
+                dbc2.UpdateMpointsWithPoint(carId, tripId);
+                Console.WriteLine(" Upadte of MPoint complete.");
+            } catch(Exception e) {
+                Console.WriteLine(e.ToString());
+            }
             dbc2.Close();
         }
 

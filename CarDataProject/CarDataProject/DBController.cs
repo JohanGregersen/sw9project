@@ -902,7 +902,7 @@ namespace CarDataProject {
             // Repetitive queries
             var query = @"SELECT id, maxspeed
                         FROM segmentinformation
-                        WHERE seginfo.osm_id = @osm_id";
+                        WHERE osm_id = @osm_id";
 
             var updateQuery = @"UPDATE gpsfact
                                 SET segmentid = @segmentid,
