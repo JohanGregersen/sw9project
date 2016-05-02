@@ -899,6 +899,10 @@ namespace CarDataProject {
         
         public int UpdateGPSFactsWithMapMatching(Dictionary<int, List<SpatialInformation>> mapmatchedEntries)
         {
+            // Reusable variables
+            int segmentId;
+            short? maxSpeed;
+
             // Repetitive queries
             var query = @"SELECT id, maxspeed
                         FROM segmentinformation
@@ -910,6 +914,11 @@ namespace CarDataProject {
                                     maxspeed = @maxspeed                                                             
                                 WHERE entryid = @entryid";
 
+            var updateQueryNoMaxSpeed = @"UPDATE gpsfact
+                                SET segmentid = @segmentid,
+                                    mpoint = ST_SetSrid(ST_MakePoint(@mpointlat, @mpointlng), 4326)                                                         
+                                WHERE entryid = @entryid";
+
             // Loop over all OSM_ID's
             foreach (KeyValuePair<int, List<SpatialInformation>> segments in mapmatchedEntries)
             {
@@ -919,30 +928,57 @@ namespace CarDataProject {
                     Parameters = { new NpgsqlParameter("@osm_id", segments.Key) }
                 };
 
-                NpgsqlDataReader reader = command.ExecuteReader();
-
-                // If matched road does not exist in our Database, skip to next
-                if (!reader.HasRows)
+                using (NpgsqlDataReader reader = command.ExecuteReader())
                 {
-                    continue;
+                    // If matched road does not exist in our Database, skip to next
+                    if (!reader.HasRows)
+                    {
+                        continue;
+                    }
+
+                    reader.Read();
+                    segmentId = reader.GetInt32(0);
+                    
+                    if (!reader.IsDBNull(1))
+                    {
+                        maxSpeed = reader.GetInt16(1);
+                    }
+                    else
+                    {
+                        maxSpeed = null;
+                    }
                 }
 
-                reader.Read();
-                var segmentId = reader.GetInt32(0);
-                var maxSpeed = reader.GetInt16(1);
-
-                foreach (SpatialInformation entry in segments.Value) {
-                    var updateCommand = new NpgsqlCommand(updateQuery, Connection)
+                foreach (SpatialInformation entry in segments.Value)
+                {
+                    NpgsqlCommand updateCommand;
+                    if (maxSpeed.HasValue)
                     {
-                        Parameters =
+                        updateCommand = new NpgsqlCommand(updateQuery, Connection)
                         {
-                            new NpgsqlParameter("@segmentid", segmentId),
-                            new NpgsqlParameter("@maxspeed", maxSpeed),
-                            new NpgsqlParameter("@entryId", entry.EntryId),
-                            new NpgsqlParameter("@mpointlat", entry.MPoint.Latitude),
-                            new NpgsqlParameter("@mpointlng", entry.MPoint.Longitude),
-                        }
-                    };
+                            Parameters =
+                            {
+                                new NpgsqlParameter("@segmentid", segmentId),
+                                new NpgsqlParameter("@entryId", entry.EntryId),
+                                new NpgsqlParameter("@mpointlat", entry.MPoint.Latitude),
+                                new NpgsqlParameter("@mpointlng", entry.MPoint.Longitude),
+                                new NpgsqlParameter("@maxspeed", maxSpeed)
+                            }
+                        };
+                    }
+                    else
+                    {
+                        updateCommand = new NpgsqlCommand(updateQueryNoMaxSpeed, Connection)
+                        {
+                            Parameters =
+                            {
+                                new NpgsqlParameter("@segmentid", segmentId),
+                                new NpgsqlParameter("@entryId", entry.EntryId),
+                                new NpgsqlParameter("@mpointlat", entry.MPoint.Latitude),
+                                new NpgsqlParameter("@mpointlng", entry.MPoint.Longitude),
+                            }
+                        };
+                    }
 
                     try {
                         NonQuery(updateCommand, "gpsfact");
