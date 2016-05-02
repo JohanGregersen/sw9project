@@ -62,7 +62,7 @@ namespace CarDataProject {
         }
 
         public static bool Accelerating(MeasureInformation MI) {
-            if (MI.Acceleration >= 5) {
+            if (MI.Acceleration >= 6) {
                 return true;
             }
 
@@ -70,7 +70,7 @@ namespace CarDataProject {
         }
 
         public static bool Jerking (MeasureInformation MI) {
-            if (Math.Abs(MI.Jerk) >= 5) {
+            if (Math.Abs(MI.Jerk) >= 8) {
                 return true;
             }
 
@@ -78,7 +78,7 @@ namespace CarDataProject {
         }
         
         public static bool Braking(MeasureInformation MI) {
-            if (MI.Acceleration <= -5) {
+            if (MI.Acceleration <= -8) {
                 return true;
             }
 

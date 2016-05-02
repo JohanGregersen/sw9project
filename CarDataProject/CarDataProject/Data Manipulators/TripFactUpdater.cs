@@ -84,7 +84,7 @@ namespace CarDataProject {
             dbc.Close();
         }
 
-        private static Trip UpdateTrip(Trip trip, List<Fact> facts, DBController dbc) {
+        public static Trip UpdateTrip(Trip trip, List<Fact> facts, DBController dbc) {
             //Temporal information
             trip.StartTemporal = facts.First().Temporal;
             trip.EndTemporal = facts.Last().Temporal;

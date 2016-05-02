@@ -19,7 +19,7 @@ namespace CarDataProject {
             dbc.Close();
         }
 
-        private static List<Fact> UpdatedFacts(List<Fact> facts) {
+        public static List<Fact> UpdatedFacts(List<Fact> facts) {
             //First-cases
             //Speeding
             bool firstSpeeding = MeasureCalculator.Speeding(facts.First().Measure.Speed, facts.First().Segment.MaxSpeed);
