@@ -1382,6 +1382,20 @@ namespace CarDataProject {
             return competitions;
         }
 
+        public List<CompetingIn> GetCompetitionInByCompetitionId(Int16 CompetitionId) {
+            string sql = String.Format(@"SELECT * FROM competingIn WHERE competitionid = '{0}'", CompetitionId);
+            DataRowCollection result = Query(sql);
+
+            List<CompetingIn> templist = new List<CompetingIn>();
+
+            foreach(DataRow row in result) {
+                templist.Add(new CompetingIn(row));
+            }
+
+            return templist;
+        }
+
+
         public int CompetitionSignUp(Int16 CarId, Int16 CompetitionId) {
             string sql = @"INSERT INTO competingin(carid, competitionid) 
                            VALUES (@carid, @competitionid)";
@@ -1452,12 +1466,7 @@ namespace CarDataProject {
             }
         }
 
-
-
-
         #endregion
-
-
         public int AddLog(string method, Int16? cardId, Int64? tripId, Int16? competitionid, string exception, string data) {
             string sql = @"INSERT INTO logs(method, carid, tripid, competitionid, exception, data) 
                            VALUES (@method, @carid, @tripid, @competitionid, @exception, @data)";
