@@ -1452,6 +1452,46 @@ namespace CarDataProject {
             }
         }
 
+
+
+
         #endregion
+
+
+        public int AddLog(string method, Int16? cardId, Int64? tripId, Int16? competitionid, string exception, string data) {
+            string sql = @"INSERT INTO logs(method, carid, tripid, competitionid, exception, data) 
+                           VALUES (@method, @carid, @tripid, @competitionid, @exception, @data)";
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@method", method);
+
+            if (cardId != null) {
+                command.Parameters.AddWithValue("@carid", cardId);
+            } else {
+                command.Parameters.AddWithValue("@carid", DBNull.Value);
+            }
+
+            if (tripId != null) {
+                command.Parameters.AddWithValue("@tripid", tripId);
+            } else {
+                command.Parameters.AddWithValue("@tripid", DBNull.Value);
+            }
+
+            if (competitionid != null) {
+                command.Parameters.AddWithValue("@competitionid", competitionid);
+            } else {
+                command.Parameters.AddWithValue("@competitionid", DBNull.Value);
+            }
+
+            command.Parameters.AddWithValue("@exception", exception);
+            command.Parameters.AddWithValue("@data", data);
+            try {
+                return NonQuery(command, "logs");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
     }
 }

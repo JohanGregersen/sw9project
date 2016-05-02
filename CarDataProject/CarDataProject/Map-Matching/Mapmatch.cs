@@ -69,7 +69,7 @@ namespace CarDataProject {
                 Console.WriteLine(" Saving complete.");
                 Console.WriteLine(" Updating unmatched MPoints with Point.");
                 dbc2.UpdateMpointsWithPoint(carId, tripId);
-                Console.WriteLine(" Upadte of MPoint complete.");
+                Console.WriteLine(" Update of MPoint complete.");
             } catch(Exception e) {
                 Console.WriteLine(e.ToString());
             }
