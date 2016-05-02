@@ -897,29 +897,55 @@ namespace CarDataProject {
             }
         }
         
-        public int UpdateGPSFactsWithMapMatching(Dictionary<int, List<SpatialInformation>> mapmatchedEntries) {
-            string sql = String.Format(@"UPDATE gpsfact
-                                            SET segmentid = (SELECT id
-                                                             FROM segmentinformation seginfo
-                                                             WHERE seginfo.osm_id = @osm_id),
-                                            mpoint = ST_SetSrid(ST_MakePoint(@mpointlat, @mpointlng), 4326),
-                                            maxspeed = (SELECT maxspeed
-                                                        FROM segmentinformation seginfo
-                                                        WHERE seginfo.osm_id = @osm_id)                                                               
-                                            WHERE entryid = @entryid");
+        public int UpdateGPSFactsWithMapMatching(Dictionary<int, List<SpatialInformation>> mapmatchedEntries)
+        {
+            // Repetitive queries
+            var query = @"SELECT id, maxspeed
+                        FROM segmentinformation
+                        WHERE seginfo.osm_id = @osm_id";
 
-            foreach (KeyValuePair<int, List<SpatialInformation>> segments in mapmatchedEntries) {
+            var updateQuery = @"UPDATE gpsfact
+                                SET segmentid = @segmentid,
+                                    mpoint = ST_SetSrid(ST_MakePoint(@mpointlat, @mpointlng), 4326),
+                                    maxspeed = @maxspeed                                                             
+                                WHERE entryid = @entryid";
+
+            // Loop over all OSM_ID's
+            foreach (KeyValuePair<int, List<SpatialInformation>> segments in mapmatchedEntries)
+            {
+                // Retreive values for update query
+                var command = new NpgsqlCommand(query, Connection)
+                {
+                    Parameters = { new NpgsqlParameter("@osm_id", segments.Key) }
+                };
+
+                NpgsqlDataReader reader = command.ExecuteReader();
+
+                // If matched road does not exist in our Database, skip to next
+                if (!reader.HasRows)
+                {
+                    continue;
+                }
+
+                reader.Read();
+                var segmentId = reader.GetInt32(0);
+                var maxSpeed = reader.GetInt16(1);
+
                 foreach (SpatialInformation entry in segments.Value) {
-
-                    NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
-
-                    command.Parameters.AddWithValue("@entryid", entry.EntryId);
-                    command.Parameters.AddWithValue("@osm_id", segments.Key);
-                    command.Parameters.AddWithValue("@mpointlat", entry.MPoint.Latitude);
-                    command.Parameters.AddWithValue("@mpointlng", entry.MPoint.Longitude);
+                    var updateCommand = new NpgsqlCommand(updateQuery, Connection)
+                    {
+                        Parameters =
+                        {
+                            new NpgsqlParameter("@segmentid", segmentId),
+                            new NpgsqlParameter("@maxspeed", maxSpeed),
+                            new NpgsqlParameter("@entryId", entry.EntryId),
+                            new NpgsqlParameter("@mpointlat", entry.MPoint.Latitude),
+                            new NpgsqlParameter("@mpointlng", entry.MPoint.Longitude),
+                        }
+                    };
 
                     try {
-                        NonQuery(command, "gpsfact");
+                        NonQuery(updateCommand, "gpsfact");
                     } catch (Exception e) {
                         Console.WriteLine(e.ToString());
                     }
