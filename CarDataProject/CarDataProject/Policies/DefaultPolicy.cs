@@ -79,7 +79,7 @@ namespace CarDataProject {
 
         public static double AccelerationPrice = 40;
         public static double BrakePrice = 65;
-        public static double JerkPrice = 36.66;
+        public static double JerkPrice = 15;
 
         public static double A = 1.02;
         public static double B = 1.05;
