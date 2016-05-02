@@ -62,10 +62,7 @@ namespace CarDataProject {
             double x = AccumulatedMultiplier(weightedIntervals);
 
             //Provide polynomial functionality to make bad distributions count for more
-            double totalMultiplier = Math.Pow(a * x, poly) + b * x + c;
-
-            //Amount of meters that should be added to the trip
-            double result =  totalMultiplier * metersSped;
+            double result = Math.Pow(a * (metersSped * x), poly) + b * (metersSped * x) + c;
 
             //Handle result if NaN
             if (double.IsNaN(result)) {
@@ -89,10 +86,7 @@ namespace CarDataProject {
             double x = AccumulatedMultiplier(weightedIntervals);
 
             //Provide polynomial functionality to make bad distributions count for more
-            double totalMultiplier = Math.Pow(a * x, poly) + b * x + c;
-
-            //Amount of meters that should be added to the trip
-            double result = totalMultiplier * accelerations * accelerationPrice;
+            double result = Math.Pow(a * (x * accelerations * accelerationPrice), poly) + b * (x * accelerations * accelerationPrice) + c;   
 
             //Handle result if NaN
             if (double.IsNaN(result)) {
@@ -116,10 +110,7 @@ namespace CarDataProject {
             double x = AccumulatedMultiplier(weightedIntervals);
 
             //Provide polynomial functionality to make bad distributions count for more
-            double totalMultiplier = Math.Pow(a * x, poly) + b * x + c;
-
-            //Amount of meters that should be added to the trip
-            double result = totalMultiplier * brakes * brakePrice;
+            double result = Math.Pow(a * (x * brakes * brakePrice), poly) + b * (x * brakes * brakePrice) + c;
 
             //Handle result if NaN
             if (double.IsNaN(result)) {
@@ -143,10 +134,7 @@ namespace CarDataProject {
             double x = AccumulatedMultiplier(weightedIntervals);
 
             //Provide polynomial functionality to make bad distributions count for more
-            double totalMultiplier = Math.Pow(a * x, poly) + b * x + c;
-
-            //Amount of meters that should be added to the trip
-            double result = totalMultiplier * jerks * jerkPrice;
+            double result = Math.Pow(a * (x * jerks * jerkPrice), poly) + b * (x * jerks * jerkPrice) + c;
 
             //Handle result if NaN
             if (double.IsNaN(result)) {
