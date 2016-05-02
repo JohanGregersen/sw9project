@@ -96,7 +96,24 @@ namespace CarDataProject {
 
             return 0;
         }
+        /*
+        
+    //Getting the previous tripid and seconds to previous trip
+    List<Int64> tripIds = dbc.GetTripIdsByCarId(carId);
+    //In case this is the first trip - ignore computing measures for previous trip
+    if (tripIds.Count > 1) {
+        Int64 latestTrip = tripIds[tripIds.Count() - 2];
+        Trip previousTrip = dbc.GetTripByCarIdAndTripId(carId, latestTrip);
+        trip.PreviousTripId = previousTrip.TripId;
+        trip.LocalTripId = previousTrip.LocalTripId + 1;
+        trip.SecondsToLag = MeasureCalculator.SecondsToLag(facts[0].Temporal.Timestamp, previousTrip.EndTemporal.Timestamp);
+    } else {
+        trip.SecondsToLag = new TimeSpan(0, 0, -1);
+        trip.LocalTripId = 1;
+    }
 
+
+            */
         public Int64 AddTripInformation(int CarId) {
             string sql = @"INSERT INTO tripfact(carid)
                            VALUES (@carid)
@@ -105,7 +122,30 @@ namespace CarDataProject {
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@carid", CarId);
             try {
-                return NonQueryWithReturnValue(command, "tripfact");
+                Int64 TripId = NonQueryWithReturnValue(command, "tripfact");
+
+                string sql2 = @"UPDATE tripfact 
+                               SET previoustripid = CASE WHEN prevtrip.previoustripid IS NOT NULL THEN prevtrip.tripid
+		                                            END,
+                                      localtripid = CASE WHEN prevtrip.localtripid IS NOT NULL THEN (prevtrip.localtripid + 1) 
+		                                            ELSE 1
+	                                                END
+                               FROM  
+                               (  
+	                            SELECT *
+	                            FROM tripfact
+	                            WHERE carid = @carid
+	                            ORDER BY tripid DESC
+	                            OFFSET 1 FETCH NEXT 1 ROWS ONLY  
+                               ) prevtrip
+                               WHERE tripfact.tripid = @tripid";
+                command = new NpgsqlCommand(sql2, Connection);
+                command.Parameters.AddWithValue("@carid", CarId);
+                command.Parameters.AddWithValue("@tripid", TripId);
+                NonQuery(command, "tripfact");
+
+                return TripId;
+
             } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
