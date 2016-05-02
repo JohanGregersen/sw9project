@@ -5,6 +5,33 @@ using System.Linq;
 namespace CarDataProject {
     public static class TripFactUpdater {
 
+        //Updates trip without PreviousTripId, localtripId and Secondstolag
+        public static void UpdateExistingTrip(Int16 carId, Int64 tripId) {
+            DBController dbc = new DBController();
+
+            Trip trip = new Trip(tripId, carId);
+            List<Fact> facts = dbc.GetFactsByTripIdNoQuality(tripId);
+
+            //Calc the trip updates
+            trip = UpdateTrip(trip, facts, dbc);
+
+            //Compute the scores
+            trip.OptimalScore = FinalScore.CalculateOptimalScore(trip);
+            List<double> fullscores = FinalScore.CalculateTripScores(trip);
+
+            trip.RoadTypeScore = fullscores[0];
+            trip.CriticalTimeScore = fullscores[1];
+            trip.SpeedingScore = fullscores[2];
+            trip.AccelerationScore = fullscores[3];
+            trip.BrakeScore = fullscores[4];
+            trip.JerkScore = fullscores[5];
+            trip.TripScore = fullscores[6];
+
+            //Update the trip in the database
+            dbc.UpdateTripFactWithMeasures(trip);
+            dbc.Close();
+        }
+
         public static void UpdateTrip(Int16 carId, Int64 tripId) {
             DBController dbc = new DBController();
 

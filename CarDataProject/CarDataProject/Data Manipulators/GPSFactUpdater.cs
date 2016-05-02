@@ -23,6 +23,7 @@ namespace CarDataProject {
             //First-cases
             //Speeding
             bool firstSpeeding = MeasureCalculator.Speeding(facts.First().Measure.Speed, facts.First().Segment.MaxSpeed);
+
             facts.First().Flag = new FlagInformation(facts.First().TripId, facts.First().EntryId, firstSpeeding, false, false, false);
 
             //steady-speed
@@ -58,6 +59,7 @@ namespace CarDataProject {
 
                 //Accelerating
                 bool accelerating = MeasureCalculator.Accelerating(facts[i].Measure);
+
                 //Jerking
                 bool jerking = MeasureCalculator.Jerking(facts[i].Measure);
                 
@@ -127,5 +129,48 @@ namespace CarDataProject {
             }
             dbc.Close();
         }
+        /*
+        public static void UpdateFactCounts(List<Fact> facts) {
+
+            for (int i = 1; i < facts.Count; i++) {
+
+                bool speeding = MeasureCalculator.Speeding(facts[i].Measure.Speed, facts[i].Segment.MaxSpeed);
+
+                //Accelerating
+                bool accelerating = MeasureCalculator.Accelerating(facts[i].Measure);
+
+                //Jerking
+                bool jerking = MeasureCalculator.Jerking(facts[i].Measure);
+
+                //Braking
+                bool braking = MeasureCalculator.Braking(facts[i].Measure);
+
+                //SteadySpeed
+                bool steadySpeed = false;
+
+                //Speed-change above speedThreshold?
+                if (Math.Abs(speedLock - facts[i].Measure.Speed) > speedThreshold) {
+                    speedLock = facts[i].Measure.Speed;
+                    steadySpeedCounter = 0;
+                }
+
+                steadySpeedCounter++;
+
+                if (steadySpeedCounter >= 5) {
+                    steadySpeed = true;
+                }
+
+                facts[i].Flag = new FlagInformation(speeding, accelerating, jerking, braking, steadySpeed);
+            }
+
+            dbc = new DBController();
+            try {
+                dbc.UpdateGPSFactWithMeasures(facts);
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+            dbc.Close();
+        }
+        */
     }
 }
