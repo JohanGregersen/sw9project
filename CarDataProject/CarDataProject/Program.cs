@@ -14,8 +14,12 @@ namespace CarDataProject {
 
             //DBInitializer.DBInitialization();
             //UpdateDatabaseThreaded();
+            
+            var dbc = new DBController();
+            List<Fact> facts = dbc.GetFactsByCarIdAndTripId(6, 118);
+            TripFactUpdater.UpdateTrip(6, 120);
+            var breakpoint = 0;
 
-            Mapmatch.MatchTrip(1, 34);
 
             /*
             DBController dbc = new DBController();
