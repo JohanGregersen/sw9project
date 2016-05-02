@@ -44,12 +44,9 @@ namespace CarDataProject {
             if (tripIds.Count > 1) {
                 Int64 latestTrip = tripIds[tripIds.Count() - 2];
                 Trip previousTrip = dbc.GetTripByCarIdAndTripId(carId, latestTrip);
-                trip.PreviousTripId = previousTrip.TripId;
-                trip.LocalTripId = previousTrip.LocalTripId + 1;
                 trip.SecondsToLag = MeasureCalculator.SecondsToLag(facts[0].Temporal.Timestamp, previousTrip.EndTemporal.Timestamp);
             } else {
                 trip.SecondsToLag = new TimeSpan(0, 0, -1);
-                trip.LocalTripId = 1;
             }
             //Calc the trip updates
             trip = UpdateTrip(trip, facts, dbc);
