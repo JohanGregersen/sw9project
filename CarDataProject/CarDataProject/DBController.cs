@@ -897,29 +897,91 @@ namespace CarDataProject {
             }
         }
         
-        public int UpdateGPSFactsWithMapMatching(Dictionary<int, List<SpatialInformation>> mapmatchedEntries) {
-            string sql = String.Format(@"UPDATE gpsfact
-                                            SET segmentid = (SELECT id
-                                                             FROM segmentinformation seginfo
-                                                             WHERE seginfo.osm_id = @osm_id),
-                                            mpoint = ST_SetSrid(ST_MakePoint(@mpointlat, @mpointlng), 4326),
-                                            maxspeed = (SELECT maxspeed
-                                                        FROM segmentinformation seginfo
-                                                        WHERE seginfo.osm_id = @osm_id)                                                               
-                                            WHERE entryid = @entryid");
+        public int UpdateGPSFactsWithMapMatching(Dictionary<int, List<SpatialInformation>> mapmatchedEntries)
+        {
+            // Reusable variables
+            int segmentId;
+            short? maxSpeed;
 
-            foreach (KeyValuePair<int, List<SpatialInformation>> segments in mapmatchedEntries) {
-                foreach (SpatialInformation entry in segments.Value) {
+            // Repetitive queries
+            var query = @"SELECT id, maxspeed
+                        FROM segmentinformation
+                        WHERE osm_id = @osm_id";
 
-                    NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+            var updateQuery = @"UPDATE gpsfact
+                                SET segmentid = @segmentid,
+                                    mpoint = ST_SetSrid(ST_MakePoint(@mpointlat, @mpointlng), 4326),
+                                    maxspeed = @maxspeed                                                             
+                                WHERE entryid = @entryid";
 
-                    command.Parameters.AddWithValue("@entryid", entry.EntryId);
-                    command.Parameters.AddWithValue("@osm_id", segments.Key);
-                    command.Parameters.AddWithValue("@mpointlat", entry.MPoint.Latitude);
-                    command.Parameters.AddWithValue("@mpointlng", entry.MPoint.Longitude);
+            var updateQueryNoMaxSpeed = @"UPDATE gpsfact
+                                SET segmentid = @segmentid,
+                                    mpoint = ST_SetSrid(ST_MakePoint(@mpointlat, @mpointlng), 4326)                                                         
+                                WHERE entryid = @entryid";
+
+            // Loop over all OSM_ID's
+            foreach (KeyValuePair<int, List<SpatialInformation>> segments in mapmatchedEntries)
+            {
+                // Retreive values for update query
+                var command = new NpgsqlCommand(query, Connection)
+                {
+                    Parameters = { new NpgsqlParameter("@osm_id", segments.Key) }
+                };
+
+                using (NpgsqlDataReader reader = command.ExecuteReader())
+                {
+                    // If matched road does not exist in our Database, skip to next
+                    if (!reader.HasRows)
+                    {
+                        continue;
+                    }
+
+                    reader.Read();
+                    segmentId = reader.GetInt32(0);
+                    
+                    if (!reader.IsDBNull(1))
+                    {
+                        maxSpeed = reader.GetInt16(1);
+                    }
+                    else
+                    {
+                        maxSpeed = null;
+                    }
+                }
+
+                foreach (SpatialInformation entry in segments.Value)
+                {
+                    NpgsqlCommand updateCommand;
+                    if (maxSpeed.HasValue)
+                    {
+                        updateCommand = new NpgsqlCommand(updateQuery, Connection)
+                        {
+                            Parameters =
+                            {
+                                new NpgsqlParameter("@segmentid", segmentId),
+                                new NpgsqlParameter("@entryId", entry.EntryId),
+                                new NpgsqlParameter("@mpointlat", entry.MPoint.Latitude),
+                                new NpgsqlParameter("@mpointlng", entry.MPoint.Longitude),
+                                new NpgsqlParameter("@maxspeed", maxSpeed)
+                            }
+                        };
+                    }
+                    else
+                    {
+                        updateCommand = new NpgsqlCommand(updateQueryNoMaxSpeed, Connection)
+                        {
+                            Parameters =
+                            {
+                                new NpgsqlParameter("@segmentid", segmentId),
+                                new NpgsqlParameter("@entryId", entry.EntryId),
+                                new NpgsqlParameter("@mpointlat", entry.MPoint.Latitude),
+                                new NpgsqlParameter("@mpointlng", entry.MPoint.Longitude),
+                            }
+                        };
+                    }
 
                     try {
-                        NonQuery(command, "gpsfact");
+                        NonQuery(updateCommand, "gpsfact");
                     } catch (Exception e) {
                         Console.WriteLine(e.ToString());
                     }
@@ -1366,6 +1428,28 @@ namespace CarDataProject {
             }
 
             return competitionIds;
+        }
+
+        public void UpdateWithCompetitionAttempt(Int16 competitionId, Int16 carId, Int64 tripId) {
+            const string sql = @"UPDATE competingin
+                                 SET attempts = CASE WHEN attempts IS NULL THEN 1
+	                                            ELSE attempts + 1 
+                                                END,
+                                        score = CASE WHEN score IS NULL THEN (SELECT tripscore / metersdriven * 100 - 100 FROM tripfact WHERE tripid = @tripid)
+                                                ELSE (score * attempts + (SELECT tripscore / metersdriven * 100 - 100 FROM tripfact WHERE tripid = @tripid)) / (attempts + 1) 
+                                                END
+                                 WHERE carid = @carid AND competitionid = @competitionid";
+
+            var command = new NpgsqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@carid", carId);
+            command.Parameters.AddWithValue("@competitionid", competitionId);
+            command.Parameters.AddWithValue("@tripid", tripId);
+
+            try {
+                NonQuery(command, "competingin");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         #endregion
