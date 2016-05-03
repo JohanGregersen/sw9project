@@ -1489,12 +1489,21 @@ namespace CarDataProject {
         public void UpdateWithCompetitionAttempt(Int16 competitionId, Int16 carId, Int64 tripId) {
             const string sql = @"UPDATE competingin
                                  SET attempts = CASE WHEN attempts IS NULL THEN 1
-	                                            ELSE attempts + 1 
+                                                ELSE attempts + 1
                                                 END,
-                                        score = CASE WHEN score IS NULL THEN (SELECT tripscore / metersdriven * 100 - 100 FROM tripfact WHERE tripid = @tripid)
-                                                ELSE (score * attempts + (SELECT tripscore / metersdriven * 100 - 100 FROM tripfact WHERE tripid = @tripid)) / (attempts + 1) 
+	                                    score = CASE WHEN score IS NULL THEN(newtrip.tripscore / newtrip.metersdriven * 100 - 100)
+                                                ELSE ((((score / 100) + 1) * totalmetersdriven) + newtrip.tripscore) / (totalmetersdriven + newtrip.metersdriven) * 100 - 100
+                                                END,
+                            totalmetersdriven = CASE WHEN totalmetersdriven IS NULL THEN newtrip.metersdriven
+                                                ELSE totalmetersdriven + newtrip.metersdriven
                                                 END
-                                 WHERE carid = @carid AND competitionid = @competitionid";
+                                 FROM
+                                 (
+                                     SELECT *
+                                     FROM tripfact
+                                     WHERE tripid = @tripid
+                                 ) newtrip
+                                 WHERE competingin.carid = @carid AND competitionid = @competitionid";
 
             var command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@carid", carId);
