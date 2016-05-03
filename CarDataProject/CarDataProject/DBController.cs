@@ -1421,7 +1421,11 @@ namespace CarDataProject {
         }
 
         public List<CompetingIn> GetCompetitionInByCompetitionId(Int16 CompetitionId) {
-            string sql = String.Format(@"SELECT * FROM competingIn WHERE competitionid = '{0}'", CompetitionId);
+            string sql = String.Format(@"SELECT * 
+                                         FROM competingIn 
+                                         INNER JOIN carinformation 
+                                         ON (competingIn.carid = carinformation.carid) 
+                                         WHERE competitionid = '{0}'", CompetitionId);
             DataRowCollection result = Query(sql);
 
             List<CompetingIn> templist = new List<CompetingIn>();
