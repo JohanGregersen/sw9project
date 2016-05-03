@@ -39,7 +39,7 @@ namespace CarDataProject {
         public double ScorePercentage {
             get {
                 if (TripScore != 0 && MetersDriven != 0) {
-                    return (TripScore / MetersDriven * 100) - 100;
+                    return (TripScore / MetersDriven * 100) - 100 - ((RoadTypeScore + CriticalTimeScore)/MetersDriven*100);
                 } else { return 0; }
             }
             set { }
