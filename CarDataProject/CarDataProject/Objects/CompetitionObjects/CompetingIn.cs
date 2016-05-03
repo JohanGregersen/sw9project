@@ -32,10 +32,10 @@ namespace CarDataProject {
             this.CompetitionId = row.Field<Int16>("competitionid");
             this.CarId = row.Field<Int16>("carid");
 
-            row["score"] = row["score"] is DBNull ? "0" : row["score"];
-            this.Score = row.Field<double>("score");
+            row["score"] = row["score"] is DBNull ? 0.0 : row["score"];
+            this.Score = (double)row.Field<Single>("score");
 
-            row["attempts"] = row["attempts"] is DBNull ? "0" : row["attempts"];
+            row["attempts"] = row["attempts"] is DBNull ? 0 : row["attempts"];
             this.Attempts = row.Field<int>("attempts");
 
         }
