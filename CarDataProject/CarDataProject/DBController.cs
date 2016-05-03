@@ -1510,8 +1510,8 @@ namespace CarDataProject {
 
         #endregion
         public int AddLog(string method, Int16? cardId, Int64? tripId, Int16? competitionid, string exception, string data) {
-            string sql = @"INSERT INTO logs(method, carid, tripid, competitionid, exception, data) 
-                           VALUES (@method, @carid, @tripid, @competitionid, @exception, @data)";
+            string sql = @"INSERT INTO logs(method, carid, tripid, competitionid, exception, data, timestamp) 
+                           VALUES (@method, @carid, @tripid, @competitionid, @exception, @data, CURRENT_TIMESTAMP)";
 
             NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
             command.Parameters.AddWithValue("@method", method);
