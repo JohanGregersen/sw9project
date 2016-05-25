@@ -45,17 +45,123 @@ namespace CarDataProject {
             return result;
         }
 
+        public static Dictionary<string, double> AverageMetricNormalized(List<Trip> trips) {
+
+            Dictionary<string, double> result = new Dictionary<string, double>();
+            Dictionary<string, double> tempDict = new Dictionary<string, double>();
+            int count = 0;
+
+            foreach (Trip trip in trips) {
+                tempDict = MetricNormalized(trip);
+                foreach (KeyValuePair<string, double> kvp in tempDict) {
+                    if (!result.ContainsKey(kvp.Key)) {
+                        result.Add(kvp.Key, kvp.Value);
+                    } else {
+                        result[kvp.Key] = +kvp.Value;
+                    }
+                }
+                count++;
+            }
+
+            foreach (KeyValuePair<string, double> kvp in result) {
+                result[kvp.Key] = kvp.Value / count;
+            }
+
+            return result;
+
+        }
+
+        public static Dictionary<string, List<double>> AverageMetricDegree(List<Trip> trips) {
+            
+            //It is not relational to the lenght of the trip, maybe it should be?
+
+            Dictionary<string, List<double>> result = new Dictionary<string, List<double>>();
+
+            List<double> temproadtypelist = new List<double>();
+            List<double> tempcriticaltimelist = new List<double>();
+            List<double> tempspeedinglist = new List<double>();
+            List<double> tempacclist = new List<double>();
+            List<double> tempbrakelist = new List<double>();
+            List<double> tempjerklist = new List<double>();
+
+            foreach (Trip trip in trips) {
+
+                if (trip == trips.First()) {
+                    result["Roadtypes"] = IntervalHelper.Decode(trip.IntervalInformation.RoadTypesInterval);
+                    result["Criticaltime"] = IntervalHelper.Decode(trip.IntervalInformation.CriticalTimeInterval);
+                    result["Speeding"] = IntervalHelper.Decode(trip.IntervalInformation.SpeedInterval);
+                    result["Accelerations"] = IntervalHelper.Decode(trip.IntervalInformation.AccelerationInterval);
+                    result["Brakes"] = IntervalHelper.Decode(trip.IntervalInformation.BrakingInterval);
+                    result["Jerks"] = IntervalHelper.Decode(trip.IntervalInformation.JerkInterval);
+                } else {
+                    temproadtypelist = IntervalHelper.Decode(trip.IntervalInformation.RoadTypesInterval);
+                    tempcriticaltimelist = IntervalHelper.Decode(trip.IntervalInformation.CriticalTimeInterval);
+                    tempspeedinglist = IntervalHelper.Decode(trip.IntervalInformation.SpeedInterval);
+                    tempacclist = IntervalHelper.Decode(trip.IntervalInformation.AccelerationInterval);
+                    tempbrakelist = IntervalHelper.Decode(trip.IntervalInformation.BrakingInterval);
+                    tempjerklist = IntervalHelper.Decode(trip.IntervalInformation.JerkInterval);
+
+                    for (int i = 0; i < 8; i++) {
+                        result["Roadtypes"][i] = +temproadtypelist[i];
+                        result["Criticaltime"][i] = +tempcriticaltimelist[i];
+                        result["Speeding"][i] = +tempspeedinglist[i];
+                        result["Accelerations"][i] = +tempacclist[i];
+                        result["Brakes"][i] = +tempbrakelist[i];
+                        result["Jerks"][i] = +tempjerklist[i];
+                    }
+                }
+            }
+
+            for (int i = 0; i < 8; i++) {
+                result["Roadtypes"][i] = result["Roadtypes"][i] / trips.Count;
+                result["Criticaltime"][i] = result["Criticaltime"][i] / trips.Count;
+                result["Speeding"][i] = result["Speeding"][i] / trips.Count;
+                result["Accelerations"][i] = result["Accelerations"][i] / trips.Count;
+                result["Brakes"][i] = result["Brakes"][i] / trips.Count;
+                result["Jerks"][i] = result["Jerks"][i] / trips.Count;
+            }
+            
+            return result;
+        }
+
         public static Dictionary<string, double> MetricPercentage(Trip trip) {
 
             Dictionary<string, double> result = new Dictionary<string, double>();
 
-            result.Add("Roadtypes", (Subscore.RoadTypes(trip.MetersDriven, IntervalHelper.Decode(trip.IntervalInformation.RoadTypesInterval), DefaultPolicy.RoadTypeWeights) / trip.MetersDriven));
-            result.Add("CriticalTimePeriod", (Subscore.CriticalTimePeriod(trip.MetersDriven, IntervalHelper.Decode(trip.IntervalInformation.CriticalTimeInterval), DefaultPolicy.CriticalTimeWeights) / trip.MetersDriven));
-            result.Add("Speeding", (Subscore.Speeding(trip.MetersSped, IntervalHelper.Decode(trip.IntervalInformation.SpeedInterval),DefaultPolicy.SpeedingWeights, DefaultPolicy.A, DefaultPolicy.B, DefaultPolicy.C, DefaultPolicy.Poly) / trip.MetersDriven));
-            result.Add("Accelerations", (Subscore.Accelerations(trip.AccelerationCount, IntervalHelper.Decode(trip.IntervalInformation.AccelerationInterval), DefaultPolicy.AccelerationPrice, DefaultPolicy.AccelerationWeights, DefaultPolicy.A, DefaultPolicy.B, DefaultPolicy.C, DefaultPolicy.Poly) / trip.MetersDriven));
-            result.Add("Brakes",(Subscore.Brakes(trip.BrakeCount,IntervalHelper.Decode(trip.IntervalInformation.BrakingInterval), DefaultPolicy.BrakePrice, DefaultPolicy.BrakeWeights, DefaultPolicy.A, DefaultPolicy.B, DefaultPolicy.C, DefaultPolicy.Poly) / trip.MetersDriven));
-            result.Add("Jerks",(Subscore.Jerks(trip.JerkCount, IntervalHelper.Decode(trip.IntervalInformation.JerkInterval), DefaultPolicy.JerkPrice, DefaultPolicy.JerkWeights, DefaultPolicy.A, DefaultPolicy.B, DefaultPolicy.C, DefaultPolicy.Poly) / trip.MetersDriven));
+            result.Add("Roadtypes", trip.RoadTypeScore / trip.MetersDriven * 100);
+            result.Add("CriticalTimePeriod", trip.CriticalTimeScore / trip.MetersDriven * 100);
+            result.Add("Speeding", trip.SpeedingScore / trip.MetersDriven * 100);
+            result.Add("Accelerations", trip.AccelerationScore / trip.MetersDriven * 100);
+            result.Add("Brakes", trip.BrakeScore / trip.MetersDriven * 100);
+            result.Add("Jerks", trip.JerkScore / trip.MetersDriven * 100);
 
+            return result;
+        }
+
+        public static Dictionary<string, double> MetricNormalized(Trip trip) {
+        
+            Dictionary<string, double> result = new Dictionary<string, double>();
+            DBController dbc = new DBController();
+
+            List<Fact> facts = dbc.GetFactsByTripId(trip.TripId);
+
+            result.Add("Speeding", 0);
+            result.Add("Accelerations", 0);
+            result.Add("Brakes", 0);
+            result.Add("Jerks", 0);
+
+            foreach (Fact fact in facts) {
+                if (fact.Flag.Speeding) {
+                    result["Speeding"]++;
+                }
+            }
+            if (result["Speeding"] != 0) {
+                result["Speeding"] = result["Speeding"] / facts.Count * 100;
+            }
+            result["Accelerations"] = trip.AccelerationCount / facts.Count * 100;
+            result["Brakes"] = trip.BrakeCount / facts.Count * 100;
+            result["Jerks"] = trip.JerkCount / facts.Count * 100;
+            
             return result;
         }
     }
