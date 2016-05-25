@@ -115,10 +115,15 @@ namespace CarDataProject {
                 facts[i].Measure.Jerk = MeasureCalculator.Jerk(facts[i].Measure, facts[i - 1].Measure, facts[i].Temporal, facts[i - 1].Temporal);
 
                 //FlagInformation
+                Boolean speeding = false;
+                if (facts[i].Segment != null && facts[i].Segment.MaxSpeed != -1) {
+                    speeding = MeasureCalculator.Speeding(facts[i].Measure.Speed, facts[i].Segment.MaxSpeed);
+                }
+
                 Boolean accelerating = MeasureCalculator.Accelerating(facts[i].Measure);
                 Boolean braking = MeasureCalculator.Braking(facts[i].Measure);
                 Boolean jerking = MeasureCalculator.Jerking(facts[i].Measure);
-                facts[i].Flag = new FlagInformation(false, accelerating, braking, jerking);
+                facts[i].Flag = new FlagInformation(speeding, accelerating, braking, jerking);
             }
             dbc = new DBController();
             try {
