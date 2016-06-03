@@ -207,5 +207,37 @@ namespace CarDataProject {
 
             return trip;
         }
+
+        public static Trip UpdateTripWithCountsAndIntervals(Trip trip, List<Fact> facts, DBController dbc) {
+            //Counts
+
+            trip.JerkCount = 0;
+            trip.BrakeCount = 0;
+            trip.AccelerationCount = 0;
+
+            for (int i = 1; i < facts.Count; i++) {
+
+                //Acceleration count
+                if (facts[i].Flag.Accelerating) {
+                    trip.AccelerationCount++;
+                }
+
+                //Brake count
+                if (facts[i].Flag.Braking) {
+                    trip.BrakeCount++;
+                }
+
+                //Jerk count
+                if (facts[i].Flag.Jerking) {
+                    trip.JerkCount++;
+                }
+            }
+
+            //Interval Information
+            trip = UpdateTripWithIntervals(trip, facts, dbc);
+
+            return trip;
+        }
+
     }
 }

@@ -13,7 +13,7 @@ namespace CarDataProject {
             double percentage = 0;
 
             foreach(Trip trip in trips) {
-                percentage = +TripStatistics.tripPercentage(trip.TripId);
+                percentage += TripStatistics.tripPercentage(trip.TripId);
                 count++;
             }
 
@@ -32,13 +32,13 @@ namespace CarDataProject {
                     if(!result.ContainsKey(kvp.Key)) {
                         result.Add(kvp.Key, kvp.Value);
                     } else {
-                        result[kvp.Key] = +kvp.Value;
+                        result[kvp.Key] = result[kvp.Key] + kvp.Value;
                     }       
                 }
                 count++;
             }
 
-            foreach(KeyValuePair<string, double> kvp in result) {
+            foreach(KeyValuePair<string, double> kvp in result.ToList()) {
                 result[kvp.Key] = kvp.Value / count;
             }
 
@@ -57,13 +57,13 @@ namespace CarDataProject {
                     if (!result.ContainsKey(kvp.Key)) {
                         result.Add(kvp.Key, kvp.Value);
                     } else {
-                        result[kvp.Key] = +kvp.Value;
+                        result[kvp.Key] += kvp.Value;
                     }
                 }
                 count++;
             }
 
-            foreach (KeyValuePair<string, double> kvp in result) {
+            foreach (KeyValuePair<string, double> kvp in result.ToList()) {
                 result[kvp.Key] = kvp.Value / count;
             }
 
@@ -102,12 +102,12 @@ namespace CarDataProject {
                     tempjerklist = IntervalHelper.Decode(trip.IntervalInformation.JerkInterval);
 
                     for (int i = 0; i < 8; i++) {
-                        result["Roadtypes"][i] = +temproadtypelist[i];
-                        result["Criticaltime"][i] = +tempcriticaltimelist[i];
-                        result["Speeding"][i] = +tempspeedinglist[i];
-                        result["Accelerations"][i] = +tempacclist[i];
-                        result["Brakes"][i] = +tempbrakelist[i];
-                        result["Jerks"][i] = +tempjerklist[i];
+                        result["Roadtypes"][i] += temproadtypelist[i];
+                        result["Criticaltime"][i] += tempcriticaltimelist[i];
+                        result["Speeding"][i] += tempspeedinglist[i];
+                        result["Accelerations"][i] += tempacclist[i];
+                        result["Brakes"][i] += tempbrakelist[i];
+                        result["Jerks"][i] += tempjerklist[i];
                     }
                 }
             }
@@ -143,7 +143,7 @@ namespace CarDataProject {
             Dictionary<string, double> result = new Dictionary<string, double>();
             DBController dbc = new DBController();
 
-            List<Fact> facts = dbc.GetFactsByTripId(trip.TripId);
+            List<Fact> facts = dbc.GetFactsByTripIdNoQuality(trip.TripId);
 
             result.Add("Speeding", 0);
             result.Add("Accelerations", 0);
@@ -156,13 +156,35 @@ namespace CarDataProject {
                 }
             }
             if (result["Speeding"] != 0) {
-                result["Speeding"] = result["Speeding"] / facts.Count * 100;
+                result["Speeding"] = result["Speeding"] / facts.Count * 1000;
             }
-            result["Accelerations"] = trip.AccelerationCount / facts.Count * 100;
-            result["Brakes"] = trip.BrakeCount / facts.Count * 100;
-            result["Jerks"] = trip.JerkCount / facts.Count * 100;
-            
+
+            result["Accelerations"] = ((double)trip.AccelerationCount / (double)facts.Count * 1000);
+            result["Brakes"] = ((double)trip.BrakeCount / (double)facts.Count * 1000);
+            result["Jerks"] = ((double)trip.JerkCount / (double)facts.Count * 1000);
+
+            dbc.Close();
+
             return result;
+        }
+
+        public static void print(Dictionary<string, double> dict) {
+            foreach(KeyValuePair<string, double> kvp in dict) {
+                Console.WriteLine(kvp.Key + " : " + kvp.Value.ToString());
+            }
+        }
+
+        public static void print(Dictionary<string, List<double>> dict) {
+            foreach(KeyValuePair<string, List<double>> kvp in dict) {
+
+                StringBuilder builder = new StringBuilder();
+
+                for(int i = 0; i < kvp.Value.Count; i++) {
+                    builder.Append(kvp.Value.ElementAt(i).ToString()).Append(" | ");
+                }
+                
+                Console.WriteLine(kvp.Key + " : " + builder.ToString());
+            }
         }
     }
 }

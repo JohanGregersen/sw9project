@@ -1162,6 +1162,30 @@ namespace CarDataProject {
             return 0;
         }
 
+        public int UpdateTripFactWithCounts(Trip UpdatedTrip) {
+            string sql = String.Format(@"UPDATE tripfact
+                                         SET jerkcount = @jerkcount,
+                                             accelerationcount =  @accelerationcount,
+                                             brakecount = @brakecount
+                                         WHERE tripid = @tripid");
+
+            NpgsqlCommand command = new NpgsqlCommand(sql, Connection);
+
+            command.Parameters.AddWithValue("@tripid", UpdatedTrip.TripId);
+
+            command.Parameters.AddWithValue("@jerkcount", UpdatedTrip.JerkCount);
+            command.Parameters.AddWithValue("@accelerationcount", UpdatedTrip.AccelerationCount);
+            command.Parameters.AddWithValue("@brakecount", UpdatedTrip.BrakeCount);
+
+            try {
+                NonQuery(command, "tripfact");
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+
+            return 0;
+        }
+
         public int UpdateTripFactWithIntervals(Trip UpdatedTrip) {
             string sql = String.Format(@"UPDATE tripfact
                                          SET roadtypesinterval = @roadtypesinterval,

@@ -10,23 +10,35 @@ using NpgsqlTypes;
 namespace CarDataProject {
     class Program {
         static void Main(string[] args) {
-            //FleetStatistics FS = new FleetStatistics();
+            
+            DBController dbc = new DBController();
 
-            //DBInitializer.DBInitialization();
-            //UpdateDatabaseThreaded();
-            Mapmatch.MatchTrip(8, 139);
-            var breakpoint = 0;
+            List<Trip> trips = dbc.GetAllTrips();
+            
+           for(int i = 0; i > trips.Count; i++) {
+                GPSFactUpdater.UpdateRawGPS((Int16)trips[i].CarId, trips[i].TripId);
+                List<Fact> facts = new List<Fact>();
+                facts = dbc.GetFactsByTripId(trips[i].TripId);
 
+                trips[i] = TripFactUpdater.UpdateTripWithCountsAndIntervals(trips[i], facts, dbc);
+                dbc.UpdateTripFactWithCounts(trips[i]);
+                dbc.UpdateTripFactWithIntervals(trips[i]);
+            }
 
             /*
-            DBController dbc = new DBController();
-            List<Fact> facts = dbc.GetFactsForMapByCarIdAndTripId(1, 22);
-            dbc.Close();
-
-            foreach (Fact f in facts) {
-                Console.WriteLine();
-                Console.WriteLine(f.EntryId + ", " + f.Spatial.MPoint.Latitude + ", " + f.Spatial.MPoint.Longitude + ",\"" + f.Temporal.Timestamp.ToString("yyyy-MM-dd") + "T" + f.Temporal.Timestamp.TimeOfDay + "\"");
-            }
+            List<Trip> trips = dbc.GetTripsByCarId(34);
+            Console.WriteLine("AverageTripPercentage:");
+            Console.WriteLine(UserProfile.AverageTripPercentage(trips).ToString());
+            Console.WriteLine("AverageMetricPercentage:");
+            UserProfile.print(UserProfile.AverageMetricPercentage(trips));
+            Console.WriteLine("AverageMetricNormalized:");
+            UserProfile.print(UserProfile.AverageMetricNormalized(trips));
+            Console.WriteLine("AverageMetricDegree:");
+            UserProfile.print(UserProfile.AverageMetricDegree(trips));
+            
+            Console.WriteLine("CorrelationMatrix:");
+            Double[,] matrix = MetricCorrelation.getCorrelationMatrix(trips);
+            MetricCorrelation.printMatrix(matrix);
             */
             Console.WriteLine("Aaaaand its done");
             Console.ReadLine();

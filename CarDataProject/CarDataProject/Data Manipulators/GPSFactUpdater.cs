@@ -118,7 +118,7 @@ namespace CarDataProject {
                 Boolean accelerating = MeasureCalculator.Accelerating(facts[i].Measure);
                 Boolean braking = MeasureCalculator.Braking(facts[i].Measure);
                 Boolean jerking = MeasureCalculator.Jerking(facts[i].Measure);
-                facts[i].Flag = new FlagInformation(false, accelerating, braking, jerking);
+                facts[i].Flag = new FlagInformation(false, accelerating, jerking, braking);
             }
             dbc = new DBController();
             try {
@@ -129,6 +129,10 @@ namespace CarDataProject {
             }
             dbc.Close();
         }
+
+
+
+
         /*
         public static void UpdateFactCounts(List<Fact> facts) {
 
