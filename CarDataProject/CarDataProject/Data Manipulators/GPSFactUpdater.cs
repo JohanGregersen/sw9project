@@ -123,7 +123,7 @@ namespace CarDataProject {
                 Boolean accelerating = MeasureCalculator.Accelerating(facts[i].Measure);
                 Boolean braking = MeasureCalculator.Braking(facts[i].Measure);
                 Boolean jerking = MeasureCalculator.Jerking(facts[i].Measure);
-                facts[i].Flag = new FlagInformation(speeding, accelerating, braking, jerking);
+                facts[i].Flag = new FlagInformation(speeding, accelerating, jerking, braking);
             }
             dbc = new DBController();
             try {
