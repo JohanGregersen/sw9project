@@ -47,7 +47,7 @@ namespace CarDataProject {
             Double[] Braking = new Double[trips.Count()];
             Double[] Jerking = new Double[trips.Count()];
            
-            for(int i = 1; i < trips.Count; i++) {
+            for(int i = 0; i < trips.Count; i++) {
                 Roadtypes[i] = trips.ElementAt(i).RoadTypeScore;
                 CriticalTime[i] = trips.ElementAt(i).CriticalTimeScore;
                 Speeding[i] = trips.ElementAt(i).SpeedingScore;
@@ -72,18 +72,25 @@ namespace CarDataProject {
             return CorrelationMatrix;
         }
 
-        public static void printMatrix(Double[,] matrix) {
+        public static string printMatrix(Double[,] matrix) {
 
             int rowLength = matrix.GetLength(0);
             int colLength = matrix.GetLength(1);
 
+            StringBuilder builder = new StringBuilder();
+
+
             for (int i = 0; i < rowLength; i++) {
                 for (int j = 0; j < colLength; j++) {
                     Console.Write(string.Format("{0} ", matrix[i, j]));
+                    builder.Append(string.Format("{0} ", matrix[i, j]));
                 }
                 Console.Write(Environment.NewLine + Environment.NewLine);
+                builder.Append(Environment.NewLine + Environment.NewLine);
             }
-            Console.ReadLine();
+
+            builder.Append("\n\n");
+            return builder.ToString();
         }
     }
 }

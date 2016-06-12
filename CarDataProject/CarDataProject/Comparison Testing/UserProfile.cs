@@ -77,63 +77,183 @@ namespace CarDataProject {
 
             Dictionary<string, List<double>> result = new Dictionary<string, List<double>>();
 
-            List<double> temproadtypelist = new List<double>();
-            List<double> tempcriticaltimelist = new List<double>();
-            List<double> tempspeedinglist = new List<double>();
-            List<double> tempacclist = new List<double>();
-            List<double> tempbrakelist = new List<double>();
-            List<double> tempjerklist = new List<double>();
+            double temproadcount = 0;
+            double tempcriticalcount = 0;
+            double tempspeedingcount = 0;
+            double tempacccount = 0;
+            double tempbrakecount = 0;
+            double tempjerkcount = 0;
+
 
             foreach (Trip trip in trips) {
 
-                if (trip == trips.First()) {
-                    result["Roadtypes"] = IntervalHelper.Decode(trip.IntervalInformation.RoadTypesInterval);
-                    result["Criticaltime"] = IntervalHelper.Decode(trip.IntervalInformation.CriticalTimeInterval);
-                    result["Speeding"] = IntervalHelper.Decode(trip.IntervalInformation.SpeedInterval);
-                    result["Accelerations"] = IntervalHelper.Decode(trip.IntervalInformation.AccelerationInterval);
-                    result["Brakes"] = IntervalHelper.Decode(trip.IntervalInformation.BrakingInterval);
-                    result["Jerks"] = IntervalHelper.Decode(trip.IntervalInformation.JerkInterval);
-                } else {
-                    temproadtypelist = IntervalHelper.Decode(trip.IntervalInformation.RoadTypesInterval);
-                    tempcriticaltimelist = IntervalHelper.Decode(trip.IntervalInformation.CriticalTimeInterval);
-                    tempspeedinglist = IntervalHelper.Decode(trip.IntervalInformation.SpeedInterval);
-                    tempacclist = IntervalHelper.Decode(trip.IntervalInformation.AccelerationInterval);
-                    tempbrakelist = IntervalHelper.Decode(trip.IntervalInformation.BrakingInterval);
-                    tempjerklist = IntervalHelper.Decode(trip.IntervalInformation.JerkInterval);
+                List<double> templist = new List<double>();
 
+                if (trip.IntervalInformation.RoadTypesInterval != 0 && !result.ContainsKey("Roadtypes")) {
+                    result["Roadtypes"] = IntervalHelper.Decode(trip.IntervalInformation.RoadTypesInterval);
+                    temproadcount++;
+                } else if (trip.IntervalInformation.RoadTypesInterval != 0 && result.ContainsKey("Roadtypes")) {
+                    templist = IntervalHelper.Decode(trip.IntervalInformation.RoadTypesInterval);
+                    temproadcount++;
                     for (int i = 0; i < 8; i++) {
-                        result["Roadtypes"][i] += temproadtypelist[i];
-                        result["Criticaltime"][i] += tempcriticaltimelist[i];
-                        result["Speeding"][i] += tempspeedinglist[i];
-                        result["Accelerations"][i] += tempacclist[i];
-                        result["Brakes"][i] += tempbrakelist[i];
-                        result["Jerks"][i] += tempjerklist[i];
+                        result["Roadtypes"][i] += templist[i];
+                    }
+                }
+
+                if (trip.IntervalInformation.CriticalTimeInterval != 0 && !result.ContainsKey("Criticaltime")) {
+                    result["Criticaltime"] = IntervalHelper.Decode(trip.IntervalInformation.CriticalTimeInterval);
+                    tempcriticalcount++;
+                } else if (trip.IntervalInformation.CriticalTimeInterval != 0 && result.ContainsKey("Criticaltime")) {
+                    templist = IntervalHelper.Decode(trip.IntervalInformation.CriticalTimeInterval);
+                    tempcriticalcount++;
+                    for (int i = 0; i < 8; i++) {
+                        result["Criticaltime"][i] += templist[i];
+                    }
+                }
+
+                if (trip.IntervalInformation.SpeedInterval != 0 && !result.ContainsKey("Speeding")) {
+                    result["Speeding"] = IntervalHelper.Decode(trip.IntervalInformation.SpeedInterval);
+                    tempspeedingcount++;
+                } else if (trip.IntervalInformation.SpeedInterval != 0 && result.ContainsKey("Speeding")) {
+                    templist = IntervalHelper.Decode(trip.IntervalInformation.SpeedInterval);
+                    tempspeedingcount++;
+                    for (int i = 0; i < 8; i++) {
+                        result["Speeding"][i] += templist[i];
+                    }
+                }
+
+                if (trip.IntervalInformation.AccelerationInterval != 0 && !result.ContainsKey("Accelerations")) {
+                    result["Accelerations"] = IntervalHelper.Decode(trip.IntervalInformation.AccelerationInterval);
+                    tempacccount++;
+                } else if (trip.IntervalInformation.AccelerationInterval != 0 && result.ContainsKey("Accelerations")) {
+                    templist = IntervalHelper.Decode(trip.IntervalInformation.AccelerationInterval);
+                    tempacccount++;
+                    for (int i = 0; i < 8; i++) {
+                        result["Accelerations"][i] += templist[i];
+                    }
+                }
+
+                if (trip.IntervalInformation.BrakingInterval != 0 && !result.ContainsKey("Brakes")) {
+                    result["Brakes"] = IntervalHelper.Decode(trip.IntervalInformation.BrakingInterval);
+                    tempbrakecount++;
+                } else if (trip.IntervalInformation.BrakingInterval != 0 && result.ContainsKey("Brakes")) {
+                    templist = IntervalHelper.Decode(trip.IntervalInformation.BrakingInterval);
+                    tempbrakecount++;
+                    for (int i = 0; i < 8; i++) {
+                        result["Brakes"][i] += templist[i];
+                    }
+                }
+
+                if (trip.IntervalInformation.JerkInterval != 0 && !result.ContainsKey("Jerks")) {
+                    result["Jerks"] = IntervalHelper.Decode(trip.IntervalInformation.JerkInterval);
+                    tempjerkcount++;
+                } else if (trip.IntervalInformation.JerkInterval != 0 && result.ContainsKey("Jerks")) {
+                    templist = IntervalHelper.Decode(trip.IntervalInformation.JerkInterval);
+                    tempjerkcount++;
+                    for (int i = 0; i < 8; i++) {
+                        result["Jerks"][i] += templist[i];
                     }
                 }
             }
 
+            List<double> nulliste = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 8; i++) {
-                result["Roadtypes"][i] = result["Roadtypes"][i] / trips.Count;
-                result["Criticaltime"][i] = result["Criticaltime"][i] / trips.Count;
-                result["Speeding"][i] = result["Speeding"][i] / trips.Count;
-                result["Accelerations"][i] = result["Accelerations"][i] / trips.Count;
-                result["Brakes"][i] = result["Brakes"][i] / trips.Count;
-                result["Jerks"][i] = result["Jerks"][i] / trips.Count;
+
+                if (result.ContainsKey("Roadtypes") && temproadcount != 0) {
+                    result["Roadtypes"][i] = result["Roadtypes"][i] / temproadcount;
+                } else if(!result.ContainsKey("Roadtypes")) {
+                    result["Roadtypes"] = nulliste;
+                    result["Roadtypes"][i] = 0;
+                } else if(result.ContainsKey("Roadtypes") && temproadcount == 0) {
+                    result["Roadtypes"][i] = 0;
+                }
+
+                if (result.ContainsKey("Criticaltime") && tempcriticalcount != 0) {
+                    result["Criticaltime"][i] = result["Criticaltime"][i] / tempcriticalcount;
+                } else if(!result.ContainsKey("Criticaltime")){
+                    result["Criticaltime"] = nulliste;
+                    result["Criticaltime"][i] = 0;
+                } else if (result.ContainsKey("Criticaltime") && tempcriticalcount == 0) {
+                    result["Criticaltime"][i] = 0;
+                }
+
+                if (result.ContainsKey("Speeding") && tempspeedingcount != 0) {
+                    result["Speeding"][i] = result["Speeding"][i] / tempspeedingcount;
+                } else if (!result.ContainsKey("Speeding")) {
+                    result["Speeding"] = nulliste;
+                    result["Speeding"][i] = 0;
+                } else if (result.ContainsKey("Speeding") && tempspeedingcount == 0) {
+                    result["Speeding"][i] = 0;
+                }
+
+                if (result.ContainsKey("Accelerations") && tempacccount != 0) {
+                    result["Accelerations"][i] = result["Accelerations"][i] / tempacccount;
+                } else if (!result.ContainsKey("Accelerations")) {
+                    result["Accelerations"] = nulliste;
+                    result["Accelerations"][i] = 0;
+                } else if (result.ContainsKey("Accelerations") && tempacccount == 0) {
+                    result["Accelerations"][i] = 0;
+                }
+
+                if (result.ContainsKey("Brakes") && tempbrakecount != 0) {
+                    result["Brakes"][i] = result["Brakes"][i] / tempbrakecount;
+                } else if(!result.ContainsKey("Brakes")) {
+                    result["Brakes"] = nulliste;
+                    result["Brakes"][i] = 0;
+                } else if (result.ContainsKey("Brakes") && tempbrakecount == 0) {
+                    result["Brakes"][i] = 0;
+                }
+
+                if (result.ContainsKey("Jerks") && tempjerkcount != 0) {
+                    result["Jerks"][i] = result["Jerks"][i] / tempjerkcount;
+                } else if (!result.ContainsKey("Jerks")) {
+                    result["Jerks"] = nulliste;
+                    result["Jerks"][i] = 0;
+                } else if (result.ContainsKey("Jerks") && tempjerkcount == 0) {
+                    result["Jerks"][i] = 0;
+                }
             }
-            
             return result;
         }
 
         public static Dictionary<string, double> MetricPercentage(Trip trip) {
 
             Dictionary<string, double> result = new Dictionary<string, double>();
+            if (trip.RoadTypeScore != 0 || trip.MetersDriven != 0) {
+                result.Add("Roadtypes", trip.RoadTypeScore / trip.MetersDriven * 100);
+            } else {
+                result.Add("Roadtypes", 0);
+            }
 
-            result.Add("Roadtypes", trip.RoadTypeScore / trip.MetersDriven * 100);
-            result.Add("CriticalTimePeriod", trip.CriticalTimeScore / trip.MetersDriven * 100);
-            result.Add("Speeding", trip.SpeedingScore / trip.MetersDriven * 100);
-            result.Add("Accelerations", trip.AccelerationScore / trip.MetersDriven * 100);
-            result.Add("Brakes", trip.BrakeScore / trip.MetersDriven * 100);
-            result.Add("Jerks", trip.JerkScore / trip.MetersDriven * 100);
+            if (trip.CriticalTimeScore != 0 || trip.MetersDriven != 0) {
+                result.Add("CriticalTimePeriod", trip.CriticalTimeScore / trip.MetersDriven * 100);
+            } else {
+                result.Add("CriticalTimePeriod", 0);
+            }
+
+            if (trip.SpeedingScore != 0 || trip.MetersDriven != 0) {
+                result.Add("Speeding", trip.SpeedingScore / trip.MetersDriven * 100);
+            } else {
+                result.Add("Speeding", 0);
+            }
+
+            if (trip.AccelerationScore != 0 || trip.MetersDriven != 0) {
+                result.Add("Accelerations", trip.AccelerationScore / trip.MetersDriven * 100);
+            } else {
+                result.Add("Accelerations", 0);
+            }
+
+            if (trip.BrakeScore != 0 || trip.MetersDriven != 0) {
+                result.Add("Brakes", trip.BrakeScore / trip.MetersDriven * 100);
+            } else {
+                result.Add("Brakes", 0);
+            }
+
+            if (trip.JerkScore != 0 || trip.MetersDriven != 0) {
+                result.Add("Jerks", trip.JerkScore / trip.MetersDriven * 100);
+            } else {
+                result.Add("Jerks", 0);
+            }
 
             return result;
         }
@@ -144,6 +264,9 @@ namespace CarDataProject {
             DBController dbc = new DBController();
 
             List<Fact> facts = dbc.GetFactsByTripIdNoQuality(trip.TripId);
+
+            double tempint = trip.MetersDriven / 1000;
+
 
             result.Add("Speeding", 0);
             result.Add("Accelerations", 0);
@@ -156,35 +279,49 @@ namespace CarDataProject {
                 }
             }
             if (result["Speeding"] != 0) {
-                result["Speeding"] = result["Speeding"] / facts.Count * 1000;
+                result["Speeding"] = result["Speeding"] / tempint;
             }
 
-            result["Accelerations"] = ((double)trip.AccelerationCount / (double)facts.Count * 1000);
-            result["Brakes"] = ((double)trip.BrakeCount / (double)facts.Count * 1000);
-            result["Jerks"] = ((double)trip.JerkCount / (double)facts.Count * 1000);
+            result["Accelerations"] = ((double)trip.AccelerationCount / tempint);
+            result["Brakes"] = ((double)trip.BrakeCount / tempint);
+            result["Jerks"] = ((double)trip.JerkCount / tempint);
 
             dbc.Close();
 
             return result;
         }
 
-        public static void print(Dictionary<string, double> dict) {
-            foreach(KeyValuePair<string, double> kvp in dict) {
+        public static string print(Dictionary<string, double> dict) {
+            StringBuilder builder = new StringBuilder();
+
+            foreach (KeyValuePair<string, double> kvp in dict) {
                 Console.WriteLine(kvp.Key + " : " + kvp.Value.ToString());
+                string tempstring = kvp.Key + " : " + kvp.Value.ToString();
+                builder.Append(tempstring);
+                builder.Append("\n");
             }
+
+            builder.Append("\n");
+            return builder.ToString();
         }
 
-        public static void print(Dictionary<string, List<double>> dict) {
+        public static string print(Dictionary<string, List<double>> dict) {
+            StringBuilder builder = new StringBuilder();
+
             foreach(KeyValuePair<string, List<double>> kvp in dict) {
 
-                StringBuilder builder = new StringBuilder();
+                StringBuilder tempbuilder = new StringBuilder();
 
                 for(int i = 0; i < kvp.Value.Count; i++) {
+                    tempbuilder.Append(kvp.Value.ElementAt(i).ToString()).Append(" | ");
                     builder.Append(kvp.Value.ElementAt(i).ToString()).Append(" | ");
                 }
                 
-                Console.WriteLine(kvp.Key + " : " + builder.ToString());
+                Console.WriteLine(kvp.Key + " : " + tempbuilder.ToString());
+                builder.Append("\n");
             }
+            builder.Append("\n");
+            return builder.ToString();
         }
     }
 }

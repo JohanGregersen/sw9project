@@ -18,7 +18,7 @@ namespace CarDataProject {
             dbc.Close();
 
             if(trip.TripScore != 0 && trip.MetersDriven != 0) {
-                result = trip.TripScore / trip.MetersDriven * 100;
+                result = trip.TripScore / trip.MetersDriven * 100 - 100;
             }
 
             return result;
